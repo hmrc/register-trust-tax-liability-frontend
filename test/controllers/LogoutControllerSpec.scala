@@ -16,31 +16,25 @@
 
 package controllers
 
-import base.SpecBase
+import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.SessionExpiredView
 
-class SessionExpiredControllerSpec extends SpecBase {
+class LogoutControllerSpec extends FreeSpec with MustMatchers with GuiceOneAppPerSuite with OptionValues {
 
-  "SessionExpired Controller" must {
+  "logout" - {
 
-    "return OK and the correct view for a GET" in {
+    "must start a new session and redirect" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      lazy val request = FakeRequest("GET", routes.LogoutController.logout().url)
+        .withSession("foo" -> "bar")
 
-      val request = FakeRequest(GET, routes.SessionExpiredController.onPageLoad().url)
+      val result = route(app, request).value
 
-      val result = route(application, request).value
-
-      val view = application.injector.instanceOf[SessionExpiredView]
-
-      status(result) mustEqual OK
-
-      contentAsString(result) mustEqual
-        view()(fakeRequest, messages).toString
-
-      application.stop()
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe "http://localhost:9514/feedback/estates"
+      session(result) mustBe empty
     }
   }
 }
