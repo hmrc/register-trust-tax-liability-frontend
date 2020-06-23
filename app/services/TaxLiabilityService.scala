@@ -2,7 +2,6 @@ package services
 
 import java.time.LocalDate
 
-import org.joda.time.{LocalDate => JodaLocalDate}
 import connectors.EstatesConnector
 import javax.inject.Inject
 import models.TaxLiabilityYear
@@ -11,7 +10,9 @@ import uk.gov.hmrc.time.TaxYear
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxLiabilityService @Inject()(estatesConnector: EstatesConnector)(implicit ec: ExecutionContext, hc: HeaderCarrier) {
+class TaxLiabilityService @Inject()(estatesConnector: EstatesConnector,
+                                    localDateService: LocalDateService
+                                   )(implicit ec: ExecutionContext, hc: HeaderCarrier) {
 
   private val deadlineMonth = 12
   private val deadlineDay = 22
@@ -19,7 +20,7 @@ class TaxLiabilityService @Inject()(estatesConnector: EstatesConnector)(implicit
   private val decemberDeadline = LocalDate.of(TaxYear.current.starts.getYear, deadlineMonth, deadlineDay)
 
   def getFirstYearOfTaxLiability(): Future[TaxLiabilityYear] = {
-    val oldestYearToShow = if (!(LocalDate.now().isBefore(currentTaxYearStart) || LocalDate.now().isAfter(decemberDeadline))) {
+    val oldestYearToShow = if (!(localDateService.now.isBefore(currentTaxYearStart) || localDateService.now.isAfter(decemberDeadline))) {
       TaxYear.current.back(4)
     } else {
       TaxYear.current.back(3)
@@ -35,7 +36,7 @@ class TaxLiabilityService @Inject()(estatesConnector: EstatesConnector)(implicit
   }
 
   def getIsTaxLiabilityLate(taxYear: TaxYear, alreadyPaid: Boolean): Boolean = {
-    if ((!(LocalDate.now().isBefore(currentTaxYearStart) || LocalDate.now().isAfter(decemberDeadline))) &&
+    if ((!(localDateService.now.isBefore(currentTaxYearStart) || localDateService.now.isAfter(decemberDeadline))) &&
       (taxYear.startYear == TaxYear.current.previous.startYear)) {
       false
     } else if (alreadyPaid) {
