@@ -13,7 +13,7 @@ class IndexControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad().url)
 
       val result = route(application, request).value
 
