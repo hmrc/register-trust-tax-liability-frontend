@@ -38,8 +38,15 @@ site.no = No
 site.yes = Yes
 site.continue = Continue
 site.service_name = Register and Maintain an Estate
+site.returnToRegistrationProgress = Return to registration progress
 site.textarea.char_limit = (Limit is {0} characters)
 site.sign_out = Sign out
 
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
+
+CYMinusFour.EarlierYearsLiability.checkYourAnswersLabel = Is {0}’s address in the UK?
+CYMinusFour.EarlierYearsLiability.title = Did the estate need to pay tax before {0}?
+CYMinusFour.EarlierYearsLiability.heading = Did the estate need to pay tax before {0}?
+CYMinusFour.EarlierYearsLiability.hint = By selecting yes you must send a schedule of any chargeable income received to HMRC
+CYMinusFour.EarlierYearsLiability.error.required = Select yes if the estate needed to pay tax for earlier years

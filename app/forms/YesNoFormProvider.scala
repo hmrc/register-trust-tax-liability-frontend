@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-package services
+package forms
 
-import java.time.LocalDate
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-class LocalDateService {
-  def now: LocalDate = LocalDate.now
+class YesNoFormProvider @Inject() extends Mappings {
+
+  def withPrefix(prefix: String): Form[Boolean] =
+    Form(
+      "value" -> boolean(s"$prefix.error.required")
+    )
 }

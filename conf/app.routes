@@ -1,6 +1,11 @@
 # microservice specific routes
 
-GET        /                                            controllers.CYMinusFourEarlierYearsLiabilityController.onPageLoad
+GET        /                                            controllers.IndexController.onPageLoad
+
+GET        /cy4-earlier-years-liability                 controllers.CYMinusFourEarlierYearsLiabilityController.onPageLoad(mode: Mode = NormalMode)
+POST       /cy4-earlier-years-liability                 controllers.CYMinusFourEarlierYearsLiabilityController.onSubmit(mode: Mode = NormalMode)
+GET        /change-cy4-earlier-years-liability          controllers.CYMinusFourEarlierYearsLiabilityController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-cy4-earlier-years-liability          controllers.CYMinusFourEarlierYearsLiabilityController.onSubmit(mode: Mode = CheckMode)
 
 GET        /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
 

@@ -14,10 +14,22 @@
  * limitations under the License.
  */
 
-package services
+package controllers.actions
 
-import java.time.LocalDate
+import com.google.inject.Inject
+import models.requests.{DataRequest, OptionalDataRequest}
+import play.api.mvc.{ActionBuilder, AnyContent}
 
-class LocalDateService {
-  def now: LocalDate = LocalDate.now
+class Actions @Inject()(
+                         identify: IdentifierAction,
+                         getData: DataRetrievalAction,
+                         requireData: DataRequiredAction
+                       ) {
+
+  def authWithSession: ActionBuilder[OptionalDataRequest, AnyContent] =
+    identify andThen getData
+
+  def authWithData: ActionBuilder[DataRequest, AnyContent] =
+    authWithSession andThen requireData
+
 }

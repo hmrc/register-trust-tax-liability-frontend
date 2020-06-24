@@ -45,6 +45,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   lazy val estatesUrl: String = configuration.get[Service]("microservice.services.estates").baseUrl
 
+  lazy val registerEstateHubOverview: String = configuration.get[String]("urls.registerEstateHubOverview")
+
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")
 

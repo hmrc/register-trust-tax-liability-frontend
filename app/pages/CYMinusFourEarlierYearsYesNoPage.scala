@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
-package services
+package pages
 
-import java.time.LocalDate
+import models.UserAnswers
+import play.api.libs.json.JsPath
 
-class LocalDateService {
-  def now: LocalDate = LocalDate.now
+import scala.util.Try
+
+case object CYMinusFourEarlierYearsYesNoPage extends QuestionPage[Boolean] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "addressUkYesNo"
+
 }
