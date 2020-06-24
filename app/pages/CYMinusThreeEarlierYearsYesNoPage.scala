@@ -16,15 +16,12 @@
 
 package pages
 
-import models.UserAnswers
 import play.api.libs.json.JsPath
 
-import scala.util.Try
-
-case object CYMinusFourEarlierYearsYesNoPage extends QuestionPage[Boolean] {
+case object CYMinusThreeEarlierYearsYesNoPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "cyMinusFourEarlierYearsYesNo"
+  override def toString: String = "cyMinusThreeEarlierYearsYesNo"
 
 }

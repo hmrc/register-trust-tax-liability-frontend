@@ -60,11 +60,11 @@ class IndexController @Inject()(
 
         (currentYear - startYear) match {
           case 4 if taxLiabilityYear.earlierYears => Redirect(controllers.routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode))
-          //          case 4 => Redirect(controllers.routes.CYMinusFourLiabilityController.onPageLoad())
-          //          case 3 if taxLiabilityYear.earlierYears => Redirect(controllers.routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad())
-          //          case 3 => Redirect(controllers.routes.CYMinusThreeLiabilityController.onPageLoad())
-          //          case 2 => Redirect(controllers.routes.CYMinusTwoLiabilityController.onPageLoad())
-          //          case 1 => Redirect(controllers.routes.CYMinusOneLiabilityController.onPageLoad())
+          case 4 => Redirect(controllers.routes.CYMinusFourLiabilityController.onPageLoad(NormalMode))
+          case 3 if taxLiabilityYear.earlierYears => Redirect(controllers.routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode))
+          case 3 => Redirect(controllers.routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode))
+          case 2 => Redirect(controllers.routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode))
+          case 1 => Redirect(controllers.routes.CYMinusOneLiabilityController.onPageLoad(NormalMode))
           case _ => InternalServerError(errorHandler.internalServerErrorTemplate)
         }
       }

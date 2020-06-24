@@ -7,6 +7,31 @@ POST       /cy4-earlier-years-liability                 controllers.CYMinusFourE
 GET        /change-cy4-earlier-years-liability          controllers.CYMinusFourEarlierYearsLiabilityController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-cy4-earlier-years-liability          controllers.CYMinusFourEarlierYearsLiabilityController.onSubmit(mode: Mode = CheckMode)
 
+GET        /cy4-liability                               controllers.CYMinusFourLiabilityController.onPageLoad(mode: Mode = NormalMode)
+POST       /cy4-liability                               controllers.CYMinusFourLiabilityController.onSubmit(mode: Mode = NormalMode)
+GET        /change-cy4-liability                        controllers.CYMinusFourLiabilityController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-cy4-liability                        controllers.CYMinusFourLiabilityController.onSubmit(mode: Mode = CheckMode)
+
+GET        /cy3-earlier-years-liability                 controllers.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(mode: Mode = NormalMode)
+POST       /cy3-earlier-years-liability                 controllers.CYMinusThreeEarlierYearsLiabilityController.onSubmit(mode: Mode = NormalMode)
+GET        /change-cy3-earlier-years-liability          controllers.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-cy3-earlier-years-liability          controllers.CYMinusThreeEarlierYearsLiabilityController.onSubmit(mode: Mode = CheckMode)
+
+GET        /cy3-liability                               controllers.CYMinusThreeLiabilityController.onPageLoad(mode: Mode = NormalMode)
+POST       /cy3-liability                               controllers.CYMinusThreeLiabilityController.onSubmit(mode: Mode = NormalMode)
+GET        /change-cy3-liability                        controllers.CYMinusThreeLiabilityController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-cy3-liability                        controllers.CYMinusThreeLiabilityController.onSubmit(mode: Mode = CheckMode)
+
+GET        /cy2-liability                               controllers.CYMinusTwoLiabilityController.onPageLoad(mode: Mode = NormalMode)
+POST       /cy2-liability                               controllers.CYMinusTwoLiabilityController.onSubmit(mode: Mode = NormalMode)
+GET        /change-cy2-liability                        controllers.CYMinusTwoLiabilityController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-cy2-liability                        controllers.CYMinusTwoLiabilityController.onSubmit(mode: Mode = CheckMode)
+
+GET        /cy1-liability                               controllers.CYMinusOneLiabilityController.onPageLoad(mode: Mode = NormalMode)
+POST       /cy1-liability                               controllers.CYMinusOneLiabilityController.onSubmit(mode: Mode = NormalMode)
+GET        /change-cy1-liability                        controllers.CYMinusOneLiabilityController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-cy1-liability                        controllers.CYMinusOneLiabilityController.onSubmit(mode: Mode = CheckMode)
+
 GET        /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
 
 GET        /language/:lang                              controllers.LanguageSwitchController.switchToLanguage(lang: String)
