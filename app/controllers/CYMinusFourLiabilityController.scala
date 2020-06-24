@@ -18,6 +18,7 @@ package controllers
 
 import java.time.format.DateTimeFormatter
 
+import config.annotations.TaxLiability
 import controllers.actions.Actions
 import forms.YesNoFormProvider
 import javax.inject.Inject
@@ -35,14 +36,14 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CYMinusFourLiabilityController @Inject()(
                                  val controllerComponents: MessagesControllerComponents,
-                                 navigator: Navigator,
+                                 @TaxLiability navigator: Navigator,
                                  actions: Actions,
                                  formProvider: YesNoFormProvider,
                                  sessionRepository: SessionRepository,
                                  view: CYMinusFourYesNoView
                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider.withPrefix("CYMinusFour.liability")
+  val form = formProvider.withPrefix("cyMinusFour.liability")
 
   val fullDatePattern: String = "d MMMM yyyy"
   val taxYearStart: String = (TaxYear.current.back(4).starts.toString(fullDatePattern))

@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.annotations.TaxLiability
 import controllers.actions.Actions
 import forms.YesNoFormProvider
 import javax.inject.Inject
@@ -33,14 +34,14 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CYMinusThreeEarlierYearsLiabilityController @Inject()(
                                  val controllerComponents: MessagesControllerComponents,
-                                 navigator: Navigator,
+                                 @TaxLiability navigator: Navigator,
                                  actions: Actions,
                                  formProvider: YesNoFormProvider,
                                  sessionRepository: SessionRepository,
                                  view: CYMinusThreeEarlierYearsYesNoView
                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider.withPrefix("CYMinusThree.EarlierYearsLiability")
+  val form = formProvider.withPrefix("cyMinusThree.EarlierYearsLiability")
 
   val taxYear: String = TaxYear.current.back(3).startYear.toString
 

@@ -26,7 +26,7 @@
 @(form: Form[_], taxYear: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = s"${errorPrefix(form)} ${messages("CYMinusFour.EarlierYearsLiability.title", taxYear)}"
+    title = s"${errorPrefix(form)} ${messages("cyMinusFour.earlierYearsLiability.title", taxYear)}"
 ) {
 
     @formHelper(action = CYMinusFourEarlierYearsLiabilityController.onSubmit(mode), 'autoComplete -> "off") {
@@ -37,9 +37,9 @@
 
         @components.input_yes_no(
             field = form("value"),
-            legend = messages("CYMinusFour.EarlierYearsLiability.heading", taxYear),
+            legend = messages("cyMinusFour.earlierYearsLiability.heading", taxYear),
             headingIsLegend = true,
-            hint = Some(messages("CYMinusFour.EarlierYearsLiability.hint"))
+            hint = Some(messages("cyMinusFour.earlierYearsLiability.hint"))
         )
 
         @components.submit_button()
