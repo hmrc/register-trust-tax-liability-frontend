@@ -45,23 +45,17 @@ site.sign_out = Sign out
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
-cyMinusFour.EarlierYearsLiability.checkYourAnswersLabel = Did the estate need to pay tax before {0}?
-cyMinusFour.EarlierYearsLiability.title = Did the estate need to pay tax before {0}?
-cyMinusFour.EarlierYearsLiability.heading = Did the estate need to pay tax before {0}?
-cyMinusFour.EarlierYearsLiability.hint = By selecting yes you must send a schedule of any chargeable income received to HMRC
-cyMinusFour.EarlierYearsLiability.error.required = Select yes if the estate needs to pay tax for earlier years
+earlierYearsLiability.checkYourAnswersLabel = Did the estate need to pay tax before {0}?
+earlierYearsLiability.title = Did the estate need to pay tax before {0}?
+earlierYearsLiability.heading = Did the estate need to pay tax before {0}?
+earlierYearsLiability.hint = By selecting yes you must send a schedule of any chargeable income received to HMRC
+earlierYearsLiability.error.required = Select yes if the estate needs to pay tax for earlier years
 
 cyMinusFour.liability.checkYourAnswersLabel = Did the estate need to pay Income Tax or Capital Gains Tax between {0}?
 cyMinusFour.liability.title = Did the estate need to pay Income Tax or Capital Gains Tax between {0}?
 cyMinusFour.liability.heading = Did the estate need to pay Income Tax or Capital Gains Tax between {0}?
 cyMinusFour.liability.hint = Excludes Inheritance Tax
 cyMinusFour.liability.error.required = Select yes if estate needs to pay Income Tax or Capital Gains Tax
-
-cyMinusThree.EarlierYearsLiability.checkYourAnswersLabel = Did the estate need to pay tax before {0}?
-cyMinusThree.EarlierYearsLiability.title = Did the estate need to pay tax before {0}?
-cyMinusThree.EarlierYearsLiability.heading = Did the estate need to pay tax before {0}?
-cyMinusThree.EarlierYearsLiability.hint = By selecting yes you must send a schedule of any chargeable income received to HMRC
-cyMinusThree.EarlierYearsLiability.error.required = Select yes if the estate needs to pay tax for earlier years
 
 cyMinusThree.liability.checkYourAnswersLabel = Did the estate need to pay Income Tax or Capital Gains Tax between {0}?
 cyMinusThree.liability.title = Did the estate need to pay Income Tax or Capital Gains Tax between {0}?

@@ -31,7 +31,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import uk.gov.hmrc.time.TaxYear
-import views.html.CYMinusFourEarlierYearsYesNoView
+import views.html.EarlierYearsToPayThanAskedYesNoView
 
 import scala.concurrent.Future
 
@@ -40,7 +40,7 @@ class CYMinusFourEarlierYearsLiabilityControllerSpec extends SpecBase with Mocki
   override def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new YesNoFormProvider()
-  val form = formProvider.withPrefix("cyMinusFour.EarlierYearsLiability")
+  val form = formProvider.withPrefix("earlierYearsLiability")
   val taxYear: String = TaxYear.current.back(4).startYear.toString
 
   lazy val cyMinusFourEarlierYearsLiabilityControllerRoute = routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode).url
@@ -55,7 +55,7 @@ class CYMinusFourEarlierYearsLiabilityControllerSpec extends SpecBase with Mocki
 
       val result = route(application, request).value
 
-      val view = application.injector.instanceOf[CYMinusFourEarlierYearsYesNoView]
+      val view = application.injector.instanceOf[EarlierYearsToPayThanAskedYesNoView]
 
       status(result) mustEqual OK
 
@@ -73,7 +73,7 @@ class CYMinusFourEarlierYearsLiabilityControllerSpec extends SpecBase with Mocki
 
       val request = FakeRequest(GET, cyMinusFourEarlierYearsLiabilityControllerRoute)
 
-      val view = application.injector.instanceOf[CYMinusFourEarlierYearsYesNoView]
+      val view = application.injector.instanceOf[EarlierYearsToPayThanAskedYesNoView]
 
       val result = route(application, request).value
 
@@ -119,7 +119,7 @@ class CYMinusFourEarlierYearsLiabilityControllerSpec extends SpecBase with Mocki
 
       val boundForm = form.bind(Map("value" -> ""))
 
-      val view = application.injector.instanceOf[CYMinusFourEarlierYearsYesNoView]
+      val view = application.injector.instanceOf[EarlierYearsToPayThanAskedYesNoView]
 
       val result = route(application, request).value
 

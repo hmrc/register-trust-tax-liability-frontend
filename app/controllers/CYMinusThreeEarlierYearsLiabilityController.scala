@@ -20,15 +20,14 @@ import config.annotations.TaxLiability
 import controllers.actions.Actions
 import forms.YesNoFormProvider
 import javax.inject.Inject
-import models.Mode
+import models.{CYMinus4TaxYear, Mode, TaxYearRange}
 import navigation.Navigator
 import pages.CYMinusThreeEarlierYearsYesNoPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import uk.gov.hmrc.time.TaxYear
-import views.html.CYMinusThreeEarlierYearsYesNoView
+import views.html.EarlierYearsToPayThanAskedYesNoView
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -38,12 +37,10 @@ class CYMinusThreeEarlierYearsLiabilityController @Inject()(
                                  actions: Actions,
                                  formProvider: YesNoFormProvider,
                                  sessionRepository: SessionRepository,
-                                 view: CYMinusThreeEarlierYearsYesNoView
+                                 view: EarlierYearsToPayThanAskedYesNoView
                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider.withPrefix("cyMinusThree.EarlierYearsLiability")
-
-  val taxYear: String = TaxYear.current.back(3).startYear.toString
+  val form = formProvider.withPrefix("earlierYearsLiability")
 
   def onPageLoad(mode: Mode): Action[AnyContent] = actions.authWithData {
     implicit request =>
@@ -53,15 +50,19 @@ class CYMinusThreeEarlierYearsLiabilityController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, taxYear, mode))
+      val start = TaxYearRange(CYMinus4TaxYear).yearAtStart
+
+      Ok(view(preparedForm, start, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = actions.authWithData.async {
     implicit request =>
 
+      val start = TaxYearRange(CYMinus4TaxYear).yearAtStart
+
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, taxYear, mode))),
+          Future.successful(BadRequest(view(formWithErrors, start, mode))),
 
         value =>
           for {

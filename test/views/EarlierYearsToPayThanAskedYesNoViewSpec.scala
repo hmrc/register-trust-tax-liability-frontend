@@ -21,18 +21,18 @@ import models.NormalMode
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
-import views.html.CYMinusFourEarlierYearsYesNoView
+import views.html.EarlierYearsToPayThanAskedYesNoView
 
-class CYMinusFourEarlierYearsLiabilityYesNoViewSpec extends YesNoViewBehaviours {
+class EarlierYearsToPayThanAskedYesNoViewSpec extends YesNoViewBehaviours {
 
-  val messageKeyPrefix = "cyMinusFour.earlierYearsLiability"
+  val messageKeyPrefix = "earlierYearsLiability"
   val taxYear = "2000"
 
   val form: Form[Boolean] = new YesNoFormProvider().withPrefix(messageKeyPrefix)
 
-  "CYMinusFourEarlierYearsLiabilityYesNo view" must {
+  "EarlierYearsToPayThanAskedYesNoView view" must {
 
-    val view = viewFor[CYMinusFourEarlierYearsYesNoView](Some(emptyUserAnswers))
+    val view = viewFor[EarlierYearsToPayThanAskedYesNoView](Some(emptyUserAnswers))
 
     def applyView(form: Form[_]): HtmlFormat.Appendable =
       view.apply(form, taxYear, NormalMode)(fakeRequest, messages)

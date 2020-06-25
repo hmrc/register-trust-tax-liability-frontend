@@ -27,8 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import uk.gov.hmrc.time.TaxYear
-import views.html.CYMinusFourEarlierYearsYesNoView
+import views.html.EarlierYearsToPayThanAskedYesNoView
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -38,10 +37,10 @@ class CYMinusFourEarlierYearsLiabilityController @Inject()(
                                  actions: Actions,
                                  formProvider: YesNoFormProvider,
                                  sessionRepository: SessionRepository,
-                                 view: CYMinusFourEarlierYearsYesNoView
+                                 view: EarlierYearsToPayThanAskedYesNoView
                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider.withPrefix("cyMinusFour.EarlierYearsLiability")
+  val form = formProvider.withPrefix("earlierYearsLiability")
 
   def onPageLoad(mode: Mode): Action[AnyContent] = actions.authWithData {
     implicit request =>
