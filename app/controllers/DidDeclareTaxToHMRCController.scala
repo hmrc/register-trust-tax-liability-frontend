@@ -46,9 +46,11 @@ class DidDeclareTaxToHMRCController @Inject()(
     implicit request =>
       val range = TaxYearRange(taxYear)
 
+      val f = form(Seq(range.startYear, range.endYear))
+
       val preparedForm = request.userAnswers.get(DidDeclareTaxToHMRCYesNoPage(taxYear)) match {
-        case None => form(Seq(range.startYear, range.endYear))
-        case Some(value) => form(Seq(range.startYear, range.endYear)).fill(value)
+        case None => f
+        case Some(value) => f.fill(value)
       }
 
       Ok(view(preparedForm, taxYear, range.toRange, mode))
