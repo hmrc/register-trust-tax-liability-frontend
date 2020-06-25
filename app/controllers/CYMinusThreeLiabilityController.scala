@@ -20,14 +20,13 @@ import config.annotations.TaxLiability
 import controllers.actions.Actions
 import forms.YesNoFormProvider
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, TaxYearRange}
 import navigation.Navigator
 import pages.CYMinusThreeYesNoPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import uk.gov.hmrc.time.TaxYear
 import views.html.CYMinusThreeYesNoView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,33 +42,27 @@ class CYMinusThreeLiabilityController @Inject()(
 
   val form = formProvider.withPrefix("cyMinusThree.liability")
 
-  val fullDatePattern: String = "d MMMM yyyy"
-  val taxYearStart: String = TaxYear.current.back(3).starts.toString(fullDatePattern)
-  val taxYearEnd: String = TaxYear.current.back(3).finishes.toString(fullDatePattern)
-
   def onPageLoad(mode: Mode): Action[AnyContent] = actions.authWithData {
     implicit request =>
 
-      val messages = request.messages
-      val taxRange = messages("taxYearRange", taxYearStart, taxYearEnd)
+      val range = TaxYearRange(3)
 
       val preparedForm = request.userAnswers.get(CYMinusThreeYesNoPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, taxRange, mode))
+      Ok(view(preparedForm, range.andRange, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = actions.authWithData.async {
     implicit request =>
 
-      val messages = request.messages
-      val taxRange = messages("taxYearRange", taxYearStart, taxYearEnd)
+      val range = TaxYearRange(3)
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, taxRange, mode))),
+          Future.successful(BadRequest(view(formWithErrors, range.andRange, mode))),
 
         value =>
           for {

@@ -16,20 +16,17 @@
 
 package controllers
 
-import java.time.format.DateTimeFormatter
-
 import config.annotations.TaxLiability
 import controllers.actions.Actions
 import forms.YesNoFormProvider
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, TaxYearRange}
 import navigation.Navigator
 import pages.CYMinusFourYesNoPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import uk.gov.hmrc.time.TaxYear
 import views.html.CYMinusFourYesNoView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,31 +42,27 @@ class CYMinusFourLiabilityController @Inject()(
 
   val form = formProvider.withPrefix("cyMinusFour.liability")
 
-  val fullDatePattern: String = "d MMMM yyyy"
-  val taxYearStart: String = TaxYear.current.back(4).starts.toString(fullDatePattern)
-  val taxYearEnd: String = TaxYear.current.back(4).finishes.toString(fullDatePattern)
-
   def onPageLoad(mode: Mode): Action[AnyContent] = actions.authWithData {
     implicit request =>
-      val messages = request.messages
-      val taxRange = messages("taxYearRange", taxYearStart, taxYearEnd)
+
+      val taxRange = TaxYearRange(4)
 
       val preparedForm = request.userAnswers.get(CYMinusFourYesNoPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, taxRange, mode))
+      Ok(view(preparedForm, taxRange.andRange, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = actions.authWithData.async {
     implicit request =>
-      val messages = request.messages
-      val taxRange = messages("taxYearRange", taxYearStart, taxYearEnd)
+
+      val taxRange = TaxYearRange(4)
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, taxRange, mode))),
+          Future.successful(BadRequest(view(formWithErrors, taxRange.andRange, mode))),
 
         value =>
           for {
