@@ -16,8 +16,8 @@
 
 package models
 
-abstract class TaxYear(val years: Int) {
-  override def toString: String = s"$years"
+abstract class TaxYear(val year: Int) {
+  override def toString: String = s"$year"
 }
 
 case object CYMinus4TaxYear extends TaxYear(4)

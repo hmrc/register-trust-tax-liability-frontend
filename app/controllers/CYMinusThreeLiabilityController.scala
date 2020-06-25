@@ -20,7 +20,7 @@ import config.annotations.TaxLiability
 import controllers.actions.Actions
 import forms.YesNoFormProvider
 import javax.inject.Inject
-import models.{Mode, TaxYearRange}
+import models.{CYMinus3TaxYear, Mode, TaxYearRange}
 import navigation.Navigator
 import pages.CYMinusThreeYesNoPage
 import play.api.i18n.I18nSupport
@@ -45,7 +45,7 @@ class CYMinusThreeLiabilityController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = actions.authWithData {
     implicit request =>
 
-      val range = TaxYearRange(3)
+      val range = TaxYearRange(CYMinus3TaxYear)
 
       val preparedForm = request.userAnswers.get(CYMinusThreeYesNoPage) match {
         case None => form
@@ -58,7 +58,7 @@ class CYMinusThreeLiabilityController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = actions.authWithData.async {
     implicit request =>
 
-      val range = TaxYearRange(3)
+      val range = TaxYearRange(CYMinus3TaxYear)
 
       form.bindFromRequest().fold(
         formWithErrors =>

@@ -32,6 +32,11 @@ POST       /cy1-liability                               controllers.CYMinusOneLi
 GET        /change-cy1-liability                        controllers.CYMinusOneLiabilityController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-cy1-liability                        controllers.CYMinusOneLiabilityController.onSubmit(mode: Mode = CheckMode)
 
+GET        /did-declare-for-previous-tax-year           controllers.DidDeclareTaxToHMRCController.onPageLoad(mode: Mode = NormalMode, taxYear: TaxYear = CYMinus1TaxYear)
+GET        /change-did-declare-for-previous-tax-year    controllers.DidDeclareTaxToHMRCController.onPageLoad(mode: Mode = CheckMode, taxYear: TaxYear = CYMinus1TaxYear)
+POST        /did-declare-for-previous-tax-year           controllers.DidDeclareTaxToHMRCController.onSubmit(mode: Mode = NormalMode, taxYear: TaxYear = CYMinus1TaxYear)
+POST       /change-did-declare-for-previous-tax-year     controllers.DidDeclareTaxToHMRCController.onSubmit(mode: Mode = CheckMode, taxYear: TaxYear = CYMinus1TaxYear)
+
 GET        /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
 
 GET        /language/:lang                              controllers.LanguageSwitchController.switchToLanguage(lang: String)

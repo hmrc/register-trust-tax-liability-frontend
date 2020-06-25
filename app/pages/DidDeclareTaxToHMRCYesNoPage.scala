@@ -16,12 +16,13 @@
 
 package pages
 
+import models.TaxYear
 import play.api.libs.json.JsPath
 
-case class DidDeclareTaxToHMRCYesNoPage(year: Int) extends QuestionPage[Boolean] {
+case class DidDeclareTaxToHMRCYesNoPage(taxYear: TaxYear) extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = s"didDeclareTaxToHMRCForYear$year"
+  override def toString: String = s"didDeclareTaxToHMRCForYear$taxYear"
 
 }

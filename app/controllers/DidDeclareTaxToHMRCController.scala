@@ -20,16 +20,16 @@ import config.annotations.TaxLiability
 import controllers.actions.Actions
 import forms.YesNoFormProvider
 import javax.inject.Inject
-import models.{Mode, TaxYearRange, TaxYear}
+import models.{Mode, TaxYear, TaxYearRange}
 import navigation.Navigator
 import pages.DidDeclareTaxToHMRCYesNoPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import views.html.CYMinusThreeYesNoView
+import views.html.DidDeclareTaxToHMRCYesNoView
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class DidDeclareTaxToHMRCController @Inject()(
                                                val controllerComponents: MessagesControllerComponents,
@@ -37,21 +37,38 @@ class DidDeclareTaxToHMRCController @Inject()(
                                                actions: Actions,
                                                formProvider: YesNoFormProvider,
                                                sessionRepository: SessionRepository,
-                                               view: CYMinusThreeYesNoView
+                                               view: DidDeclareTaxToHMRCYesNoView
                                              )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider.withPrefix("didDeclareToHMRC")
 
   def onPageLoad(mode: Mode, taxYear: TaxYear): Action[AnyContent] = actions.authWithData {
     implicit request =>
-      val range = TaxYearRange(taxYear.years)
+      val range = TaxYearRange(taxYear)
 
-      val preparedForm = request.userAnswers.get(DidDeclareTaxToHMRCYesNoPage(taxYear.years)) match {
+      val preparedForm = request.userAnswers.get(DidDeclareTaxToHMRCYesNoPage(taxYear)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, range.toRange, mode))
+      Ok(view(preparedForm, taxYear, range.toRange, mode))
+  }
+
+  def onSubmit(mode: Mode, taxYear: TaxYear): Action[AnyContent] = actions.authWithData.async {
+    implicit request =>
+      form.bindFromRequest().fold(
+        formWithErrors => {
+          val range = TaxYearRange(taxYear)
+          Future.successful(BadRequest(view(formWithErrors, taxYear, range.toRange, mode)))
+        },
+        value => {
+          val page = DidDeclareTaxToHMRCYesNoPage(taxYear)
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(page, value))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(page, mode, updatedAnswers))
+        }
+      )
   }
 
 }
