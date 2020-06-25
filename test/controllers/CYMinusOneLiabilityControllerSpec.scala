@@ -47,7 +47,6 @@ class CYMinusOneLiabilityControllerSpec extends SpecBase with MockitoSugar {
 
   val taxYear: String = s"$taxYearStart and $taxYearEnd"
 
-
   lazy val cyMinusOneLiabilityControllerRoute = routes.CYMinusOneLiabilityController.onPageLoad(NormalMode).url
 
   "CYMinusOneLiability Controller" must {

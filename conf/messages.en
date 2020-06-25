@@ -80,3 +80,5 @@ cyMinusOne.liability.title = Did the estate need to pay Income Tax or Capital Ga
 cyMinusOne.liability.heading = Did the estate need to pay Income Tax or Capital Gains Tax between {0}?
 cyMinusOne.liability.hint = Excludes Inheritance Tax
 cyMinusOne.liability.error.required = Select yes if estate needs to pay Income Tax or Capital Gains Tax
+
+taxYearRange = {0} and {1}

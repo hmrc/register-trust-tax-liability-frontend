@@ -47,25 +47,28 @@ class CYMinusOneLiabilityController @Inject()(
   val taxYearStart: String = (TaxYear.current.previous.starts.toString(fullDatePattern))
   val taxYearEnd: String = (TaxYear.current.previous.finishes.toString(fullDatePattern))
 
-  val taxYear: String = s"$taxYearStart and $taxYearEnd"
-
   def onPageLoad(mode: Mode): Action[AnyContent] = actions.authWithData {
     implicit request =>
+      val messages = request.messages
+      val taxRange = messages("taxYearRange", taxYearStart, taxYearEnd)
 
       val preparedForm = request.userAnswers.get(CYMinusOneYesNoPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, taxYear, mode))
+      Ok(view(preparedForm, taxRange, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = actions.authWithData.async {
     implicit request =>
 
+      val messages = request.messages
+      val taxRange = messages("taxYearRange", taxYearStart, taxYearEnd)
+
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, taxYear, mode))),
+          Future.successful(BadRequest(view(formWithErrors, taxRange, mode))),
 
         value =>
           for {

@@ -47,25 +47,29 @@ class CYMinusTwoLiabilityController @Inject()(
   val taxYearStart: String = (TaxYear.current.back(2).starts.toString(fullDatePattern))
   val taxYearEnd: String = (TaxYear.current.back(2).finishes.toString(fullDatePattern))
 
-  val taxYear: String = s"$taxYearStart and $taxYearEnd"
-
   def onPageLoad(mode: Mode): Action[AnyContent] = actions.authWithData {
     implicit request =>
+
+      val messages = request.messages
+      val taxRange = messages("taxYearRange", taxYearStart, taxYearEnd)
 
       val preparedForm = request.userAnswers.get(CYMinusTwoYesNoPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, taxYear, mode))
+      Ok(view(preparedForm, taxRange, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = actions.authWithData.async {
     implicit request =>
 
+      val messages = request.messages
+      val taxRange = messages("taxYearRange", taxYearStart, taxYearEnd)
+
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, taxYear, mode))),
+          Future.successful(BadRequest(view(formWithErrors, taxRange, mode))),
 
         value =>
           for {

@@ -43,7 +43,6 @@ class CYMinusFourEarlierYearsLiabilityControllerSpec extends SpecBase with Mocki
   val form = formProvider.withPrefix("cyMinusFour.EarlierYearsLiability")
   val taxYear: String = TaxYear.current.back(4).startYear.toString
 
-
   lazy val cyMinusFourEarlierYearsLiabilityControllerRoute = routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode).url
 
   "CYMinusFourEarlierYearsLiability Controller" must {
