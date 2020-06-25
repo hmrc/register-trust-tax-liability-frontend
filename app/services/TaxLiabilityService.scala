@@ -21,6 +21,7 @@ import java.time.LocalDate
 import connectors.EstatesConnector
 import javax.inject.Inject
 import models.TaxLiabilityYear
+import org.joda.time.DateTime
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.time.TaxYear
 
@@ -30,20 +31,39 @@ class TaxLiabilityService @Inject()(estatesConnector: EstatesConnector,
                                     localDateService: LocalDateService
                                    )(implicit ec: ExecutionContext) {
 
-  private val deadlineMonth = 12
-  private val deadlineDay = 22
-  private val currentTaxYearStart = LocalDate.of(TaxYear.current.starts.getYear, TaxYear.current.starts.getMonthOfYear, TaxYear.current.starts.getDayOfMonth)
-  private val decemberDeadline = LocalDate.of(TaxYear.current.starts.getYear, deadlineMonth, deadlineDay)
+  private val APRIL = 4
+  private val TAX_YEAR_START_DAY = 6
+
+  private val DEADLINE_MONTH = 12
+  private val DEADLINE_DAY = 22
+
+  private val LAST_4_TAX_YEARS = 4
+  private val LAST_3_TAX_YEARS = 3
+
+  private val currentTaxYearStartDate = LocalDate.of(
+    TaxYear.current.starts.getYear,
+    TaxYear.current.starts.getMonthOfYear,
+    TaxYear.current.starts.getDayOfMonth
+  )
+
+  private val decemberDeadline = LocalDate.of(TaxYear.current.starts.getYear, DEADLINE_MONTH, DEADLINE_DAY)
 
   def getFirstYearOfTaxLiability()(implicit hc: HeaderCarrier): Future[TaxLiabilityYear] = {
-    val oldestYearToShow = if (!(localDateService.now.isBefore(currentTaxYearStart) || localDateService.now.isAfter(decemberDeadline))) {
-      TaxYear.current.back(4)
+
+    val todayIsAfterTaxYearStart : Boolean = localDateService.now.isAfter(currentTaxYearStartDate.minusDays(1))
+    val isNotAfterDecemberDeadline : Boolean = localDateService.now.isBefore(decemberDeadline)
+
+    val oldestYearToShow = if (todayIsAfterTaxYearStart && isNotAfterDecemberDeadline) {
+      TaxYear.current.back(LAST_4_TAX_YEARS)
     } else {
-      TaxYear.current.back(3)
+      TaxYear.current.back(LAST_3_TAX_YEARS)
     }
 
     getTaxYearOfDeath().map{ taxYearOfDeath =>
-      if (taxYearOfDeath.startYear < oldestYearToShow.startYear) {
+
+      val deathWasBeforeMaximum4Years = taxYearOfDeath.startYear < oldestYearToShow.startYear
+
+      if (deathWasBeforeMaximum4Years) {
         TaxLiabilityYear(oldestYearToShow, earlierYears = true)
       } else {
         TaxLiabilityYear(taxYearOfDeath, earlierYears = false)
@@ -52,7 +72,7 @@ class TaxLiabilityService @Inject()(estatesConnector: EstatesConnector,
   }
 
   def getIsTaxLiabilityLate(taxYear: TaxYear, alreadyPaid: Boolean): Boolean = {
-    if ((!(localDateService.now.isBefore(currentTaxYearStart) || localDateService.now.isAfter(decemberDeadline))) &&
+    if ((!(localDateService.now.isBefore(currentTaxYearStartDate) || localDateService.now.isAfter(decemberDeadline))) &&
       (taxYear.startYear == TaxYear.current.previous.startYear)) {
       false
     } else if (alreadyPaid) {
@@ -64,8 +84,8 @@ class TaxLiabilityService @Inject()(estatesConnector: EstatesConnector,
 
   private def getTaxYearOfDeath()(implicit hc: HeaderCarrier): Future[TaxYear] = {
     estatesConnector.getDateOfDeath().map { dateOfDeath =>
-      val beforeApril = dateOfDeath.getMonthValue < 4
-      val between1stAnd5thApril = dateOfDeath.getMonthValue == 4 && dateOfDeath.getDayOfMonth < 6
+      val beforeApril = dateOfDeath.getMonthValue < APRIL
+      val between1stAnd5thApril = dateOfDeath.getMonthValue == APRIL && dateOfDeath.getDayOfMonth < TAX_YEAR_START_DAY
 
       if (beforeApril || between1stAnd5thApril) {
         TaxYear(dateOfDeath.getYear - 1)

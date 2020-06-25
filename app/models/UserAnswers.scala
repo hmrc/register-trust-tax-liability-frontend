@@ -67,6 +67,8 @@ final case class UserAnswers(
 
 object UserAnswers {
 
+  def startNewSession(identifier: String) : UserAnswers = UserAnswers(identifier)
+
   implicit lazy val reads: Reads[UserAnswers] = {
 
     import play.api.libs.functional.syntax._

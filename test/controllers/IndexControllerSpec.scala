@@ -101,11 +101,11 @@ class IndexControllerSpec extends SpecBase {
 
         val mockEstatesConnector = mock[EstatesConnector]
 
-        val dateBeforeDec23rd = LocalDate.of(2020, 12, 25)
+        val dateAfterDec23rd = LocalDate.of(2020, 12, 25)
 
         val application = applicationBuilder(userAnswers = None)
           .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
-          .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
+          .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateAfterDec23rd)))
           .build()
 
         val dateOfDeath = LocalDate.of(2015, 5, 1)
@@ -155,11 +155,11 @@ class IndexControllerSpec extends SpecBase {
 
           val mockEstatesConnector = mock[EstatesConnector]
 
-          val dateBeforeDec23rd = LocalDate.of(2020, 12, 25)
+          val dateAfterDec23rd = LocalDate.of(2020, 12, 25)
 
           val application = applicationBuilder(userAnswers = None)
             .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
-            .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
+            .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateAfterDec23rd)))
             .build()
 
           val dateOfDeath = LocalDate.of(2017, 5, 1)
@@ -210,11 +210,11 @@ class IndexControllerSpec extends SpecBase {
 
           val mockEstatesConnector = mock[EstatesConnector]
 
-          val dateBeforeDec23rd = LocalDate.of(2020, 12, 25)
+          val dateAfterDec23rd = LocalDate.of(2020, 12, 25)
 
           val application = applicationBuilder(userAnswers = None)
             .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
-            .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
+            .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateAfterDec23rd)))
             .build()
 
           val dateOfDeath = LocalDate.of(2018, 5, 1)
@@ -233,7 +233,7 @@ class IndexControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to CY-3 liability controller" when {
+    "redirect to CY-1 liability controller" when {
 
       "date of death is one years ago" when {
         "current date is before 23rd Dec" in {
@@ -265,11 +265,11 @@ class IndexControllerSpec extends SpecBase {
 
           val mockEstatesConnector = mock[EstatesConnector]
 
-          val dateBeforeDec23rd = LocalDate.of(2020, 12, 25)
+          val dateAfterDec23rd = LocalDate.of(2020, 12, 25)
 
           val application = applicationBuilder(userAnswers = None)
             .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
-            .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
+            .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateAfterDec23rd)))
             .build()
 
           val dateOfDeath = LocalDate.of(2019, 5, 1)

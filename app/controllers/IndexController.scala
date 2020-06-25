@@ -16,7 +16,6 @@
 
 package controllers
 
-import connectors.EstatesConnector
 import controllers.actions.Actions
 import handlers.ErrorHandler
 import javax.inject.Inject
@@ -28,7 +27,6 @@ import repositories.SessionRepository
 import services.TaxLiabilityService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.time.TaxYear
-import views.html.IndexView
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,7 +41,8 @@ class IndexController @Inject()(
   def onPageLoad: Action[AnyContent] = actions.authWithSession.async {
     implicit request =>
 
-      val userAnswers: UserAnswers = request.userAnswers.getOrElse(UserAnswers(request.internalId))
+      val userAnswers: UserAnswers = request.userAnswers
+        .getOrElse(UserAnswers.startNewSession(request.internalId))
 
       for {
         _ <- repository.set(userAnswers)

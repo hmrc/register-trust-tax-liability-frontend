@@ -25,7 +25,7 @@ class TaxLiabilityNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks  
 
   val navigator = new TaxLiabilityNavigator
 
-  "Business navigator" when {
+  "tax liability navigator" when {
 
     "add journey navigation" must {
 
