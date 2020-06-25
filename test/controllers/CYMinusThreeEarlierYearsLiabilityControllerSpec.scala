@@ -45,6 +45,8 @@ class CYMinusThreeEarlierYearsLiabilityControllerSpec extends SpecBase with Mock
 
   lazy val cyMinusThreeEarlierYearsLiabilityControllerRoute = routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode).url
 
+  lazy val submitRoute = routes.CYMinusThreeEarlierYearsLiabilityController.onSubmit(NormalMode)
+
   "CYMinusThreeEarlierYearsLiability Controller" must {
 
     "return OK and the correct view for a GET" in {
@@ -60,7 +62,7 @@ class CYMinusThreeEarlierYearsLiabilityControllerSpec extends SpecBase with Mock
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(form, taxYear, NormalMode)(fakeRequest, messages).toString
+        view(form, taxYear, NormalMode, submitRoute)(fakeRequest, messages).toString
 
       application.stop()
     }
@@ -80,7 +82,7 @@ class CYMinusThreeEarlierYearsLiabilityControllerSpec extends SpecBase with Mock
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(form.fill(true), taxYear, NormalMode)(fakeRequest, messages).toString
+        view(form.fill(true), taxYear, NormalMode, submitRoute)(fakeRequest, messages).toString
 
       application.stop()
     }
@@ -126,7 +128,7 @@ class CYMinusThreeEarlierYearsLiabilityControllerSpec extends SpecBase with Mock
       status(result) mustEqual BAD_REQUEST
 
       contentAsString(result) mustEqual
-        view(boundForm, taxYear, NormalMode)(fakeRequest, messages).toString
+        view(boundForm, taxYear, NormalMode, submitRoute)(fakeRequest, messages).toString
 
       application.stop()
     }

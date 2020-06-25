@@ -30,12 +30,14 @@ class EarlierYearsToPayThanAskedYesNoViewSpec extends YesNoViewBehaviours {
 
   val form: Form[Boolean] = new YesNoFormProvider().withPrefix(messageKeyPrefix)
 
+  lazy val submitRoute = controllers.routes.CYMinusThreeEarlierYearsLiabilityController.onSubmit(NormalMode)
+
   "EarlierYearsToPayThanAskedYesNoView view" must {
 
     val view = viewFor[EarlierYearsToPayThanAskedYesNoView](Some(emptyUserAnswers))
 
     def applyView(form: Form[_]): HtmlFormat.Appendable =
-      view.apply(form, taxYear, NormalMode)(fakeRequest, messages)
+      view.apply(form, taxYear, NormalMode, submitRoute)(fakeRequest, messages)
 
     behave like dynamicTitlePage(applyView(form), messageKeyPrefix, taxYear)
 

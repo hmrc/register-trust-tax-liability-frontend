@@ -20,7 +20,7 @@ import config.annotations.TaxLiability
 import controllers.actions.Actions
 import forms.YesNoFormProvider
 import javax.inject.Inject
-import models.{CYMinus4TaxYear, Mode, TaxYearRange}
+import models.{CYMinus3TaxYear, CYMinus4TaxYear, Mode, TaxYearRange}
 import navigation.Navigator
 import pages.CYMinusThreeEarlierYearsYesNoPage
 import play.api.i18n.I18nSupport
@@ -50,19 +50,22 @@ class CYMinusThreeEarlierYearsLiabilityController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val start = TaxYearRange(CYMinus4TaxYear).yearAtStart
+      val start = TaxYearRange(CYMinus3TaxYear).yearAtStart
 
-      Ok(view(preparedForm, start, mode))
+      val submitRoute = routes.CYMinusThreeEarlierYearsLiabilityController.onSubmit(mode)
+
+      Ok(view(preparedForm, start, mode, submitRoute))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = actions.authWithData.async {
     implicit request =>
 
-      val start = TaxYearRange(CYMinus4TaxYear).yearAtStart
+      val start = TaxYearRange(CYMinus3TaxYear).yearAtStart
+      val submitRoute = routes.CYMinusThreeEarlierYearsLiabilityController.onSubmit(mode)
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, start, mode))),
+          Future.successful(BadRequest(view(formWithErrors, start, mode, submitRoute))),
 
         value =>
           for {

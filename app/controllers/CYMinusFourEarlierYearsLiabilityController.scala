@@ -52,17 +52,20 @@ class CYMinusFourEarlierYearsLiabilityController @Inject()(
 
       val start = TaxYearRange(CYMinus4TaxYear).yearAtStart
 
-      Ok(view(preparedForm, start, mode))
+      val submitRoute = routes.CYMinusFourEarlierYearsLiabilityController.onSubmit(mode)
+
+      Ok(view(preparedForm, start, mode, submitRoute))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = actions.authWithData.async {
     implicit request =>
 
       val start = TaxYearRange(CYMinus4TaxYear).yearAtStart
+      val submitRoute = routes.CYMinusFourEarlierYearsLiabilityController.onSubmit(mode)
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, start, mode))),
+          Future.successful(BadRequest(view(formWithErrors, start, mode, submitRoute))),
 
         value =>
           for {

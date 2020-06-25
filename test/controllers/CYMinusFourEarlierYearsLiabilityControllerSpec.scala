@@ -45,6 +45,8 @@ class CYMinusFourEarlierYearsLiabilityControllerSpec extends SpecBase with Mocki
 
   lazy val cyMinusFourEarlierYearsLiabilityControllerRoute = routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode).url
 
+  lazy val submitRoute = routes.CYMinusFourEarlierYearsLiabilityController.onSubmit(NormalMode)
+
   "CYMinusFourEarlierYearsLiability Controller" must {
 
     "return OK and the correct view for a GET" in {
@@ -60,7 +62,7 @@ class CYMinusFourEarlierYearsLiabilityControllerSpec extends SpecBase with Mocki
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(form, taxYear, NormalMode)(fakeRequest, messages).toString
+        view(form, taxYear, NormalMode, submitRoute)(fakeRequest, messages).toString
 
       application.stop()
     }
@@ -80,7 +82,7 @@ class CYMinusFourEarlierYearsLiabilityControllerSpec extends SpecBase with Mocki
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(form.fill(true), taxYear, NormalMode)(fakeRequest, messages).toString
+        view(form.fill(true), taxYear, NormalMode, submitRoute)(fakeRequest, messages).toString
 
       application.stop()
     }
@@ -126,7 +128,7 @@ class CYMinusFourEarlierYearsLiabilityControllerSpec extends SpecBase with Mocki
       status(result) mustEqual BAD_REQUEST
 
       contentAsString(result) mustEqual
-        view(boundForm, taxYear, NormalMode)(fakeRequest, messages).toString
+        view(boundForm, taxYear, NormalMode, submitRoute)(fakeRequest, messages).toString
 
       application.stop()
     }
