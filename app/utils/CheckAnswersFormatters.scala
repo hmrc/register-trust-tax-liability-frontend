@@ -14,8 +14,19 @@
  * limitations under the License.
  */
 
-package pages
+package utils
 
-import queries.{Gettable, Settable}
+import play.api.i18n.Messages
+import play.twirl.api.{Html, HtmlFormat}
 
-trait QuestionPage[A] extends Page with Gettable[A] with Settable[A]
+object CheckAnswersFormatters {
+
+  def yesOrNo(answer: Boolean)(implicit messages: Messages): Html = {
+    if (answer) {
+      HtmlFormat.escape(messages("site.yes"))
+    } else {
+      HtmlFormat.escape(messages("site.no"))
+    }
+  }
+
+}

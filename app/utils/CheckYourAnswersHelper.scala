@@ -16,27 +16,34 @@
 
 package utils
 
-import java.time.format.DateTimeFormatter
-
-import controllers.routes
-import models.{CheckMode, UserAnswers}
-import pages._
+import com.google.inject.Inject
+import models.{NormalMode, UserAnswers}
+import pages.CYMinusFourEarlierYearsYesNoPage
 import play.api.i18n.Messages
-import play.twirl.api.{Html, HtmlFormat}
-import viewmodels.AnswerRow
-import CheckYourAnswersHelper._
+import viewmodels.{AnswerRow, AnswerSection}
 
-class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
+class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter) {
 
-  private def yesOrNo(answer: Boolean)(implicit messages: Messages): Html =
-    if (answer) {
-      HtmlFormat.escape(messages("site.yes"))
-    } else {
-      HtmlFormat.escape(messages("site.no"))
+  def currentYearMinus4Answers(userAnswers: UserAnswers)(implicit messages: Messages) : Option[AnswerSection] = {
+    val bound = answerRowConverter.bind(userAnswers)
+
+    val answerRows : Seq[AnswerRow] = Seq(
+      bound.yesNoQuestion(
+        CYMinusFourEarlierYearsYesNoPage,
+        "earlierYearsLiability",
+        controllers.routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode).url
+      )
+    ).flatten
+
+    answerRows match {
+      case Nil => None
+      case _ => Some(AnswerSection(None, answerRows))
     }
+
+  }
+
 }
 
 object CheckYourAnswersHelper {
 
-  private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 }
