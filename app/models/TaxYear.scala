@@ -16,16 +16,25 @@
 
 package models
 
-abstract class TaxYear(val year: Int) {
-  override def toString: String = s"$year"
+import play.api.mvc.JavascriptLiteral
+
+sealed trait TaxYear {
+
+  val year: Int
+
+  override def toString: String = year.toString
 }
 
-case object CYMinus4TaxYear extends TaxYear(4)
-case object CYMinus3TaxYear extends TaxYear(3)
-case object CYMinus2TaxYear extends TaxYear(2)
-case object CYMinus1TaxYear extends TaxYear(1)
+case object CYMinus4TaxYear extends TaxYear {override val year: Int = 4}
+case object CYMinus3TaxYear extends TaxYear {override val year: Int = 3}
+case object CYMinus2TaxYear extends TaxYear {override val year: Int = 2}
+case object CYMinus1TaxYear extends TaxYear {override val year: Int = 1}
 
 object TaxYear {
+
+  implicit val jsLiteral : JavascriptLiteral[TaxYear] = new JavascriptLiteral[TaxYear] {
+    override def to(value: TaxYear): String = value.toString
+  }
 
   def from(int: Int) : Option[TaxYear] = {
     int match {

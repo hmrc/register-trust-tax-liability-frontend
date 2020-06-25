@@ -30,7 +30,7 @@
     title = s"${errorPrefix(form)} ${messages("didDeclareToHMRC.title")}"
 ) {
 
-    @formHelper(action = DidDeclareTaxToHMRCController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = DidDeclareTaxToHMRCController.onSubmit(mode, taxYear), 'autoComplete -> "off") {
 
         @components.back_link()
 

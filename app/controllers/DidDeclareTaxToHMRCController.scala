@@ -18,7 +18,7 @@ package controllers
 
 import config.annotations.TaxLiability
 import controllers.actions.Actions
-import forms.YesNoFormProvider
+import forms.YesNoFormProviderWithArguments
 import javax.inject.Inject
 import models.{Mode, TaxYear, TaxYearRange}
 import navigation.Navigator
@@ -35,20 +35,20 @@ class DidDeclareTaxToHMRCController @Inject()(
                                                val controllerComponents: MessagesControllerComponents,
                                                @TaxLiability navigator: Navigator,
                                                actions: Actions,
-                                               formProvider: YesNoFormProvider,
+                                               formProvider: YesNoFormProviderWithArguments,
                                                sessionRepository: SessionRepository,
                                                view: DidDeclareTaxToHMRCYesNoView
                                              )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider.withPrefix("didDeclareToHMRC")
+  def form(ranges: Seq[String]) = formProvider.withPrefix("didDeclareToHMRC", ranges)
 
   def onPageLoad(mode: Mode, taxYear: TaxYear): Action[AnyContent] = actions.authWithData {
     implicit request =>
       val range = TaxYearRange(taxYear)
 
       val preparedForm = request.userAnswers.get(DidDeclareTaxToHMRCYesNoPage(taxYear)) match {
-        case None => form
-        case Some(value) => form.fill(value)
+        case None => form(Seq(range.startYear, range.endYear))
+        case Some(value) => form(Seq(range.startYear, range.endYear)).fill(value)
       }
 
       Ok(view(preparedForm, taxYear, range.toRange, mode))
@@ -56,9 +56,9 @@ class DidDeclareTaxToHMRCController @Inject()(
 
   def onSubmit(mode: Mode, taxYear: TaxYear): Action[AnyContent] = actions.authWithData.async {
     implicit request =>
-      form.bindFromRequest().fold(
+      val range = TaxYearRange(taxYear)
+      form(Seq(range.startYear, range.endYear)).bindFromRequest().fold(
         formWithErrors => {
-          val range = TaxYearRange(taxYear)
           Future.successful(BadRequest(view(formWithErrors, taxYear, range.toRange, mode)))
         },
         value => {

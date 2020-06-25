@@ -29,6 +29,10 @@ case class TaxYearRange(taxYear: TaxYear)(implicit messages: Messages) {
 
   def yearAtStart: String = startingYearForTaxYear
 
+  def startYear: String = start
+
+  def endYear: String = end
+
   def toRange : String = {
     messages("taxYearToRange", start, end)
   }

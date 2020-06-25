@@ -32,10 +32,25 @@ POST       /cy1-liability                               controllers.CYMinusOneLi
 GET        /change-cy1-liability                        controllers.CYMinusOneLiabilityController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-cy1-liability                        controllers.CYMinusOneLiabilityController.onSubmit(mode: Mode = CheckMode)
 
-GET        /did-declare-for-previous-tax-year           controllers.DidDeclareTaxToHMRCController.onPageLoad(mode: Mode = NormalMode, taxYear: TaxYear = CYMinus1TaxYear)
-GET        /change-did-declare-for-previous-tax-year    controllers.DidDeclareTaxToHMRCController.onPageLoad(mode: Mode = CheckMode, taxYear: TaxYear = CYMinus1TaxYear)
-POST        /did-declare-for-previous-tax-year           controllers.DidDeclareTaxToHMRCController.onSubmit(mode: Mode = NormalMode, taxYear: TaxYear = CYMinus1TaxYear)
-POST       /change-did-declare-for-previous-tax-year     controllers.DidDeclareTaxToHMRCController.onSubmit(mode: Mode = CheckMode, taxYear: TaxYear = CYMinus1TaxYear)
+GET        /declared-for-previous-tax-year           controllers.DidDeclareTaxToHMRCController.onPageLoad(mode: Mode = NormalMode, taxYear: TaxYear = CYMinus1TaxYear)
+GET        /change-declared-for-previous-tax-year    controllers.DidDeclareTaxToHMRCController.onPageLoad(mode: Mode = CheckMode, taxYear: TaxYear = CYMinus1TaxYear)
+POST        /declared-for-previous-tax-year           controllers.DidDeclareTaxToHMRCController.onSubmit(mode: Mode = NormalMode, taxYear: TaxYear = CYMinus1TaxYear)
+POST       /change-declared-for-previous-tax-year     controllers.DidDeclareTaxToHMRCController.onSubmit(mode: Mode = CheckMode, taxYear: TaxYear = CYMinus1TaxYear)
+
+GET        /declared-tax-2-years-ago           controllers.DidDeclareTaxToHMRCController.onPageLoad(mode: Mode = NormalMode, taxYear: TaxYear = CYMinus2TaxYear)
+GET        /change-declared-tax-2-years-ago    controllers.DidDeclareTaxToHMRCController.onPageLoad(mode: Mode = CheckMode, taxYear: TaxYear = CYMinus2TaxYear)
+POST        /declared-tax-2-years-ago           controllers.DidDeclareTaxToHMRCController.onSubmit(mode: Mode = NormalMode, taxYear: TaxYear = CYMinus2TaxYear)
+POST       /change-declared-tax-2-years-ago     controllers.DidDeclareTaxToHMRCController.onSubmit(mode: Mode = CheckMode, taxYear: TaxYear = CYMinus2TaxYear)
+
+GET        /declared-tax-3-years-ago           controllers.DidDeclareTaxToHMRCController.onPageLoad(mode: Mode = NormalMode, taxYear: TaxYear = CYMinus3TaxYear)
+GET        /change-declared-tax-3-years-ago    controllers.DidDeclareTaxToHMRCController.onPageLoad(mode: Mode = CheckMode, taxYear: TaxYear = CYMinus3TaxYear)
+POST        /declared-tax-3-years-ago           controllers.DidDeclareTaxToHMRCController.onSubmit(mode: Mode = NormalMode, taxYear: TaxYear = CYMinus3TaxYear)
+POST       /change-declared-tax-3-years-ago     controllers.DidDeclareTaxToHMRCController.onSubmit(mode: Mode = CheckMode, taxYear: TaxYear = CYMinus3TaxYear)
+
+GET        /declared-tax-4-years-ago           controllers.DidDeclareTaxToHMRCController.onPageLoad(mode: Mode = NormalMode, taxYear: TaxYear = CYMinus4TaxYear)
+GET        /change-declared-tax-4-years-ago    controllers.DidDeclareTaxToHMRCController.onPageLoad(mode: Mode = CheckMode, taxYear: TaxYear = CYMinus4TaxYear)
+POST        /declared-tax-4-years-ago           controllers.DidDeclareTaxToHMRCController.onSubmit(mode: Mode = NormalMode, taxYear: TaxYear = CYMinus4TaxYear)
+POST       /change-declared-tax-4-years-ago     controllers.DidDeclareTaxToHMRCController.onSubmit(mode: Mode = CheckMode, taxYear: TaxYear = CYMinus4TaxYear)
 
 GET        /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
 
