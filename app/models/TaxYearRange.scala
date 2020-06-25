@@ -17,13 +17,12 @@
 package models
 
 import play.api.i18n.Messages
-import uk.gov.hmrc.time.TaxYear
 
 case class TaxYearRange(years: Int)(implicit messages: Messages) {
 
   private val fullDatePattern: String = "d MMMM yyyy"
-  private val start = TaxYear.current.back(years).starts.toString(fullDatePattern)
-  private val end = TaxYear.current.back(years).finishes.toString(fullDatePattern)
+  private val start = uk.gov.hmrc.time.TaxYear.current.back(years).starts.toString(fullDatePattern)
+  private val end = uk.gov.hmrc.time.TaxYear.current.back(years).finishes.toString(fullDatePattern)
 
   def toRange : String = {
     messages("taxYearToRange", start, end)

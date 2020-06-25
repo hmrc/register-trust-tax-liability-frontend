@@ -20,9 +20,9 @@ import config.annotations.TaxLiability
 import controllers.actions.Actions
 import forms.YesNoFormProvider
 import javax.inject.Inject
-import models.{Mode, TaxYearRange}
+import models.{Mode, TaxYearRange, TaxYear}
 import navigation.Navigator
-import pages.CYMinusThreeYesNoPage
+import pages.DidDeclareTaxToHMRCYesNoPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -42,11 +42,11 @@ class DidDeclareTaxToHMRCController @Inject()(
 
   val form = formProvider.withPrefix("didDeclareToHMRC")
 
-  def onPageLoad(mode: Mode, yearsBack: Int): Action[AnyContent] = actions.authWithData {
+  def onPageLoad(mode: Mode, taxYear: TaxYear): Action[AnyContent] = actions.authWithData {
     implicit request =>
-      val range = TaxYearRange(yearsBack)
+      val range = TaxYearRange(taxYear.years)
 
-      val preparedForm = request.userAnswers.get(CYMinusThreeYesNoPage) match {
+      val preparedForm = request.userAnswers.get(DidDeclareTaxToHMRCYesNoPage(taxYear.years)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
