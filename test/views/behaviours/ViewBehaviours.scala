@@ -110,12 +110,13 @@ trait ViewBehaviours extends ViewSpecBase {
 
   def pageWithHint[A](form: Form[A],
                       createView: Form[A] => HtmlFormat.Appendable,
-                      expectedHintKey: String): Unit = {
+                      expectedHintKey: String,
+                      messageArgs: Seq[String] = Nil): Unit = {
 
     "behave like a page with hint text" in {
 
       val doc = asDocument(createView(form))
-      assertContainsHint(doc, "value", Some(messages(expectedHintKey)))
+      assertContainsHint(doc, "value", Some(messages(expectedHintKey, messageArgs:_*)))
     }
   }
 
