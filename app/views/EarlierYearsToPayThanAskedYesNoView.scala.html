@@ -23,27 +23,25 @@
         appConfig: FrontendAppConfig
 )
 
-@(form: Form[_], taxYear: String, mode: Mode, submitRoute: Call)(implicit request: Request[_], messages: Messages)
+@(date: String, mode: Mode, continueUrl: Call)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = s"${errorPrefix(form)} ${messages("earlierYearsLiability.title", taxYear)}"
+    title = s"${messages("earlierYearsLiability.title", date)}"
 ) {
-
-    @formHelper(action = submitRoute, 'autoComplete -> "off") {
 
         @components.back_link()
 
-        @components.error_summary(form.errors)
+        <h1 class="heading-large">@messages("earlierYearsLiability.heading", date)</h1>
 
-        @components.input_yes_no(
-            field = form("value"),
-            legend = messages("earlierYearsLiability.heading", taxYear),
-            headingIsLegend = true,
-            hint = Some(messages("earlierYearsLiability.hint"))
-        )
+        @components.warning("earlierYearsLiability")
 
-        @components.submit_button()
+        <p>@messages("earlierYearsLiability.declare.prior", date) <a href="https://www.gov.uk/government/organisations/hm-revenue-customs/contact/bereavement-and-deceased-estate" target="_blank">@messages("earlierYearsLiability.deceased.helpline")</a>.</p>
+
+        @formHelper(action = continueUrl, 'autoComplete -> "off") {
+
+            @components.submit_button()
+
+        }
 
         <p><a href="@appConfig.registerEstateHubOverview">@messages("site.returnToRegistrationProgress")</a></p>
-    }
 }

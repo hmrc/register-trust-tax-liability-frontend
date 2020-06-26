@@ -16,19 +16,15 @@
 
 package views
 
-import forms.YesNoFormProvider
 import models.NormalMode
-import play.api.data.Form
 import play.twirl.api.HtmlFormat
-import views.behaviours.YesNoViewBehaviours
+import views.behaviours.ViewBehaviours
 import views.html.EarlierYearsToPayThanAskedYesNoView
 
-class EarlierYearsToPayThanAskedYesNoViewSpec extends YesNoViewBehaviours {
+class EarlierYearsToPayThanAskedYesNoViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "earlierYearsLiability"
   val taxYear = "2000"
-
-  val form: Form[Boolean] = new YesNoFormProvider().withPrefix(messageKeyPrefix)
 
   lazy val submitRoute = controllers.routes.CYMinusThreeEarlierYearsLiabilityController.onSubmit(NormalMode)
 
@@ -36,17 +32,13 @@ class EarlierYearsToPayThanAskedYesNoViewSpec extends YesNoViewBehaviours {
 
     val view = viewFor[EarlierYearsToPayThanAskedYesNoView](Some(emptyUserAnswers))
 
-    def applyView(form: Form[_]): HtmlFormat.Appendable =
-      view.apply(form, taxYear, NormalMode, submitRoute)(fakeRequest, messages)
+    def applyView(): HtmlFormat.Appendable =
+      view.apply(taxYear, NormalMode, submitRoute)(fakeRequest, messages)
 
-    behave like dynamicTitlePage(applyView(form), messageKeyPrefix, taxYear)
+    behave like dynamicTitlePage(applyView(), messageKeyPrefix, taxYear)
 
-    behave like pageWithBackLink(applyView(form))
+    behave like pageWithBackLink(applyView())
 
-    behave like pageWithHint(form, applyView, messageKeyPrefix + ".hint")
-
-    behave like yesNoPage(form, applyView, messageKeyPrefix, Some(taxYear))
-
-    behave like pageWithASubmitButton(applyView(form))
+    behave like pageWithASubmitButton(applyView())
   }
 }

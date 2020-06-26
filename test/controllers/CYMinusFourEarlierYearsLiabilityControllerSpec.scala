@@ -39,8 +39,6 @@ class CYMinusFourEarlierYearsLiabilityControllerSpec extends SpecBase with Mocki
 
   override def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new YesNoFormProvider()
-  val form = formProvider.withPrefix("earlierYearsLiability")
   val taxYear: String = TaxYear.current.back(4).startYear.toString
 
   lazy val cyMinusFourEarlierYearsLiabilityControllerRoute = routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode).url
@@ -62,7 +60,7 @@ class CYMinusFourEarlierYearsLiabilityControllerSpec extends SpecBase with Mocki
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(form, taxYear, NormalMode, submitRoute)(fakeRequest, messages).toString
+        view(taxYear, NormalMode, submitRoute)(fakeRequest, messages).toString
 
       application.stop()
     }
@@ -82,7 +80,7 @@ class CYMinusFourEarlierYearsLiabilityControllerSpec extends SpecBase with Mocki
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(form.fill(true), taxYear, NormalMode, submitRoute)(fakeRequest, messages).toString
+        view(taxYear, NormalMode, submitRoute)(fakeRequest, messages).toString
 
       application.stop()
     }
@@ -100,35 +98,12 @@ class CYMinusFourEarlierYearsLiabilityControllerSpec extends SpecBase with Mocki
 
       val request =
         FakeRequest(POST, cyMinusFourEarlierYearsLiabilityControllerRoute)
-          .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual onwardRoute.url
-
-      application.stop()
-    }
-
-    "return a Bad Request and errors when invalid data is submitted" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      val request =
-        FakeRequest(POST, cyMinusFourEarlierYearsLiabilityControllerRoute)
-          .withFormUrlEncodedBody(("value", ""))
-
-      val boundForm = form.bind(Map("value" -> ""))
-
-      val view = application.injector.instanceOf[EarlierYearsToPayThanAskedYesNoView]
-
-      val result = route(application, request).value
-
-      status(result) mustEqual BAD_REQUEST
-
-      contentAsString(result) mustEqual
-        view(boundForm, taxYear, NormalMode, submitRoute)(fakeRequest, messages).toString
 
       application.stop()
     }

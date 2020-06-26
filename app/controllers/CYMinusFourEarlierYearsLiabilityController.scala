@@ -35,43 +35,22 @@ class CYMinusFourEarlierYearsLiabilityController @Inject()(
                                  val controllerComponents: MessagesControllerComponents,
                                  @TaxLiability navigator: Navigator,
                                  actions: Actions,
-                                 formProvider: YesNoFormProvider,
                                  sessionRepository: SessionRepository,
                                  view: EarlierYearsToPayThanAskedYesNoView
                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider.withPrefix("earlierYearsLiability")
-
   def onPageLoad(mode: Mode): Action[AnyContent] = actions.authWithData {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(CYMinusFourEarlierYearsYesNoPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-
       val start = TaxYearRange(CYMinus4TaxYear).yearAtStart
 
-      val submitRoute = routes.CYMinusFourEarlierYearsLiabilityController.onSubmit(mode)
+      val continueUrl = routes.CYMinusFourEarlierYearsLiabilityController.onSubmit(mode)
 
-      Ok(view(preparedForm, start, mode, submitRoute))
+      Ok(view(start, mode, continueUrl))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = actions.authWithData.async {
     implicit request =>
-
-      val start = TaxYearRange(CYMinus4TaxYear).yearAtStart
-      val submitRoute = routes.CYMinusFourEarlierYearsLiabilityController.onSubmit(mode)
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, start, mode, submitRoute))),
-
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(CYMinusFourEarlierYearsYesNoPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(CYMinusFourEarlierYearsYesNoPage, mode, updatedAnswers))
-      )
+      Future.successful(Redirect(navigator.nextPage(CYMinusFourEarlierYearsYesNoPage, mode, request.userAnswers)))
   }
 }

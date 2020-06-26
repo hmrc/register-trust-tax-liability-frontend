@@ -20,10 +20,6 @@ error.number = Please enter a valid number
 error.required = Please enter a value
 error.summary.title = There is a problem
 
-index.title = register-estate-tax-liability-frontend
-index.heading = register-estate-tax-liability-frontend
-index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
-
 session_expired.title = For your security, this service has been reset
 session_expired.heading = For your security, this service has been reset
 session_expired.guidance = The details you have given have been deleted because you did not continue the service for 15 minutes.
@@ -45,11 +41,12 @@ unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
 earlierYearsLiability.checkYourAnswerSectionHeading = Tax liability before {0}
-earlierYearsLiability.checkYourAnswersLabel = Did the estate need to pay tax before {0}?
-earlierYearsLiability.title = Did the estate need to pay tax before {0}?
-earlierYearsLiability.heading = Did the estate need to pay tax before {0}?
-earlierYearsLiability.hint = By selecting yes you must send a schedule of any chargeable income received to HMRC
-earlierYearsLiability.error.required = Select yes if the estate needs to pay tax for earlier years
+earlierYearsLiability.checkYourAnswersLabel = You may need to inform HMRC if the estate needed to pay tax before {0}
+earlierYearsLiability.title = You may need to inform HMRC if the estate needed to pay tax before {0}
+earlierYearsLiability.heading = You may need to inform HMRC if the estate needed to pay tax before {0}
+earlierYearsLiability.warning = You must send a schedule of any chargeable income received to HMRC
+earlierYearsLiability.declare.prior = To declare prior to {0}
+earlierYearsLiability.deceased.helpline = contact the deceased estate helpine for more information (opens in a new tab)
 
 cyMinusFour.liability.checkYourAnswersLabel = Did the estate need to pay Income Tax or Capital Gains Tax between {0}?
 cyMinusFour.liability.title = Did the estate need to pay Income Tax or Capital Gains Tax between {0}?

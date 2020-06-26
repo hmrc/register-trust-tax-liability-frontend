@@ -20,7 +20,7 @@ import config.annotations.TaxLiability
 import controllers.actions.Actions
 import forms.YesNoFormProvider
 import javax.inject.Inject
-import models.{CYMinus3TaxYear, CYMinus4TaxYear, Mode, TaxYearRange}
+import models.{CYMinus3TaxYear, Mode, TaxYearRange}
 import navigation.Navigator
 import pages.CYMinusThreeEarlierYearsYesNoPage
 import play.api.i18n.I18nSupport
@@ -35,43 +35,22 @@ class CYMinusThreeEarlierYearsLiabilityController @Inject()(
                                  val controllerComponents: MessagesControllerComponents,
                                  @TaxLiability navigator: Navigator,
                                  actions: Actions,
-                                 formProvider: YesNoFormProvider,
                                  sessionRepository: SessionRepository,
                                  view: EarlierYearsToPayThanAskedYesNoView
                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider.withPrefix("earlierYearsLiability")
-
   def onPageLoad(mode: Mode): Action[AnyContent] = actions.authWithData {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(CYMinusThreeEarlierYearsYesNoPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-
       val start = TaxYearRange(CYMinus3TaxYear).yearAtStart
 
-      val submitRoute = routes.CYMinusThreeEarlierYearsLiabilityController.onSubmit(mode)
+      val continueUrl = routes.CYMinusThreeEarlierYearsLiabilityController.onSubmit(mode)
 
-      Ok(view(preparedForm, start, mode, submitRoute))
+      Ok(view(start, mode, continueUrl))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = actions.authWithData.async {
     implicit request =>
-
-      val start = TaxYearRange(CYMinus3TaxYear).yearAtStart
-      val submitRoute = routes.CYMinusThreeEarlierYearsLiabilityController.onSubmit(mode)
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, start, mode, submitRoute))),
-
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(CYMinusThreeEarlierYearsYesNoPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(CYMinusThreeEarlierYearsYesNoPage, mode, updatedAnswers))
-      )
+      Future.successful(Redirect(navigator.nextPage(CYMinusThreeEarlierYearsYesNoPage, mode, request.userAnswers)))
   }
 }
