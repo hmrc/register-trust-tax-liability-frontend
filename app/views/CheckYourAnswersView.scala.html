@@ -26,9 +26,9 @@
     title = messages("checkYourAnswers.title")
     ) {
 
-    @components.heading("checkYourAnswers.heading")
+    @components.back_link()
 
-    <p>@messages("checkYourAnswers.guidance")</p>
+    @components.heading("checkYourAnswers.heading")
 
     @for(section <- answerSections){
         @{
