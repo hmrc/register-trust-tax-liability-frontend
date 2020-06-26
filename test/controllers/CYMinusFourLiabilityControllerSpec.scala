@@ -24,7 +24,7 @@ import navigation.Navigator
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.CYMinusFourYesNoPage
+import pages.{CYMinusFourYesNoPage, CYMinusFourYesNoPageSpec}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest

@@ -16,12 +16,23 @@
 
 package pages
 
+import models.{CYMinus1TaxYear, UserAnswers}
 import play.api.libs.json.JsPath
+
+import scala.util.Try
 
 case object CYMinusOneYesNoPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "cyMinusOneYesNo"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
+    value match {
+      case Some(false) =>
+        userAnswers.remove(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear))
+      case _ =>  super.cleanup(value, userAnswers)
+    }
+  }
 
 }
