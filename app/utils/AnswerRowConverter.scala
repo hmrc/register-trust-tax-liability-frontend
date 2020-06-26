@@ -32,10 +32,11 @@ class AnswerRowConverter @Inject()() {
 
     def yesNoQuestion(query: QuestionPage[Boolean],
                       labelKey: String,
-                      changeUrl: String): Option[AnswerRow] = {
+                      changeUrl: String,
+                      arguments: Any*): Option[AnswerRow] = {
       userAnswers.get(query) map {x =>
         AnswerRow(
-          HtmlFormat.escape(messages(s"$labelKey.checkYourAnswersLabel")),
+          HtmlFormat.escape(messages(s"$labelKey.checkYourAnswersLabel", arguments: _*)),
           CheckAnswersFormatters.yesOrNo(x),
           changeUrl
         )

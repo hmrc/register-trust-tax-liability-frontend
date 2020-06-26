@@ -19,16 +19,27 @@ package models
 import play.api.mvc.JavascriptLiteral
 
 sealed trait TaxYear {
-
   val year: Int
-
+  val messagePrefix : String
   override def toString: String = year.toString
 }
 
-case object CYMinus4TaxYear extends TaxYear {override val year: Int = 4}
-case object CYMinus3TaxYear extends TaxYear {override val year: Int = 3}
-case object CYMinus2TaxYear extends TaxYear {override val year: Int = 2}
-case object CYMinus1TaxYear extends TaxYear {override val year: Int = 1}
+case object CYMinus4TaxYear extends TaxYear {
+  override val year: Int = 4
+  override val messagePrefix: String = "cyMinusFour"
+}
+case object CYMinus3TaxYear extends TaxYear {
+  override val year: Int = 3
+  override val messagePrefix: String = "cyMinusThree"
+}
+case object CYMinus2TaxYear extends TaxYear {
+  override val year: Int = 2
+  override val messagePrefix: String = "cyMinusTwo"
+}
+case object CYMinus1TaxYear extends TaxYear {
+  override val year: Int = 1
+  override val messagePrefix: String = "cyMinusOne"
+}
 
 object TaxYear {
 

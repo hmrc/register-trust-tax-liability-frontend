@@ -18,11 +18,11 @@ package controllers
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.CheckYourAnswersHelper
-import viewmodels.AnswerSection
 import views.html.CheckYourAnswersView
 
 class CheckYourAnswersController @Inject()(
@@ -38,10 +38,20 @@ class CheckYourAnswersController @Inject()(
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val minus4Section = checkYourAnswersHelper.currentYearMinus4Answers(request.userAnswers)
+      val earlierThan4Years = checkYourAnswersHelper.earlierThan4YearsAnswers(request.userAnswers)
+      val earlierThan3Years = checkYourAnswersHelper.earlierThan3YearsAnswers(request.userAnswers)
+      val taxFor4Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(request.userAnswers, CYMinus4TaxYear)
+      val taxFor3Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(request.userAnswers, CYMinus3TaxYear)
+      val taxFor2Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(request.userAnswers, CYMinus2TaxYear)
+      val taxFor1Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(request.userAnswers, CYMinus1TaxYear)
 
       val sections = Seq(
-        minus4Section
+        earlierThan4Years,
+        earlierThan3Years,
+        taxFor4Years,
+        taxFor3Years,
+        taxFor2Years,
+        taxFor1Years
       ).flatten
 
       Ok(view(sections))

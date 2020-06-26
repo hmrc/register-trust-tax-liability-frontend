@@ -45,6 +45,7 @@ site.sign_out = Sign out
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
+earlierYearsLiability.checkYourAnswerSectionHeading = Tax liability before {0}
 earlierYearsLiability.checkYourAnswersLabel = Did the estate need to pay tax before {0}?
 earlierYearsLiability.title = Did the estate need to pay tax before {0}?
 earlierYearsLiability.heading = Did the estate need to pay tax before {0}?
@@ -83,4 +84,6 @@ didDeclareToHMRC.title = Did you declare this tax to HMRC?
 didDeclareToHMRC.heading = Did you declare this tax to HMRC?
 didDeclareToHMRC.hint = By selecting yes, you are confirming you made a full voluntary disclosure for {0}
 didDeclareToHMRC.error.required = Select yes if you made a full voluntary disclosure for {0} to {1}
+
+taxLiabilityBetweenYears.checkYourAnswerSectionHeading = Tax liability between {0}
 

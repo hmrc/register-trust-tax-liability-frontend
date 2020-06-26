@@ -16,4 +16,6 @@
 
 package viewmodels
 
-case class AnswerSection(headingKey: Option[String], rows: Seq[AnswerRow]) extends Section
+import play.twirl.api.Html
+
+case class AnswerSection(heading: Option[Html], rows: Seq[AnswerRow]) extends Section
