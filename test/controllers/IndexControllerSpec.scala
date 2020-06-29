@@ -23,11 +23,13 @@ import connectors.EstatesConnector
 import models.NormalMode
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
+import pages.DateOfDeathPage
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.LocalDateService
-import views.html.IndexView
+import org.mockito.Mockito.{times, verify}
+import play.api.libs.json.Json
 
 import scala.concurrent.Future
 
@@ -37,6 +39,71 @@ class IndexControllerSpec extends SpecBase {
 
     def setCurrentDate(date: LocalDate): LocalDateService = new LocalDateService {
       override def now: LocalDate = date
+    }
+
+    "for an existing session" when {
+
+      "continue session if date of death is not changed" in {
+        val mockEstatesConnector = mock[EstatesConnector]
+
+        val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
+
+        val initialDateOfDeath = LocalDate.of(2015, 5, 1)
+
+        val existingUserAnswers = emptyUserAnswers.set(DateOfDeathPage, initialDateOfDeath).success.value
+
+        val application = applicationBuilder(userAnswers = Some(existingUserAnswers))
+          .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+          .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
+          .build()
+
+        when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(initialDateOfDeath))
+
+        when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
+
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode).url)
+
+        verify(sessionRepository, times(0)).resetCache(any())
+
+        application.stop()
+      }
+
+      "clear user answers if the user returns and the date of death has changed" in {
+        val mockEstatesConnector = mock[EstatesConnector]
+
+        val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
+
+        val initialDateOfDeath = LocalDate.of(2015, 5, 1)
+
+        val existingUserAnswers = emptyUserAnswers.set(DateOfDeathPage, initialDateOfDeath).success.value
+
+        val application = applicationBuilder(userAnswers = Some(existingUserAnswers))
+          .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+          .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
+          .build()
+
+        val newDateOfDeath = LocalDate.of(2018, 5, 1)
+
+        when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(newDateOfDeath))
+
+        when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
+
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode).url)
+
+        verify(sessionRepository, times(1)).resetCache(any())
+
+        application.stop()
+      }
     }
 
     "redirect to CY-4 Earlier years liability controller" when {
@@ -55,6 +122,8 @@ class IndexControllerSpec extends SpecBase {
         val dateOfDeath = LocalDate.of(2015, 5, 1)
 
         when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+
+        when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
         val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
 
@@ -84,6 +153,8 @@ class IndexControllerSpec extends SpecBase {
 
         when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
 
+        when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
+
         val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
 
         val result = route(application, request).value
@@ -111,6 +182,8 @@ class IndexControllerSpec extends SpecBase {
         val dateOfDeath = LocalDate.of(2015, 5, 1)
 
         when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+
+        when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
         val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
 
@@ -141,6 +214,8 @@ class IndexControllerSpec extends SpecBase {
 
           when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
 
+          when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
+
           val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
 
           val result = route(application, request).value
@@ -165,6 +240,8 @@ class IndexControllerSpec extends SpecBase {
           val dateOfDeath = LocalDate.of(2017, 5, 1)
 
           when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+
+          when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
           val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
 
@@ -196,6 +273,8 @@ class IndexControllerSpec extends SpecBase {
 
           when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
 
+          when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
+
           val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
 
           val result = route(application, request).value
@@ -220,6 +299,8 @@ class IndexControllerSpec extends SpecBase {
           val dateOfDeath = LocalDate.of(2018, 5, 1)
 
           when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+
+          when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
           val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
 
@@ -251,6 +332,8 @@ class IndexControllerSpec extends SpecBase {
 
           when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
 
+          when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
+
           val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
 
           val result = route(application, request).value
@@ -275,6 +358,8 @@ class IndexControllerSpec extends SpecBase {
           val dateOfDeath = LocalDate.of(2019, 5, 1)
 
           when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+
+          when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
           val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
 
