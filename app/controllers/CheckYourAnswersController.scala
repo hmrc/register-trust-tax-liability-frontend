@@ -37,17 +37,12 @@ class CheckYourAnswersController @Inject()(
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-
-//      val earlierThan4Years = checkYourAnswersHelper.earlierThan4YearsAnswers(request.userAnswers)
-//      val earlierThan3Years = checkYourAnswersHelper.earlierThan3YearsAnswers(request.userAnswers)
       val taxFor4Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(request.userAnswers, CYMinus4TaxYear)
       val taxFor3Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(request.userAnswers, CYMinus3TaxYear)
       val taxFor2Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(request.userAnswers, CYMinus2TaxYear)
       val taxFor1Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(request.userAnswers, CYMinus1TaxYear)
 
       val sections = Seq(
-//        earlierThan4Years,
-//        earlierThan3Years,
         taxFor4Years,
         taxFor3Years,
         taxFor2Years,
