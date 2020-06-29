@@ -17,7 +17,7 @@
 package views
 
 import forms.YesNoFormProviderWithArguments
-import models.{CYMinus1TaxYear, NormalMode, TaxYearRange}
+import models.{CYMinus1TaxYear, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
@@ -35,7 +35,7 @@ class DidDeclareTaxToHMRCYesNoViewSpec extends YesNoViewBehaviours {
     val view = viewFor[DidDeclareTaxToHMRCYesNoView](Some(emptyUserAnswers))
 
     def applyView(form: Form[_]): HtmlFormat.Appendable =
-      view.apply(form, CYMinus1TaxYear, TaxYearRange(CYMinus1TaxYear).toRange, NormalMode)(fakeRequest, messages)
+      view.apply(form, CYMinus1TaxYear, "6 April 2019 to 5 April 2020", NormalMode)(fakeRequest, messages)
 
     behave like normalPage(applyView(form), messageKeyPrefix)
 
