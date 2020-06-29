@@ -33,9 +33,7 @@
 
         <h1 class="heading-large">@messages("earlierYearsLiability.heading", date)</h1>
 
-        @components.warning("earlierYearsLiability")
-
-        <p>@messages("earlierYearsLiability.declare.prior", date) <a href="https://www.gov.uk/government/organisations/hm-revenue-customs/contact/bereavement-and-deceased-estate" target="_blank">@messages("earlierYearsLiability.deceased.helpline")</a>.</p>
+        <p>@messages("earlierYearsLiability.p1")</p>
 
         @formHelper(action = continueUrl, 'autoComplete -> "off") {
 

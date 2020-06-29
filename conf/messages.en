@@ -41,12 +41,10 @@ unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
 earlierYearsLiability.checkYourAnswerSectionHeading = Tax liability before {0}
-earlierYearsLiability.checkYourAnswersLabel = You may need to inform HMRC if the estate needed to pay tax before {0}
-earlierYearsLiability.title = You may need to inform HMRC if the estate needed to pay tax before {0}
-earlierYearsLiability.heading = You may need to inform HMRC if the estate needed to pay tax before {0}
-earlierYearsLiability.warning = You must send a schedule of any chargeable income received to HMRC
-earlierYearsLiability.declare.prior = To declare prior to {0}
-earlierYearsLiability.deceased.helpline = contact the deceased estate helpine for more information (opens in a new tab)
+earlierYearsLiability.checkYourAnswersLabel = You must tell HMRC if the estate needed to pay any tax before {0}
+earlierYearsLiability.title = You must tell HMRC if the estate needed to pay any tax before {0}
+earlierYearsLiability.heading = You must tell HMRC if the estate needed to pay any tax before {0}
+earlierYearsLiability.p1 = You will need to send a schedule of any chargeable income.
 
 cyMinusFour.liability.checkYourAnswersLabel = Did the estate need to pay Income Tax or Capital Gains Tax between {0}?
 cyMinusFour.liability.title = Did the estate need to pay Income Tax or Capital Gains Tax between {0}?
