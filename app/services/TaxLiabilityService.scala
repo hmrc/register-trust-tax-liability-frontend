@@ -53,7 +53,7 @@ class TaxLiabilityService @Inject()(estatesConnector: EstatesConnector,
     val today = localDateService.now
 
     val todayIsAfterTaxYearStart : Boolean = today.isAfter(currentTaxYearStartDate.minusDays(1))
-    val isNotAfterDecemberDeadline : Boolean = today.isBefore(decemberDeadline)
+    val isNotAfterDecemberDeadline : Boolean = today.isBefore(decemberDeadline.plusDays(1))
 
     val oldestYearToShow = if (todayIsAfterTaxYearStart && isNotAfterDecemberDeadline) {
       TaxYear.current.back(LAST_4_TAX_YEARS)
@@ -74,8 +74,10 @@ class TaxLiabilityService @Inject()(estatesConnector: EstatesConnector,
   }
 
   def getIsTaxLiabilityLate(taxYear: TaxYear, alreadyPaid: Boolean): Boolean = {
-    if ((!(localDateService.now.isBefore(currentTaxYearStartDate) || localDateService.now.isAfter(decemberDeadline))) &&
-      (taxYear.startYear == TaxYear.current.previous.startYear)) {
+    val currentDateIsBeforeDecemberDeadline = !(localDateService.now.isBefore(currentTaxYearStartDate) || localDateService.now.isAfter(decemberDeadline))
+    val taxYearIsCyMinusOne = taxYear.startYear == TaxYear.current.previous.startYear
+
+    if (currentDateIsBeforeDecemberDeadline && taxYearIsCyMinusOne) {
       false
     } else if (alreadyPaid) {
       false
@@ -84,7 +86,7 @@ class TaxLiabilityService @Inject()(estatesConnector: EstatesConnector,
     }
   }
 
-  private def getTaxYearOfDeath()(implicit hc: HeaderCarrier): Future[TaxYear] = {
+  def getTaxYearOfDeath()(implicit hc: HeaderCarrier): Future[TaxYear] = {
     estatesConnector.getDateOfDeath().map { dateOfDeath =>
       val beforeApril = dateOfDeath.getMonthValue < APRIL
       val between1stAnd5thApril = dateOfDeath.getMonthValue == APRIL && dateOfDeath.getDayOfMonth < TAX_YEAR_START_DAY
