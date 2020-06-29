@@ -17,11 +17,13 @@
 package models
 
 import play.api.mvc.JavascriptLiteral
-
 sealed trait TaxYear {
   val year: Int
   val messagePrefix : String
   override def toString: String = year.toString
+
+  def asShortFinishYear(): String =
+    uk.gov.hmrc.time.TaxYear.current.back(year).finishYear.toString.takeRight(2)
 }
 
 case object CYMinus4TaxYear extends TaxYear {

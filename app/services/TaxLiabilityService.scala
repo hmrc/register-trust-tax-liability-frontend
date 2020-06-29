@@ -20,8 +20,8 @@ import java.time.LocalDate
 
 import connectors.EstatesConnector
 import javax.inject.Inject
-import models.TaxLiabilityYear
-import org.joda.time.DateTime
+import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, TaxLiabilityYear, TaxYearsDue, UserAnswers, YearReturnType}
+import pages.DidDeclareTaxToHMRCYesNoPage
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.time.TaxYear
 
@@ -73,19 +73,6 @@ class TaxLiabilityService @Inject()(estatesConnector: EstatesConnector,
     }
   }
 
-  def getIsTaxLiabilityLate(taxYear: TaxYear, alreadyPaid: Boolean): Boolean = {
-    val currentDateIsBeforeDecemberDeadline = !(localDateService.now.isBefore(currentTaxYearStartDate) || localDateService.now.isAfter(decemberDeadline))
-    val taxYearIsCyMinusOne = taxYear.startYear == TaxYear.current.previous.startYear
-
-    if (currentDateIsBeforeDecemberDeadline && taxYearIsCyMinusOne) {
-      false
-    } else if (alreadyPaid) {
-      false
-    } else {
-      true
-    }
-  }
-
   def getTaxYearOfDeath()(implicit hc: HeaderCarrier): Future[TaxYear] = {
     dateOfDeath().map { dateOfDeath =>
       val beforeApril = dateOfDeath.getMonthValue < APRIL
@@ -100,4 +87,16 @@ class TaxLiabilityService @Inject()(estatesConnector: EstatesConnector,
   }
 
   def dateOfDeath()(implicit hc: HeaderCarrier): Future[LocalDate] = estatesConnector.getDateOfDeath()
+
+  def evaulateTaxYears(userAnswers: UserAnswers): List[YearReturnType] = {
+
+    val yearsDeclared = TaxYearsDue(
+      cyMinus4Due = userAnswers.get(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYear)).contains(false),
+      cyMinus3Due = userAnswers.get(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYear)).contains(false),
+      cyMinus2Due = userAnswers.get(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYear)).contains(false),
+      cyMinus1Due = userAnswers.get(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear)).contains(false)
+    )(localDateService.now)
+
+    yearsDeclared.toList
+  }
 }

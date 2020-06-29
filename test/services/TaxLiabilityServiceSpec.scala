@@ -20,9 +20,10 @@ import java.time.LocalDate
 
 import base.SpecBase
 import connectors.EstatesConnector
-import models.TaxLiabilityYear
+import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, TaxLiabilityYear, YearReturnType}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
+import pages.{CYMinusFourYesNoPage, DidDeclareTaxToHMRCYesNoPage}
 import play.api.inject.bind
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.time.TaxYear
@@ -306,50 +307,162 @@ class TaxLiabilityServiceSpec extends SpecBase {
     }
   }
 
-  "getIsTaxLiabilityLate" must {
-    "return false if current date is before the December deadline and the tax year is CY-1" in {
+  "evaluate answers to CY-1, CY-2, CY-3 and CY-4" when {
 
-      val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
+    "need to pay tax for CY-1, CY-2, CY-3, CY-4 years" must {
 
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
-        .build()
+      "generate a list with 4 tax consequences" in {
+        val userAnswers = emptyUserAnswers
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYear), false).success.value
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYear), false).success.value
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYear), false).success.value
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
 
-      val service = application.injector.instanceOf[TaxLiabilityService]
+        val today = LocalDate.of(2020, 5, 5)
 
-      val result = service.getIsTaxLiabilityLate(TaxYear(2019), alreadyPaid = false)
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[LocalDateService].toInstance(setCurrentDate(today)))
+          .build()
 
-      result mustEqual false
+        val service = application.injector.instanceOf[TaxLiabilityService]
+
+        val expected = service.evaulateTaxYears(userAnswers)
+
+        expected mustBe List(
+          YearReturnType(taxReturnYear = "17", taxConsequence = true),
+          YearReturnType(taxReturnYear = "18", taxConsequence = true),
+          YearReturnType(taxReturnYear = "19", taxConsequence = true),
+          YearReturnType(taxReturnYear = "20", taxConsequence = true)
+        )
+      }
+
+      "when CY-1 is late (after 5 October)" in {
+        val userAnswers = emptyUserAnswers
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYear), false).success.value
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYear), false).success.value
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYear), false).success.value
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
+
+        val today = LocalDate.of(2020, 10, 6)
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[LocalDateService].toInstance(setCurrentDate(today)))
+          .build()
+
+        val service = application.injector.instanceOf[TaxLiabilityService]
+
+        val expected = service.evaulateTaxYears(userAnswers)
+
+        expected mustBe List(
+          YearReturnType(taxReturnYear = "17", taxConsequence = true),
+          YearReturnType(taxReturnYear = "18", taxConsequence = true),
+          YearReturnType(taxReturnYear = "19", taxConsequence = true),
+          YearReturnType(taxReturnYear = "20", taxConsequence = false)
+        )
+      }
+
     }
 
-    "return false if the tax year is before CY-1 but already paid is true" in {
+    "need to pay tax for CY-1, CY-2" when {
 
-      val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
+      "generate a list with 2 tax consequences" in {
+        val userAnswers = emptyUserAnswers
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYear), false).success.value
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
 
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
-        .build()
+        val today = LocalDate.of(2020, 5, 5)
 
-      val service = application.injector.instanceOf[TaxLiabilityService]
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[LocalDateService].toInstance(setCurrentDate(today)))
+          .build()
 
-      val result = service.getIsTaxLiabilityLate(TaxYear(2018), alreadyPaid = true)
+        val service = application.injector.instanceOf[TaxLiabilityService]
 
-      result mustEqual false
+        val expected = service.evaulateTaxYears(userAnswers)
+
+        expected mustBe List(
+          YearReturnType(taxReturnYear = "19", taxConsequence = true),
+          YearReturnType(taxReturnYear = "20", taxConsequence = true)
+        )
+      }
+
     }
 
-    "return true if the tax year is before CY-1 and already paid is false" in {
+    "need to pay tax for CY-2, CY-4" when {
 
-      val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
+      "generate a list with 2 tax consequences" in {
+        val userAnswers = emptyUserAnswers
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYear), false).success.value
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYear), false).success.value
 
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
-        .build()
+        val today = LocalDate.of(2020, 5, 5)
 
-      val service = application.injector.instanceOf[TaxLiabilityService]
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[LocalDateService].toInstance(setCurrentDate(today)))
+          .build()
 
-      val result = service.getIsTaxLiabilityLate(TaxYear(2018), alreadyPaid = false)
+        val service = application.injector.instanceOf[TaxLiabilityService]
 
-      result mustEqual true
+        val expected = service.evaulateTaxYears(userAnswers)
+
+        expected mustBe List(
+          YearReturnType(taxReturnYear = "17", taxConsequence = true),
+          YearReturnType(taxReturnYear = "19", taxConsequence = true)
+        )
+      }
+
     }
+
   }
+
+  "must evaluate answers for CY-1" when {
+
+    "tax owed is late (after 5 October)" must {
+
+      "generate a list with 1 tax consequence (false)" in {
+        val userAnswers = emptyUserAnswers
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
+
+        val today = LocalDate.of(2020, 10, 6)
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[LocalDateService].toInstance(setCurrentDate(today)))
+          .build()
+
+        val service = application.injector.instanceOf[TaxLiabilityService]
+
+        val expected = service.evaulateTaxYears(userAnswers)
+
+        expected mustBe List(
+          YearReturnType(taxReturnYear = "20", taxConsequence = false)
+        )
+      }
+
+    }
+
+    "tax owed is not late (before 5 October)" must {
+
+      "generate a list with 1 tax consequence (true)" in {
+        val userAnswers = emptyUserAnswers
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
+
+        val today = LocalDate.of(2020, 10, 5)
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[LocalDateService].toInstance(setCurrentDate(today)))
+          .build()
+
+        val service = application.injector.instanceOf[TaxLiabilityService]
+
+        val expected = service.evaulateTaxYears(userAnswers)
+
+        expected mustBe List(
+          YearReturnType(taxReturnYear = "20", taxConsequence = true)
+        )
+      }
+
+    }
+
+  }
+
 }
