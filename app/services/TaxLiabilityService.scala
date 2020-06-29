@@ -87,7 +87,7 @@ class TaxLiabilityService @Inject()(estatesConnector: EstatesConnector,
   }
 
   def getTaxYearOfDeath()(implicit hc: HeaderCarrier): Future[TaxYear] = {
-    estatesConnector.getDateOfDeath().map { dateOfDeath =>
+    dateOfDeath().map { dateOfDeath =>
       val beforeApril = dateOfDeath.getMonthValue < APRIL
       val between1stAnd5thApril = dateOfDeath.getMonthValue == APRIL && dateOfDeath.getDayOfMonth < TAX_YEAR_START_DAY
 
@@ -98,4 +98,6 @@ class TaxLiabilityService @Inject()(estatesConnector: EstatesConnector,
       }
     }
   }
+
+  def dateOfDeath()(implicit hc: HeaderCarrier): Future[LocalDate] = estatesConnector.getDateOfDeath()
 }
