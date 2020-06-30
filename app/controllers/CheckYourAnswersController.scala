@@ -32,9 +32,6 @@ import scala.concurrent.ExecutionContext.Implicits._
 
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
-                                            identify: IdentifierAction,
-                                            getData: DataRetrievalAction,
-                                            requireData: DataRequiredAction,
                                             val controllerComponents: MessagesControllerComponents,
                                             view: CheckYourAnswersView,
                                             checkYourAnswersHelper: CheckYourAnswersHelper,
