@@ -18,16 +18,18 @@ package services
 
 import java.time.LocalDate
 
+import akka.http.scaladsl.model.HttpHeader.ParsingResult.Ok
 import base.SpecBase
 import connectors.EstatesConnector
 import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, TaxLiabilityYear, YearReturnType}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
-import pages.{CYMinusFourYesNoPage, DidDeclareTaxToHMRCYesNoPage}
+import pages.DidDeclareTaxToHMRCYesNoPage
 import play.api.inject.bind
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.time.TaxYear
 
+import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.Future
 
 class TaxLiabilityServiceSpec extends SpecBase {
@@ -307,6 +309,31 @@ class TaxLiabilityServiceSpec extends SpecBase {
     }
   }
 
+  ".sendTaxLiability" must {
+
+    "send tax liability to estates" in {
+      val mockEstatesConnector = mock[EstatesConnector]
+
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+        .build()
+
+      when(mockEstatesConnector.saveTaxConsequence(any())(any(), any())).thenReturn(Future.successful(HttpResponse(200)))
+
+      val service = application.injector.instanceOf[TaxLiabilityService]
+
+      val userAnswers = emptyUserAnswers
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYear), false).success.value
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYear), false).success.value
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYear), false).success.value
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
+
+      val result = service.submitTaxLiability(userAnswers)
+
+      result.futureValue.status mustBe 200
+    }
+  }
+
   "evaluate answers to CY-1, CY-2, CY-3 and CY-4" when {
 
     "need to pay tax for CY-1, CY-2, CY-3, CY-4 years" must {
@@ -326,7 +353,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val expected = service.evaulateTaxYears(userAnswers)
+        val expected = service.evaluateTaxYears(userAnswers)
 
         expected mustBe List(
           YearReturnType(taxReturnYear = "17", taxConsequence = true),
@@ -351,7 +378,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val expected = service.evaulateTaxYears(userAnswers)
+        val expected = service.evaluateTaxYears(userAnswers)
 
         expected mustBe List(
           YearReturnType(taxReturnYear = "17", taxConsequence = true),
@@ -378,7 +405,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val expected = service.evaulateTaxYears(userAnswers)
+        val expected = service.evaluateTaxYears(userAnswers)
 
         expected mustBe List(
           YearReturnType(taxReturnYear = "19", taxConsequence = true),
@@ -403,7 +430,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val expected = service.evaulateTaxYears(userAnswers)
+        val expected = service.evaluateTaxYears(userAnswers)
 
         expected mustBe List(
           YearReturnType(taxReturnYear = "17", taxConsequence = true),
@@ -431,7 +458,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val expected = service.evaulateTaxYears(userAnswers)
+        val expected = service.evaluateTaxYears(userAnswers)
 
         expected mustBe List(
           YearReturnType(taxReturnYear = "20", taxConsequence = false)
@@ -454,7 +481,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val expected = service.evaulateTaxYears(userAnswers)
+        val expected = service.evaluateTaxYears(userAnswers)
 
         expected mustBe List(
           YearReturnType(taxReturnYear = "20", taxConsequence = true)

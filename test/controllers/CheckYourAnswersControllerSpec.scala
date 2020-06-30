@@ -17,11 +17,15 @@
 package controllers
 
 import base.SpecBase
+import connectors.EstatesConnector
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import services.TaxLiabilityService
+import uk.gov.hmrc.http.HttpResponse
 import views.html.CheckYourAnswersView
 
 import scala.concurrent.Future
@@ -65,17 +69,20 @@ class CheckYourAnswersControllerSpec extends SpecBase {
 
     "redirect to the next page when valid data is submitted" in {
 
-      val mockPlaybackRepository = mock[SessionRepository]
+      val mockService = mock[TaxLiabilityService]
 
-      when(mockPlaybackRepository.set(any())) thenReturn Future.successful(true)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[TaxLiabilityService].toInstance(mockService))
+        .build()
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      when(mockService.submitTaxLiability(any())(any())).thenReturn(Future.successful(HttpResponse(200)))
+
+      val controller = application.injector.instanceOf[CheckYourAnswersController]
 
       val request =
         FakeRequest(POST, routes.CheckYourAnswersController.onSubmit().url)
 
-      val result = route(application, request).value
+      val result = controller.onSubmit().apply(request)
 
       status(result) mustEqual SEE_OTHER
 

@@ -20,9 +20,9 @@ import java.time.LocalDate
 
 import connectors.EstatesConnector
 import javax.inject.Inject
-import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, TaxLiabilityYear, TaxYearsDue, UserAnswers, YearReturnType}
+import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, TaxLiabilityYear, TaxYearsDue, UserAnswers, YearReturnType, YearsReturns}
 import pages.DidDeclareTaxToHMRCYesNoPage
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.time.TaxYear
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -88,7 +88,7 @@ class TaxLiabilityService @Inject()(estatesConnector: EstatesConnector,
 
   def dateOfDeath()(implicit hc: HeaderCarrier): Future[LocalDate] = estatesConnector.getDateOfDeath()
 
-  def evaulateTaxYears(userAnswers: UserAnswers): List[YearReturnType] = {
+  def evaluateTaxYears(userAnswers: UserAnswers): List[YearReturnType] = {
 
     val yearsDeclared = TaxYearsDue(
       cyMinus4Due = userAnswers.get(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYear)).contains(false),
@@ -98,5 +98,10 @@ class TaxLiabilityService @Inject()(estatesConnector: EstatesConnector,
     )(localDateService.now)
 
     yearsDeclared.toList
+  }
+
+  def submitTaxLiability(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    val taxYears = evaluateTaxYears(userAnswers)
+    estatesConnector.saveTaxConsequence(YearsReturns(taxYears))
   }
 }
