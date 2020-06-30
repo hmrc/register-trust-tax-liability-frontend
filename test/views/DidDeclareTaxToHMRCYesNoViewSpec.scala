@@ -37,13 +37,11 @@ class DidDeclareTaxToHMRCYesNoViewSpec extends YesNoViewBehaviours {
     def applyView(form: Form[_]): HtmlFormat.Appendable =
       view.apply(form, CYMinus1TaxYear, "6 April 2019 to 5 April 2020", NormalMode)(fakeRequest, messages)
 
-    behave like normalPage(applyView(form), messageKeyPrefix)
+    behave like dynamicTitlePage(applyView(form), messageKeyPrefix, "6 April 2019 to 5 April 2020")
 
     behave like pageWithBackLink(applyView(form))
 
-    behave like pageWithHint(form, applyView, messageKeyPrefix + ".hint", Seq("6 April 2019 to 5 April 2020"))
-
-    behave like yesNoPage(form, applyView, messageKeyPrefix, None)
+    behave like yesNoPage(form, applyView, messageKeyPrefix, Some("6 April 2019 to 5 April 2020"))
 
     behave like pageWithASubmitButton(applyView(form))
   }

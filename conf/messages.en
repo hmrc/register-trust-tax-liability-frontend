@@ -73,11 +73,11 @@ cyMinusOne.liability.error.required = Select yes if the estate needed to pay any
 taxYearAndRange = {0} and {1}
 taxYearToRange = {0} to {1}
 
-didDeclareToHMRC.checkYourAnswersLabel = Did you declare this tax to HMRC?
-didDeclareToHMRC.title = Did you declare this tax to HMRC?
-didDeclareToHMRC.heading = Did you declare this tax to HMRC?
-didDeclareToHMRC.hint = By selecting yes, you are confirming you made a full voluntary disclosure for {0}
-didDeclareToHMRC.error.required = Select yes if you made a full voluntary disclosure for {0} to {1}
+didDeclareToHMRC.checkYourAnswersLabel = Was the tax from {0} declared?
+didDeclareToHMRC.title = Was the tax from {0} declared?
+didDeclareToHMRC.heading = Was the tax from {0} declared?
+didDeclareToHMRC.p1 = You must have sent a full voluntary disclosure for {0}.
+didDeclareToHMRC.error.required = Select yes if the tax from {0} to {1} was declared
 
 taxLiabilityBetweenYears.checkYourAnswerSectionHeading = Tax liability {0}
 

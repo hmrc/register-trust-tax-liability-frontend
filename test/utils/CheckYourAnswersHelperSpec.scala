@@ -90,7 +90,7 @@ class CheckYourAnswersHelperSpec extends SpecBase {
               changeUrl = routes.CYMinusFourLiabilityController.onPageLoad(NormalMode).url
             ),
             AnswerRow(
-              label = Html("Did you declare this tax to HMRC?"),
+              label = Html("Was the tax from 6 April 2016 to 5 April 2017 declared?"),
               answer = Html("Yes"),
               changeUrl = routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, taxYear).url
             )
@@ -121,7 +121,7 @@ class CheckYourAnswersHelperSpec extends SpecBase {
               changeUrl = routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode).url
             ),
             AnswerRow(
-              label = Html("Did you declare this tax to HMRC?"),
+              label = Html("Was the tax from 6 April 2017 to 5 April 2018 declared?"),
               answer = Html("Yes"),
               changeUrl = routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, taxYear).url
             )
@@ -152,7 +152,7 @@ class CheckYourAnswersHelperSpec extends SpecBase {
               changeUrl = routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode).url
             ),
             AnswerRow(
-              label = Html("Did you declare this tax to HMRC?"),
+              label = Html("Was the tax from 6 April 2018 to 5 April 2019 declared?"),
               answer = Html("Yes"),
               changeUrl = routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, taxYear).url
             )
@@ -183,7 +183,7 @@ class CheckYourAnswersHelperSpec extends SpecBase {
               changeUrl = routes.CYMinusOneLiabilityController.onPageLoad(NormalMode).url
             ),
             AnswerRow(
-              label = Html("Did you declare this tax to HMRC?"),
+              label = Html("Was the tax from 6 April 2019 to 5 April 2020 declared?"),
               answer = Html("Yes"),
               changeUrl = routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, taxYear).url
             )
