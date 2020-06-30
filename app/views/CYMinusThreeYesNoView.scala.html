@@ -35,11 +35,16 @@
 
         @components.error_summary(form.errors)
 
+        <h1 class="heading-large">@messages("cyMinusThree.liability.heading", taxYear)</h1>
+
+        <p>@messages("cyMinusThree.liability.p1")</p>
+
         @components.input_yes_no(
             field = form("value"),
             legend = messages("cyMinusThree.liability.heading", taxYear),
-            headingIsLegend = true,
-            hint = Some(messages("cyMinusThree.liability.hint"))
+            headingIsLegend = false,
+            legendClass = Some("visually-hidden"),
+            hint = None
         )
 
         @components.submit_button()

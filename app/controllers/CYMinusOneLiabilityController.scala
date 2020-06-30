@@ -18,9 +18,9 @@ package controllers
 
 import config.annotations.TaxLiability
 import controllers.actions.Actions
-import forms.YesNoFormProvider
+import forms.YesNoFormProviderWithArguments
 import javax.inject.Inject
-import models.{Mode, PreviousTaxYearRange}
+import models.{CYMinus1TaxYear, Mode, TaxYearRange}
 import navigation.Navigator
 import pages.CYMinusOneYesNoPage
 import play.api.i18n.I18nSupport
@@ -35,34 +35,38 @@ class CYMinusOneLiabilityController @Inject()(
                                  val controllerComponents: MessagesControllerComponents,
                                  @TaxLiability navigator: Navigator,
                                  actions: Actions,
-                                 formProvider: YesNoFormProvider,
+                                 formProvider: YesNoFormProviderWithArguments,
                                  sessionRepository: SessionRepository,
                                  view: CYMinusOneYesNoView
                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider.withPrefix("cyMinusOne.liability")
+  def form(ranges: Seq[String]) = formProvider.withPrefix("cyMinusOne.liability", ranges)
 
   def onPageLoad(mode: Mode): Action[AnyContent] = actions.authWithData {
     implicit request =>
 
-      val range = PreviousTaxYearRange
+      val range = TaxYearRange(CYMinus1TaxYear)
+
+      val f = form(Seq(range.startYear, range.endYear))
 
       val preparedForm = request.userAnswers.get(CYMinusOneYesNoPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+        case None => f
+        case Some(value) => f.fill(value)
       }
 
-      Ok(view(preparedForm, range.andRange, mode))
+      Ok(view(preparedForm, range.toRange, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = actions.authWithData.async {
     implicit request =>
 
-      val range = PreviousTaxYearRange
+      val range = TaxYearRange(CYMinus1TaxYear)
 
-      form.bindFromRequest().fold(
+      val f = form(Seq(range.startYear, range.endYear))
+
+      f.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, range.andRange, mode))),
+          Future.successful(BadRequest(view(formWithErrors, range.toRange, mode))),
 
         value =>
           for {

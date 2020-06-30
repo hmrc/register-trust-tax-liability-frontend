@@ -41,8 +41,6 @@ class CYMinusThreeLiabilityYesNoViewSpec extends YesNoViewBehaviours {
 
     behave like pageWithBackLink(applyView(form))
 
-    behave like pageWithHint(form, applyView, messageKeyPrefix + ".hint")
-
     behave like yesNoPage(form, applyView, messageKeyPrefix, Some(taxYear))
 
     behave like pageWithASubmitButton(applyView(form))

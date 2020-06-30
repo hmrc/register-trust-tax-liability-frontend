@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import config.annotations.TaxLiability
-import forms.YesNoFormProvider
+import forms.YesNoFormProviderWithArguments
 import models.NormalMode
 import navigation.Navigator
 import org.mockito.Matchers.any
@@ -30,7 +30,6 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import uk.gov.hmrc.time.TaxYear
 import views.html.CYMinusTwoYesNoView
 
 import scala.concurrent.Future
@@ -39,13 +38,16 @@ class CYMinusTwoLiabilityControllerSpec extends SpecBase with MockitoSugar {
 
   override def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new YesNoFormProvider()
-  val form = formProvider.withPrefix("cyMinusTwo.liability")
-  val fullDatePattern: String = "d MMMM yyyy"
-  val taxYearStart: String = (TaxYear.current.back(2).starts.toString(fullDatePattern))
-  val taxYearEnd: String = (TaxYear.current.back(2).finishes.toString(fullDatePattern))
+  val formProvider = new YesNoFormProviderWithArguments()
 
-  val taxYear: String = s"$taxYearStart and $taxYearEnd"
+  def form(arguments: Seq[Any]) = formProvider.withPrefix("cyMinusTwo.liability", arguments)
+
+  val fullDatePattern: String = "d MMMM yyyy"
+
+  val taxYearStart: String = "6 April 2018"
+  val taxYearEnd: String = "5 April 2019"
+
+  val taxYear: String = s"$taxYearStart to $taxYearEnd"
 
   lazy val cyMinusTwoLiabilityControllerRoute = routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode).url
 
@@ -57,6 +59,8 @@ class CYMinusTwoLiabilityControllerSpec extends SpecBase with MockitoSugar {
 
       val request = FakeRequest(GET, cyMinusTwoLiabilityControllerRoute)
 
+      val formWithArgs = form(Seq("6 April 2018", "5 April 2019"))
+
       val result = route(application, request).value
 
       val view = application.injector.instanceOf[CYMinusTwoYesNoView]
@@ -64,7 +68,7 @@ class CYMinusTwoLiabilityControllerSpec extends SpecBase with MockitoSugar {
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(form, taxYear, NormalMode)(fakeRequest, messages).toString
+        view(formWithArgs, taxYear, NormalMode)(fakeRequest, messages).toString
 
       application.stop()
     }
@@ -77,6 +81,8 @@ class CYMinusTwoLiabilityControllerSpec extends SpecBase with MockitoSugar {
 
       val request = FakeRequest(GET, cyMinusTwoLiabilityControllerRoute)
 
+      val formWithArgs = form(Seq("6 April 2018", "5 April 2019"))
+
       val view = application.injector.instanceOf[CYMinusTwoYesNoView]
 
       val result = route(application, request).value
@@ -84,7 +90,7 @@ class CYMinusTwoLiabilityControllerSpec extends SpecBase with MockitoSugar {
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(form.fill(true), taxYear, NormalMode)(fakeRequest, messages).toString
+        view(formWithArgs.fill(true), taxYear, NormalMode)(fakeRequest, messages).toString
 
       application.stop()
     }
@@ -121,7 +127,9 @@ class CYMinusTwoLiabilityControllerSpec extends SpecBase with MockitoSugar {
         FakeRequest(POST, cyMinusTwoLiabilityControllerRoute)
           .withFormUrlEncodedBody(("value", ""))
 
-      val boundForm = form.bind(Map("value" -> ""))
+      val formWithArgs = form(Seq("6 April 2018", "5 April 2019"))
+
+      val boundForm = formWithArgs.bind(Map("value" -> ""))
 
       val view = application.injector.instanceOf[CYMinusTwoYesNoView]
 

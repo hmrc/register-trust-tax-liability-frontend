@@ -81,7 +81,7 @@ class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter) {
                            (implicit messages: Messages): Option[AnswerSection] = {
     val bound = answerRowConverter.bind(userAnswers)
 
-    val andRange = TaxYearRange(taxYear).andRange
+    val toRange = TaxYearRange(taxYear).toRange
     val page = yesNoPageForTaxYear(taxYear)
     val changeRoute = changeRouteForTaxYear(taxYear)
 
@@ -90,13 +90,13 @@ class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter) {
         page,
         s"${taxYear.messagePrefix}.liability",
         changeRoute,
-        andRange
+        toRange
       ),
       bound.yesNoQuestion(
         DidDeclareTaxToHMRCYesNoPage(taxYear),
         "didDeclareToHMRC",
         controllers.routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, taxYear).url,
-        andRange
+        toRange
       )
     ).flatten
 
@@ -105,7 +105,7 @@ class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter) {
       case _ =>
         Some(
           AnswerSection(
-            Some(HtmlFormat.escape(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", andRange))),
+            Some(HtmlFormat.escape(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", toRange))),
             answerRows
           )
         )

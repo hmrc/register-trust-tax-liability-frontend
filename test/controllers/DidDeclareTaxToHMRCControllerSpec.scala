@@ -18,8 +18,8 @@ package controllers
 
  import base.SpecBase
  import config.annotations.TaxLiability
- import forms.{YesNoFormProvider, YesNoFormProviderWithArguments}
- import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, NormalMode, PreviousTaxYearRange, TaxYear, TaxYearRange}
+ import forms.YesNoFormProviderWithArguments
+ import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, NormalMode, TaxYear, TaxYearRange}
  import navigation.Navigator
  import org.mockito.Matchers.any
  import org.mockito.Mockito.when
@@ -61,7 +61,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs, CYMinus1TaxYear, PreviousTaxYearRange.toRange, NormalMode)(fakeRequest, messages).toString
+          view(formWithArgs, CYMinus1TaxYear, TaxYearRange(CYMinus1TaxYear).toRange, NormalMode)(fakeRequest, messages).toString
 
         application.stop()
       }
@@ -83,7 +83,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs.fill(true), CYMinus1TaxYear, PreviousTaxYearRange.toRange, NormalMode)(fakeRequest, messages).toString
+          view(formWithArgs.fill(true), CYMinus1TaxYear, TaxYearRange(CYMinus1TaxYear).toRange, NormalMode)(fakeRequest, messages).toString
 
         application.stop()
       }
@@ -131,7 +131,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, CYMinus1TaxYear, PreviousTaxYearRange.toRange, NormalMode)(fakeRequest, messages).toString
+          view(boundForm, CYMinus1TaxYear, TaxYearRange(CYMinus1TaxYear).toRange, NormalMode)(fakeRequest, messages).toString
 
         application.stop()
       }

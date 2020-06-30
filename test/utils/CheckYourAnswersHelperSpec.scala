@@ -82,10 +82,10 @@ class CheckYourAnswersHelperSpec extends SpecBase {
         val result = cyaHelper.cyMinusTaxYearAnswers(userAnswers, taxYear)
 
         result.value mustBe AnswerSection(
-          heading = Some(Html("Tax liability between 6 April 2016 and 5 April 2017")),
+          heading = Some(Html("Tax liability 6 April 2016 to 5 April 2017")),
           rows = Seq(
             AnswerRow(
-              label = Html("Did the estate need to pay Income Tax or Capital Gains Tax between 6 April 2016 and 5 April 2017?"),
+              label = Html("Did the estate need to pay any tax from 6 April 2016 to 5 April 2017?"),
               answer = Html("Yes"),
               changeUrl = routes.CYMinusFourLiabilityController.onPageLoad(NormalMode).url
             ),
@@ -113,10 +113,10 @@ class CheckYourAnswersHelperSpec extends SpecBase {
         val result = cyaHelper.cyMinusTaxYearAnswers(userAnswers, taxYear)
 
         result.value mustBe AnswerSection(
-          heading = Some(Html("Tax liability between 6 April 2017 and 5 April 2018")),
+          heading = Some(Html("Tax liability 6 April 2017 to 5 April 2018")),
           rows = Seq(
             AnswerRow(
-              label = Html("Did the estate need to pay Income Tax or Capital Gains Tax between 6 April 2017 and 5 April 2018?"),
+              label = Html("Did the estate need to pay any tax from 6 April 2017 to 5 April 2018?"),
               answer = Html("Yes"),
               changeUrl = routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode).url
             ),
@@ -144,10 +144,10 @@ class CheckYourAnswersHelperSpec extends SpecBase {
         val result = cyaHelper.cyMinusTaxYearAnswers(userAnswers, taxYear)
 
         result.value mustBe AnswerSection(
-          heading = Some(Html("Tax liability between 6 April 2018 and 5 April 2019")),
+          heading = Some(Html("Tax liability 6 April 2018 to 5 April 2019")),
           rows = Seq(
             AnswerRow(
-              label = Html("Did the estate need to pay Income Tax or Capital Gains Tax between 6 April 2018 and 5 April 2019?"),
+              label = Html("Did the estate need to pay any tax from 6 April 2018 to 5 April 2019?"),
               answer = Html("Yes"),
               changeUrl = routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode).url
             ),
@@ -175,10 +175,10 @@ class CheckYourAnswersHelperSpec extends SpecBase {
         val result = cyaHelper.cyMinusTaxYearAnswers(userAnswers, taxYear)
 
         result.value mustBe AnswerSection(
-          heading = Some(Html("Tax liability between 6 April 2019 and 5 April 2020")),
+          heading = Some(Html("Tax liability 6 April 2019 to 5 April 2020")),
           rows = Seq(
             AnswerRow(
-              label = Html("Did the estate need to pay Income Tax or Capital Gains Tax between 6 April 2019 and 5 April 2020?"),
+              label = Html("Did the estate need to pay any tax from 6 April 2019 to 5 April 2020?"),
               answer = Html("Yes"),
               changeUrl = routes.CYMinusOneLiabilityController.onPageLoad(NormalMode).url
             ),

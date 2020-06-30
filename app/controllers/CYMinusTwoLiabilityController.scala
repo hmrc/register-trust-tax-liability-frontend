@@ -18,7 +18,7 @@ package controllers
 
 import config.annotations.TaxLiability
 import controllers.actions.Actions
-import forms.YesNoFormProvider
+import forms.{YesNoFormProvider, YesNoFormProviderWithArguments}
 import javax.inject.Inject
 import models.{CYMinus2TaxYear, Mode, TaxYearRange}
 import navigation.Navigator
@@ -35,24 +35,26 @@ class CYMinusTwoLiabilityController @Inject()(
                                  val controllerComponents: MessagesControllerComponents,
                                  @TaxLiability navigator: Navigator,
                                  actions: Actions,
-                                 formProvider: YesNoFormProvider,
+                                 formProvider: YesNoFormProviderWithArguments,
                                  sessionRepository: SessionRepository,
                                  view: CYMinusTwoYesNoView
                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider.withPrefix("cyMinusTwo.liability")
+  def form(ranges: Seq[String]) = formProvider.withPrefix("cyMinusTwo.liability", ranges)
 
   def onPageLoad(mode: Mode): Action[AnyContent] = actions.authWithData {
     implicit request =>
 
       val range = TaxYearRange(CYMinus2TaxYear)
 
+      val f = form(Seq(range.startYear, range.endYear))
+
       val preparedForm = request.userAnswers.get(CYMinusTwoYesNoPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+        case None => f
+        case Some(value) => f.fill(value)
       }
 
-      Ok(view(preparedForm, range.andRange, mode))
+      Ok(view(preparedForm, range.toRange, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = actions.authWithData.async {
@@ -60,9 +62,11 @@ class CYMinusTwoLiabilityController @Inject()(
 
       val range = TaxYearRange(CYMinus2TaxYear)
 
-      form.bindFromRequest().fold(
+      val f = form(Seq(range.startYear, range.endYear))
+
+      f.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, range.andRange, mode))),
+          Future.successful(BadRequest(view(formWithErrors, range.toRange, mode))),
 
         value =>
           for {

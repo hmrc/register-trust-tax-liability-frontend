@@ -46,29 +46,29 @@ earlierYearsLiability.title = You must tell HMRC if the estate needed to pay any
 earlierYearsLiability.heading = You must tell HMRC if the estate needed to pay any tax before {0}
 earlierYearsLiability.p1 = You will need to send a schedule of any chargeable income.
 
-cyMinusFour.liability.checkYourAnswersLabel = Did the estate need to pay Income Tax or Capital Gains Tax between {0}?
-cyMinusFour.liability.title = Did the estate need to pay Income Tax or Capital Gains Tax between {0}?
-cyMinusFour.liability.heading = Did the estate need to pay Income Tax or Capital Gains Tax between {0}?
-cyMinusFour.liability.hint = Excludes Inheritance Tax
-cyMinusFour.liability.error.required = Select yes if estate needs to pay Income Tax or Capital Gains Tax
+cyMinusFour.liability.checkYourAnswersLabel = Did the estate need to pay any tax from {0}?
+cyMinusFour.liability.title = Did the estate need to pay any tax from {0}?
+cyMinusFour.liability.heading = Did the estate need to pay any tax from {0}?
+cyMinusFour.liability.p1 = This does not include Inheritance Tax.
+cyMinusFour.liability.error.required = Select yes if the estate needed to pay any tax from {0} to {1}
 
-cyMinusThree.liability.checkYourAnswersLabel = Did the estate need to pay Income Tax or Capital Gains Tax between {0}?
-cyMinusThree.liability.title = Did the estate need to pay Income Tax or Capital Gains Tax between {0}?
-cyMinusThree.liability.heading = Did the estate need to pay Income Tax or Capital Gains Tax between {0}?
-cyMinusThree.liability.hint = Excludes Inheritance Tax
-cyMinusThree.liability.error.required = Select yes if estate needs to pay Income Tax or Capital Gains Tax
+cyMinusThree.liability.checkYourAnswersLabel = Did the estate need to pay any tax from {0}?
+cyMinusThree.liability.title = Did the estate need to pay any tax from {0}?
+cyMinusThree.liability.heading = Did the estate need to pay any tax from {0}?
+cyMinusThree.liability.p1 = This does not include Inheritance Tax.
+cyMinusThree.liability.error.required = Select yes if the estate needed to pay any tax from {0} to {1}
 
-cyMinusTwo.liability.checkYourAnswersLabel = Did the estate need to pay Income Tax or Capital Gains Tax between {0}?
-cyMinusTwo.liability.title = Did the estate need to pay Income Tax or Capital Gains Tax between {0}?
-cyMinusTwo.liability.heading = Did the estate need to pay Income Tax or Capital Gains Tax between {0}?
-cyMinusTwo.liability.hint = Excludes Inheritance Tax
-cyMinusTwo.liability.error.required = Select yes if estate needs to pay Income Tax or Capital Gains Tax
+cyMinusTwo.liability.checkYourAnswersLabel = Did the estate need to pay any tax from {0}?
+cyMinusTwo.liability.title = Did the estate need to pay any tax from {0}?
+cyMinusTwo.liability.heading = Did the estate need to pay any tax from {0}?
+cyMinusTwo.liability.p1 = This does not include Inheritance Tax.
+cyMinusTwo.liability.error.required = Select yes if the estate needed to pay any tax from {0} to {1}
 
-cyMinusOne.liability.checkYourAnswersLabel = Did the estate need to pay Income Tax or Capital Gains Tax between {0}?
-cyMinusOne.liability.title = Did the estate need to pay Income Tax or Capital Gains Tax between {0}?
-cyMinusOne.liability.heading = Did the estate need to pay Income Tax or Capital Gains Tax between {0}?
-cyMinusOne.liability.hint = Excludes Inheritance Tax
-cyMinusOne.liability.error.required = Select yes if estate needs to pay Income Tax or Capital Gains Tax
+cyMinusOne.liability.checkYourAnswersLabel = Did the estate need to pay any tax from {0}?
+cyMinusOne.liability.title = Did the estate need to pay any tax from {0}?
+cyMinusOne.liability.heading = Did the estate need to pay any tax from {0}?
+cyMinusOne.liability.p1 = This does not include Inheritance Tax.
+cyMinusOne.liability.error.required = Select yes if the estate needed to pay any tax from {0} to {1}
 
 taxYearAndRange = {0} and {1}
 taxYearToRange = {0} to {1}
@@ -79,5 +79,5 @@ didDeclareToHMRC.heading = Did you declare this tax to HMRC?
 didDeclareToHMRC.hint = By selecting yes, you are confirming you made a full voluntary disclosure for {0}
 didDeclareToHMRC.error.required = Select yes if you made a full voluntary disclosure for {0} to {1}
 
-taxLiabilityBetweenYears.checkYourAnswerSectionHeading = Tax liability between {0}
+taxLiabilityBetweenYears.checkYourAnswerSectionHeading = Tax liability {0}
 

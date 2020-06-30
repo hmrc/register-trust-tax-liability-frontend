@@ -42,10 +42,3 @@ case class TaxYearRange(taxYear: TaxYear)(implicit messages: Messages) {
   }
 
 }
-
-object PreviousTaxYearRange {
-
-  def toRange(implicit messages: Messages) : String = TaxYearRange(CYMinus1TaxYear).toRange
-  def andRange(implicit messages: Messages) : String = TaxYearRange(CYMinus1TaxYear).andRange
-
-}
