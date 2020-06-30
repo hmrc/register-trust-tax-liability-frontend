@@ -17,13 +17,15 @@
 package controllers
 
 import com.google.inject.Inject
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{Actions, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.CheckYourAnswersHelper
 import views.html.CheckYourAnswersView
+
+import scala.concurrent.Future
 
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
@@ -32,10 +34,11 @@ class CheckYourAnswersController @Inject()(
                                             requireData: DataRequiredAction,
                                             val controllerComponents: MessagesControllerComponents,
                                             view: CheckYourAnswersView,
-                                            checkYourAnswersHelper: CheckYourAnswersHelper
+                                            checkYourAnswersHelper: CheckYourAnswersHelper,
+                                            actions: Actions
                                           ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(): Action[AnyContent] = actions.authWithData {
     implicit request =>
       val taxFor4Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(request.userAnswers, CYMinus4TaxYear)
       val taxFor3Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(request.userAnswers, CYMinus3TaxYear)
@@ -50,5 +53,10 @@ class CheckYourAnswersController @Inject()(
       ).flatten
 
       Ok(view(sections))
+  }
+
+  def onSubmit(): Action[AnyContent] = actions.authWithData.async {
+    implicit request =>
+      Future.successful(Ok)
   }
 }

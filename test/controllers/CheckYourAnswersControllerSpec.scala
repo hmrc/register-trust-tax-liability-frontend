@@ -17,10 +17,14 @@
 package controllers
 
 import base.SpecBase
+import org.mockito.Matchers.any
+import org.mockito.Mockito.when
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import viewmodels.AnswerSection
+import repositories.SessionRepository
 import views.html.CheckYourAnswersView
+
+import scala.concurrent.Future
 
 class CheckYourAnswersControllerSpec extends SpecBase {
 
@@ -55,6 +59,43 @@ class CheckYourAnswersControllerSpec extends SpecBase {
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+
+      application.stop()
+    }
+
+    "redirect to the next page when valid data is submitted" in {
+
+      val mockPlaybackRepository = mock[SessionRepository]
+
+      when(mockPlaybackRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      val request =
+        FakeRequest(POST, routes.CheckYourAnswersController.onSubmit().url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual onwardRoute.url
+
+      application.stop()
+    }
+
+    "redirect to Session Expired for a POST if no existing data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      val request =
+        FakeRequest(POST, routes.CheckYourAnswersController.onSubmit().url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
