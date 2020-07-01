@@ -32,7 +32,7 @@ class EstatesStoreConnectorSpec extends SpecBase
 
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
-  "trusts store connector" must {
+  "estates store connector" must {
 
     "return OK with the current task status" in {
       val application = applicationBuilder()
