@@ -22,6 +22,7 @@ import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.WireMockHelper
+import play.api.test.Helpers._
 
 import scala.concurrent.ExecutionContext
 
@@ -58,7 +59,7 @@ class EstatesStoreConnectorSpec extends SpecBase
 
       whenReady(futureResult) {
         r =>
-          r.status mustBe 200
+          r.status mustBe OK
       }
 
       application.stop()

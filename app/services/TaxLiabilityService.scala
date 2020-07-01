@@ -101,7 +101,14 @@ class TaxLiabilityService @Inject()(estatesConnector: EstatesConnector,
   }
 
   def submitTaxLiability(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    val taxYears = evaluateTaxYears(userAnswers)
-    estatesConnector.saveTaxConsequence(YearsReturns(taxYears))
+    evaluateTaxYears(userAnswers) match {
+      case Nil =>
+        estatesConnector.resetTaxLiability()
+      case years =>
+        for {
+          _ <- estatesConnector.resetTaxLiability()
+          r <- estatesConnector.saveTaxConsequence(YearsReturns(years))
+        } yield r
+    }
   }
 }

@@ -18,7 +18,6 @@ package services
 
 import java.time.LocalDate
 
-import akka.http.scaladsl.model.HttpHeader.ParsingResult.Ok
 import base.SpecBase
 import connectors.EstatesConnector
 import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, TaxLiabilityYear, YearReturnType}
@@ -28,6 +27,7 @@ import pages.DidDeclareTaxToHMRCYesNoPage
 import play.api.inject.bind
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.time.TaxYear
+import play.api.test.Helpers._
 
 import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.Future
@@ -311,13 +311,14 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
   ".sendTaxLiability" must {
 
-    "send tax liability to estates" in {
+    "clear out and send tax liability transform to estates when there is a liability" in {
       val mockEstatesConnector = mock[EstatesConnector]
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
         .build()
 
+      when(mockEstatesConnector.resetTaxLiability()(any(), any())).thenReturn(Future.successful(HttpResponse(200)))
       when(mockEstatesConnector.saveTaxConsequence(any())(any(), any())).thenReturn(Future.successful(HttpResponse(200)))
 
       val service = application.injector.instanceOf[TaxLiabilityService]
@@ -330,7 +331,29 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
       val result = service.submitTaxLiability(userAnswers)
 
-      result.futureValue.status mustBe 200
+      result.futureValue.status mustBe OK
+    }
+
+    "clear out tax liability transforms when there is no liability" in {
+      val mockEstatesConnector = mock[EstatesConnector]
+
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+        .build()
+
+      when(mockEstatesConnector.resetTaxLiability()(any(), any())).thenReturn(Future.successful(HttpResponse(200)))
+
+      val service = application.injector.instanceOf[TaxLiabilityService]
+
+      val userAnswers = emptyUserAnswers
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYear), true).success.value
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYear), true).success.value
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYear), true).success.value
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), true).success.value
+
+      val result = service.submitTaxLiability(userAnswers)
+
+      result.futureValue.status mustBe OK
     }
   }
 
