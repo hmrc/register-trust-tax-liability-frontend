@@ -311,13 +311,14 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
   ".sendTaxLiability" must {
 
-    "send tax liability to estates" in {
+    "clear out and send tax liability transform to estates when there is a liability" in {
       val mockEstatesConnector = mock[EstatesConnector]
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
         .build()
 
+      when(mockEstatesConnector.resetTaxLiability()(any(), any())).thenReturn(Future.successful(HttpResponse(200)))
       when(mockEstatesConnector.saveTaxConsequence(any())(any(), any())).thenReturn(Future.successful(HttpResponse(200)))
 
       val service = application.injector.instanceOf[TaxLiabilityService]
@@ -327,6 +328,28 @@ class TaxLiabilityServiceSpec extends SpecBase {
         .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYear), false).success.value
         .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYear), false).success.value
         .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
+
+      val result = service.submitTaxLiability(userAnswers)
+
+      result.futureValue.status mustBe 200
+    }
+
+    "clear out tax liability transforms when there is no liability" in {
+      val mockEstatesConnector = mock[EstatesConnector]
+
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+        .build()
+
+      when(mockEstatesConnector.resetTaxLiability()(any(), any())).thenReturn(Future.successful(HttpResponse(200)))
+
+      val service = application.injector.instanceOf[TaxLiabilityService]
+
+      val userAnswers = emptyUserAnswers
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYear), true).success.value
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYear), true).success.value
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYear), true).success.value
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), true).success.value
 
       val result = service.submitTaxLiability(userAnswers)
 
