@@ -16,7 +16,7 @@
 
 package views
 
-import forms.YesNoFormProvider
+import forms.YesNoFormProviderWithArguments
 import models.NormalMode
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
@@ -28,7 +28,7 @@ class CYMinusOneLiabilityYesNoViewSpec extends YesNoViewBehaviours {
   val messageKeyPrefix = "cyMinusOne.liability"
   val taxYear = "tax range"
 
-  val form: Form[Boolean] = new YesNoFormProvider().withPrefix(messageKeyPrefix)
+  val form: Form[Boolean] = new YesNoFormProviderWithArguments().withPrefix(messageKeyPrefix, Seq("6 April 2019", "5 April 2020"))
 
   "CYMinusOneLiabilityYesNo view" must {
 

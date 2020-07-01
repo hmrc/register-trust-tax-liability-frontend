@@ -18,8 +18,7 @@ package controllers
 
 import base.SpecBase
 import config.annotations.TaxLiability
-import forms.YesNoFormProvider
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import navigation.Navigator
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
