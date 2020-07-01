@@ -16,27 +16,114 @@
 
 package utils
 
-import java.time.format.DateTimeFormatter
-
-import controllers.routes
-import models.{CheckMode, UserAnswers}
+import com.google.inject.Inject
+import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, NormalMode, TaxYear, TaxYearRange, UserAnswers}
 import pages._
 import play.api.i18n.Messages
-import play.twirl.api.{Html, HtmlFormat}
-import viewmodels.AnswerRow
-import CheckYourAnswersHelper._
+import play.twirl.api.HtmlFormat
+import viewmodels.{AnswerRow, AnswerSection}
 
-class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
+class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter) {
 
-  private def yesOrNo(answer: Boolean)(implicit messages: Messages): Html =
-    if (answer) {
-      HtmlFormat.escape(messages("site.yes"))
-    } else {
-      HtmlFormat.escape(messages("site.no"))
+  def earlierThan4YearsAnswers(userAnswers: UserAnswers)(implicit messages: Messages) : Option[AnswerSection] = {
+    val bound = answerRowConverter.bind(userAnswers)
+
+    val date = TaxYearRange(CYMinus4TaxYear).yearAtStart
+
+    val answerRows : Seq[AnswerRow] = Seq(
+      bound.yesNoQuestion(
+        CYMinusFourEarlierYearsYesNoPage,
+        "earlierYearsLiability",
+        controllers.routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode).url,
+        date
+      )
+    ).flatten
+
+    answerRows match {
+      case Nil => None
+      case _ =>
+        Some(
+          AnswerSection(
+            Some(HtmlFormat.escape(messages("earlierYearsLiability.checkYourAnswerSectionHeading", date))),
+            answerRows
+          )
+        )
     }
-}
+  }
 
-object CheckYourAnswersHelper {
+  def earlierThan3YearsAnswers(userAnswers: UserAnswers)(implicit messages: Messages) : Option[AnswerSection] = {
+    val bound = answerRowConverter.bind(userAnswers)
 
-  private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+    val date = TaxYearRange(CYMinus3TaxYear).yearAtStart
+
+    val answerRows : Seq[AnswerRow] = Seq(
+      bound.yesNoQuestion(
+        CYMinusThreeEarlierYearsYesNoPage,
+        "earlierYearsLiability",
+        controllers.routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode).url,
+        date
+      )
+    ).flatten
+
+    answerRows match {
+      case Nil => None
+      case _ =>
+        Some(
+          AnswerSection(
+            Some(HtmlFormat.escape(messages("earlierYearsLiability.checkYourAnswerSectionHeading", date))),
+            answerRows
+          )
+        )
+    }
+  }
+
+  def cyMinusTaxYearAnswers(userAnswers: UserAnswers, taxYear: TaxYear)
+                           (implicit messages: Messages): Option[AnswerSection] = {
+    val bound = answerRowConverter.bind(userAnswers)
+
+    val toRange = TaxYearRange(taxYear).toRange
+    val page = yesNoPageForTaxYear(taxYear)
+    val changeRoute = changeRouteForTaxYear(taxYear)
+
+    val answerRows : Seq[AnswerRow] = Seq(
+      bound.yesNoQuestion(
+        page,
+        s"${taxYear.messagePrefix}.liability",
+        changeRoute,
+        toRange
+      ),
+      bound.yesNoQuestion(
+        DidDeclareTaxToHMRCYesNoPage(taxYear),
+        "didDeclareToHMRC",
+        controllers.routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, taxYear).url,
+        toRange
+      )
+    ).flatten
+
+    answerRows match {
+      case Nil => None
+      case _ =>
+        Some(
+          AnswerSection(
+            Some(HtmlFormat.escape(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", toRange))),
+            answerRows
+          )
+        )
+    }
+  }
+
+  private def changeRouteForTaxYear(taxYear: TaxYear): String = taxYear match {
+    case CYMinus4TaxYear => controllers.routes.CYMinusFourLiabilityController.onPageLoad(NormalMode).url
+    case CYMinus3TaxYear => controllers.routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode).url
+    case CYMinus2TaxYear => controllers.routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode).url
+    case CYMinus1TaxYear => controllers.routes.CYMinusOneLiabilityController.onPageLoad(NormalMode).url
+  }
+
+  private def yesNoPageForTaxYear(taxYear: TaxYear) : QuestionPage[Boolean] = taxYear match {
+    case CYMinus4TaxYear => CYMinusFourYesNoPage
+    case CYMinus3TaxYear => CYMinusThreeYesNoPage
+    case CYMinus2TaxYear => CYMinusTwoYesNoPage
+    case CYMinus1TaxYear => CYMinusOneYesNoPage
+  }
+
 }

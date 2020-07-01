@@ -16,18 +16,75 @@
 
 package controllers
 
+import java.time.LocalDate
+
+import controllers.actions.Actions
+import handlers.ErrorHandler
 import javax.inject.Inject
+import models.requests.OptionalDataRequest
+import models.{NormalMode, UserAnswers}
+import pages.DateOfDeathPage
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import repositories.SessionRepository
+import services.TaxLiabilityService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import views.html.IndexView
+import uk.gov.hmrc.time.TaxYear
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class IndexController @Inject()(
                                  val controllerComponents: MessagesControllerComponents,
-                                 view: IndexView
-                               ) extends FrontendBaseController with I18nSupport {
+                                 taxLiabilityService: TaxLiabilityService,
+                                 actions: Actions,
+                                 repository: SessionRepository,
+                                 errorHandler: ErrorHandler
+                               )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    Ok(view())
+  private def startNewSession(dateOfDeath: LocalDate)(implicit request: OptionalDataRequest[AnyContent]) = for {
+    _ <- repository.resetCache(request.internalId)
+    newSession <- Future.fromTry {
+      UserAnswers.startNewSession(request.internalId)
+        .set(DateOfDeathPage, dateOfDeath)
+    }
+    _ <- repository.set(newSession)
+    result <- redirect()
+  } yield result
+
+  def onPageLoad: Action[AnyContent] = actions.authWithSession.async {
+    implicit request =>
+
+      taxLiabilityService.dateOfDeath() flatMap { dateOfDeath =>
+        val userAnswers: UserAnswers = request.userAnswers
+          .getOrElse(UserAnswers.startNewSession(request.internalId))
+
+        userAnswers.get(DateOfDeathPage) match {
+          case Some(cachedDate) =>
+            if (cachedDate.isEqual(dateOfDeath)) {
+              redirect()
+            } else {
+              startNewSession(dateOfDeath)
+            }
+          case None =>
+            startNewSession(dateOfDeath)
+        }
+      }
+  }
+
+  private def redirect()(implicit request: OptionalDataRequest[AnyContent]) : Future[Result] = {
+    taxLiabilityService.getFirstYearOfTaxLiability().map { taxLiabilityYear =>
+      val currentYear = TaxYear.current.startYear
+      val startYear = taxLiabilityYear.firstYearAvailable.startYear
+
+      (currentYear - startYear) match {
+        case 4 if taxLiabilityYear.earlierYears => Redirect(controllers.routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode))
+        case 4 => Redirect(controllers.routes.CYMinusFourLiabilityController.onPageLoad(NormalMode))
+        case 3 if taxLiabilityYear.earlierYears => Redirect(controllers.routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode))
+        case 3 => Redirect(controllers.routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode))
+        case 2 => Redirect(controllers.routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode))
+        case 1 => Redirect(controllers.routes.CYMinusOneLiabilityController.onPageLoad(NormalMode))
+        case _ => InternalServerError(errorHandler.internalServerErrorTemplate)
+      }
+    }
   }
 }

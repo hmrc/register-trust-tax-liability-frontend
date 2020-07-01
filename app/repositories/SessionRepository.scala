@@ -24,6 +24,7 @@ import models.UserAnswers
 import play.api.Configuration
 import play.api.libs.json._
 import play.modules.reactivemongo.ReactiveMongoApi
+import reactivemongo.api.WriteConcern
 import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.BSONDocument
 import reactivemongo.play.json.ImplicitBSONHandlers.JsObjectDocumentWriter
@@ -76,6 +77,17 @@ class DefaultSessionRepository @Inject()(
       }
     }
   }
+
+  override def resetCache(id: String): Future[Option[JsObject]] = {
+
+    val selector = Json.obj(
+      "_id" -> id
+    )
+
+    collection.flatMap(_.findAndRemove(selector, None, None, WriteConcern.Default, None, None, Seq.empty).map(
+      _.value
+    ))
+  }
 }
 
 trait SessionRepository {
@@ -85,4 +97,6 @@ trait SessionRepository {
   def get(id: String): Future[Option[UserAnswers]]
 
   def set(userAnswers: UserAnswers): Future[Boolean]
+
+  def resetCache(internalId: String): Future[Option[JsObject]]
 }

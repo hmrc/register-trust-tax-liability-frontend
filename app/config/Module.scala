@@ -17,7 +17,9 @@
 package config
 
 import com.google.inject.AbstractModule
+import config.annotations.TaxLiability
 import controllers.actions._
+import navigation.{Navigator, TaxLiabilityNavigator}
 import repositories.{DefaultSessionRepository, SessionRepository}
 
 class Module extends AbstractModule {
@@ -31,5 +33,6 @@ class Module extends AbstractModule {
     bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction]).asEagerSingleton()
 
     bind(classOf[SessionRepository]).to(classOf[DefaultSessionRepository]).asEagerSingleton()
+    bind(classOf[Navigator]).annotatedWith(classOf[TaxLiability]).to(classOf[TaxLiabilityNavigator]).asEagerSingleton()
   }
 }
