@@ -18,7 +18,7 @@ package controllers
 
 import config.annotations.TaxLiability
 import controllers.actions.Actions
-import forms.{YesNoFormProvider, YesNoFormProviderWithArguments}
+import forms.YesNoFormProviderWithArguments
 import javax.inject.Inject
 import models.{CYMinus3TaxYear, Mode, TaxYearRange}
 import navigation.Navigator

@@ -127,7 +127,3 @@ class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter) {
   }
 
 }
-
-object CheckYourAnswersHelper {
-
-}
