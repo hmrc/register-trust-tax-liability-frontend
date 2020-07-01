@@ -18,7 +18,6 @@ package services
 
 import java.time.LocalDate
 
-import akka.http.scaladsl.model.HttpHeader.ParsingResult.Ok
 import base.SpecBase
 import connectors.EstatesConnector
 import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, TaxLiabilityYear, YearReturnType}
@@ -28,6 +27,7 @@ import pages.DidDeclareTaxToHMRCYesNoPage
 import play.api.inject.bind
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.time.TaxYear
+import play.api.test.Helpers._
 
 import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.Future
@@ -331,7 +331,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
       val result = service.submitTaxLiability(userAnswers)
 
-      result.futureValue.status mustBe 200
+      result.futureValue.status mustBe OK
     }
 
     "clear out tax liability transforms when there is no liability" in {
@@ -353,7 +353,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
       val result = service.submitTaxLiability(userAnswers)
 
-      result.futureValue.status mustBe 200
+      result.futureValue.status mustBe OK
     }
   }
 
