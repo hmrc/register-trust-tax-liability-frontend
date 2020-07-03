@@ -359,7 +359,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
   "evaluate answers to CY-1, CY-2, CY-3 and CY-4" when {
 
-    "need to pay tax for CY-1, CY-2, CY-3, CY-4 years" must {
+    "need to pay tax for CY-1, CY-2, CY-3, CY-4 years (Before 5 October)" must {
 
       "generate a list with 4 tax consequences" in {
         val userAnswers = emptyUserAnswers
@@ -382,7 +382,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
           YearReturnType(taxReturnYear = "17", taxConsequence = true),
           YearReturnType(taxReturnYear = "18", taxConsequence = true),
           YearReturnType(taxReturnYear = "19", taxConsequence = true),
-          YearReturnType(taxReturnYear = "20", taxConsequence = true)
+          YearReturnType(taxReturnYear = "20", taxConsequence = false)
         )
       }
 
@@ -407,13 +407,13 @@ class TaxLiabilityServiceSpec extends SpecBase {
           YearReturnType(taxReturnYear = "17", taxConsequence = true),
           YearReturnType(taxReturnYear = "18", taxConsequence = true),
           YearReturnType(taxReturnYear = "19", taxConsequence = true),
-          YearReturnType(taxReturnYear = "20", taxConsequence = false)
+          YearReturnType(taxReturnYear = "20", taxConsequence = true)
         )
       }
 
     }
 
-    "need to pay tax for CY-1, CY-2" when {
+    "need to pay tax for CY-1, CY-2 (before 5 October)" when {
 
       "generate a list with 2 tax consequences" in {
         val userAnswers = emptyUserAnswers
@@ -432,7 +432,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         expected mustBe List(
           YearReturnType(taxReturnYear = "19", taxConsequence = true),
-          YearReturnType(taxReturnYear = "20", taxConsequence = true)
+          YearReturnType(taxReturnYear = "20", taxConsequence = false)
         )
       }
 
@@ -484,7 +484,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
         val expected = service.evaluateTaxYears(userAnswers)
 
         expected mustBe List(
-          YearReturnType(taxReturnYear = "20", taxConsequence = false)
+          YearReturnType(taxReturnYear = "20", taxConsequence = true)
         )
       }
 
@@ -507,7 +507,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
         val expected = service.evaluateTaxYears(userAnswers)
 
         expected mustBe List(
-          YearReturnType(taxReturnYear = "20", taxConsequence = true)
+          YearReturnType(taxReturnYear = "20", taxConsequence = false)
         )
       }
 
