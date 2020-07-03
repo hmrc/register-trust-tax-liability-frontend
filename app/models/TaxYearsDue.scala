@@ -37,9 +37,9 @@ case class TaxYearsDue(cyMinus4Due: Boolean, cyMinus3Due: Boolean, cyMinus2Due: 
     if (cyMinus1Due) {
 
       lazy val evaluateCYMinus1 : Boolean = if(today.isAfter(octoberDeadline)) {
-        !cyMinus1Due
-      } else {
         cyMinus1Due
+      } else {
+        !cyMinus1Due
       }
 
       val cyMinus1 = YearReturnType(taxReturnYear = CYMinus1TaxYear.asShortFinishYear(), evaluateCYMinus1)
