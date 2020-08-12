@@ -1,0 +1,83 @@
+checkYourAnswers.title = Check years of tax liability
+checkYourAnswers.heading = Check years of tax liability
+
+date.day = Day
+date.month = Month
+date.year = Year
+
+error.browser.title.prefix = Error:
+error.boolean = Please give an answer
+error.invalid_date = Give a correct date
+error.date.day_blank = Enter a day
+error.date.day_invalid = Give a correct day using numbers 1 to 31
+error.date.month_blank = Enter a month
+error.date.month_invalid = Give a correct month using numbers 1 to 12
+error.date.year_blank = Enter a year
+error.date.year_invalid = Give a correct year
+error.integer = Give an answer in whole numbers
+error.non_numeric = Give a value using only numbers
+error.number = Please enter a valid number
+error.required = Please enter a value
+error.summary.title = There is a problem
+
+session_expired.title = For your security, this service has been reset
+session_expired.heading = For your security, this service has been reset
+session_expired.guidance = The details you have given have been deleted because you did not continue the service for 15 minutes.
+
+site.back = Back
+site.delete = Remove
+site.edit = Change
+site.hidden-delete = Delete {0}
+site.hidden-edit = Change {0}
+site.no = No
+site.yes = Yes
+site.continue = Continue
+site.service_name = Register and Maintain an Estate
+site.returnToRegistrationProgress = Return to registration progress
+site.textarea.char_limit = (Limit is {0} characters)
+site.sign_out = Sign out
+
+unauthorised.title = You can’t access this service with this account
+unauthorised.heading = You can’t access this service with this account
+
+earlierYearsLiability.checkYourAnswerSectionHeading = Tax liability before {0}
+earlierYearsLiability.checkYourAnswersLabel = You must tell HMRC if the estate needed to pay any tax before {0}
+earlierYearsLiability.title = You must tell HMRC if the estate needed to pay any tax before {0}
+earlierYearsLiability.heading = You must tell HMRC if the estate needed to pay any tax before {0}
+earlierYearsLiability.p1 = You will need to send a schedule of any chargeable income.
+
+cyMinusFour.liability.checkYourAnswersLabel = Did the estate need to pay any tax from {0}?
+cyMinusFour.liability.title = Did the estate need to pay any tax from {0}?
+cyMinusFour.liability.heading = Did the estate need to pay any tax from {0}?
+cyMinusFour.liability.p1 = This does not include Inheritance Tax.
+cyMinusFour.liability.error.required = Select yes if the estate needed to pay any tax from {0} to {1}
+
+cyMinusThree.liability.checkYourAnswersLabel = Did the estate need to pay any tax from {0}?
+cyMinusThree.liability.title = Did the estate need to pay any tax from {0}?
+cyMinusThree.liability.heading = Did the estate need to pay any tax from {0}?
+cyMinusThree.liability.p1 = This does not include Inheritance Tax.
+cyMinusThree.liability.error.required = Select yes if the estate needed to pay any tax from {0} to {1}
+
+cyMinusTwo.liability.checkYourAnswersLabel = Did the estate need to pay any tax from {0}?
+cyMinusTwo.liability.title = Did the estate need to pay any tax from {0}?
+cyMinusTwo.liability.heading = Did the estate need to pay any tax from {0}?
+cyMinusTwo.liability.p1 = This does not include Inheritance Tax.
+cyMinusTwo.liability.error.required = Select yes if the estate needed to pay any tax from {0} to {1}
+
+cyMinusOne.liability.checkYourAnswersLabel = Did the estate need to pay any tax from {0}?
+cyMinusOne.liability.title = Did the estate need to pay any tax from {0}?
+cyMinusOne.liability.heading = Did the estate need to pay any tax from {0}?
+cyMinusOne.liability.p1 = This does not include Inheritance Tax.
+cyMinusOne.liability.error.required = Select yes if the estate needed to pay any tax from {0} to {1}
+
+taxYearAndRange = {0} and {1}
+taxYearToRange = {0} to {1}
+
+didDeclareToHMRC.checkYourAnswersLabel = Was the tax from {0} declared?
+didDeclareToHMRC.title = Was the tax from {0} declared?
+didDeclareToHMRC.heading = Was the tax from {0} declared?
+didDeclareToHMRC.p1 = You must have sent a full voluntary disclosure for {0}.
+didDeclareToHMRC.error.required = Select yes if the tax from {0} to {1} was declared
+
+taxLiabilityBetweenYears.checkYourAnswerSectionHeading = Tax liability {0}
+
