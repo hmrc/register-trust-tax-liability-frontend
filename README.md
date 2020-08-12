@@ -1,5 +1,5 @@
 
-# register-estate-tax-liability-frontend
+# register-trust-tax-liability-frontend
 
 This is a placeholder README.md for a new repository
 
