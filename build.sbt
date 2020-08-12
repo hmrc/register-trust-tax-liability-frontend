@@ -8,6 +8,7 @@ lazy val appName: String = "register-trust-tax-liability-frontend"
 
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin, SbtArtifactory)
+  .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(DefaultBuildSettings.scalaSettings: _*)
   .settings(DefaultBuildSettings.defaultSettings(): _*)
   .settings(SbtDistributablesPlugin.publishingSettings: _*)
@@ -16,6 +17,7 @@ lazy val root = (project in file("."))
   .settings(
     name := appName,
     RoutesKeys.routesImport += "models._",
+    RoutesKeys.routesImport += "models.requests.TaxYearBindable._",
     TwirlKeys.templateImports ++= Seq(
       "play.twirl.api.HtmlFormat",
       "play.twirl.api.HtmlFormat._",
@@ -25,7 +27,7 @@ lazy val root = (project in file("."))
       "models.Mode",
       "controllers.routes._"
     ),
-    PlayKeys.playDefaultPort := 9000,
+    PlayKeys.playDefaultPort := 8838,
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*filters.*;.*handlers.*;.*components.*;.*repositories.*;" +
       ".*BuildInfo.*;.*javascript.*;.*FrontendAuditConnector.*;.*Routes.*;.*GuiceInjector;" +
       ".*ControllerConfiguration;.*LanguageSwitchController",
@@ -44,7 +46,11 @@ lazy val root = (project in file("."))
     // concatenate js
     Concat.groups := Seq(
       "javascripts/registertrusttaxliabilityfrontend-app.js" ->
-        group(Seq("javascripts/show-hide-content.js", "javascripts/registertrusttaxliabilityfrontend.js"))
+        group(Seq(
+          "javascripts/show-hide-content.js",
+          "javascripts/registertrusttaxliabilityfrontend.js",
+          "javascripts/autocomplete/location-autocomplete.min.js"
+        ))
     ),
     // prevent removal of unused code which generates warning errors due to use of third-party libs
     uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
