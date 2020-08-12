@@ -61,6 +61,7 @@ class CheckYourAnswersController @Inject()(
 
       for {
         _ <- estatesService.submitTaxLiability(request.userAnswers)
+        //TODO: Set the task as completed?
       } yield {
         Redirect(appConfig.registerEstateHubOverview)
       }
