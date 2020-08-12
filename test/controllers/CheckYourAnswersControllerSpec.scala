@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import connectors.{EstatesConnector, EstatesStoreConnector}
+import connectors.EstatesConnector
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
@@ -70,15 +70,12 @@ class CheckYourAnswersControllerSpec extends SpecBase {
     "redirect to the next page when valid data is submitted" in {
 
       val mockService = mock[TaxLiabilityService]
-      val mockEstatesStoreConnector = mock[EstatesStoreConnector]
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[TaxLiabilityService].toInstance(mockService))
-        .overrides(bind[EstatesStoreConnector].toInstance(mockEstatesStoreConnector))
         .build()
 
       when(mockService.submitTaxLiability(any())(any())).thenReturn(Future.successful(HttpResponse(200)))
-      when(mockEstatesStoreConnector.setTaskComplete()(any(), any())).thenReturn(Future.successful(HttpResponse(200)))
 
       val controller = application.injector.instanceOf[CheckYourAnswersController]
 

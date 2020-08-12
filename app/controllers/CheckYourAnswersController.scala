@@ -18,7 +18,6 @@ package controllers
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.EstatesStoreConnector
 import controllers.actions.Actions
 import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -37,7 +36,6 @@ class CheckYourAnswersController @Inject()(
                                             checkYourAnswersHelper: CheckYourAnswersHelper,
                                             actions: Actions,
                                             estatesService: TaxLiabilityService,
-                                            estatesStoreConnector: EstatesStoreConnector,
                                             val appConfig : FrontendAppConfig
                                           ) extends FrontendBaseController with I18nSupport {
 
@@ -63,7 +61,6 @@ class CheckYourAnswersController @Inject()(
 
       for {
         _ <- estatesService.submitTaxLiability(request.userAnswers)
-        _ <- estatesStoreConnector.setTaskComplete()
       } yield {
         Redirect(appConfig.registerEstateHubOverview)
       }
