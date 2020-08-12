@@ -1,3 +1,19 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
 @import viewmodels.RadioOption
 
 @(
@@ -14,7 +30,7 @@
     <fieldset id="@{field.id}" @if(field.hasErrors || hint.nonEmpty){aria-describedby="@if(field.hasErrors){error-message-@{field.id}-input} @if(hint.nonEmpty){hint-@{field.id}}"}>
         @if(headingIsLegend){
             <legend>
-                <h1 @if(legendClass.nonEmpty){class="@legendClass" }else{class="heading-xlarge"}>@legend</h1>
+                <h1 @if(legendClass.nonEmpty){class="@legendClass" }else{class="heading-large"}>@legend</h1>
             </legend>
         } else {
             <legend @if(legendClass.nonEmpty){class="@legendClass" }>
@@ -43,7 +59,7 @@
                     name="@field(s"[$index]").name"
                     value="@value"
                         @if(answers.contains(value)) {checked="checked"}
-                        @if(trackGa) {data-journey-click="register-trust-tax-liability-frontend:click:@field(s"[$index]").id"}
+                        @if(trackGa) {data-journey-click="register-estate-tax-liability-frontend:click:@field(s"[$index]").id"}
                     />
                     <label for="@field(s"[$index]").id">
                     @messages(messageKey)
