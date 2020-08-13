@@ -34,7 +34,7 @@ class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter) {
       bound.yesNoQuestion(
         CYMinusFourEarlierYearsYesNoPage,
         "earlierYearsLiability",
-        controllers.routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode).url,
+        Some(controllers.routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode).url),
         date
       )
     ).flatten
@@ -44,7 +44,7 @@ class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter) {
       case _ =>
         Some(
           AnswerSection(
-            Some(HtmlFormat.escape(messages("earlierYearsLiability.checkYourAnswerSectionHeading", date))),
+            Some(messages("earlierYearsLiability.checkYourAnswerSectionHeading", date)),
             answerRows
           )
         )
@@ -60,7 +60,7 @@ class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter) {
       bound.yesNoQuestion(
         CYMinusThreeEarlierYearsYesNoPage,
         "earlierYearsLiability",
-        controllers.routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode).url,
+        Some(controllers.routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode).url),
         date
       )
     ).flatten
@@ -70,7 +70,7 @@ class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter) {
       case _ =>
         Some(
           AnswerSection(
-            Some(HtmlFormat.escape(messages("earlierYearsLiability.checkYourAnswerSectionHeading", date))),
+            Some(messages("earlierYearsLiability.checkYourAnswerSectionHeading", date)),
             answerRows
           )
         )
@@ -89,13 +89,13 @@ class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter) {
       bound.yesNoQuestion(
         page,
         s"${taxYear.messagePrefix}.liability",
-        changeRoute,
+        Some(changeRoute),
         toRange
       ),
       bound.yesNoQuestion(
         DidDeclareTaxToHMRCYesNoPage(taxYear),
         "didDeclareToHMRC",
-        controllers.routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, taxYear).url,
+        Some(controllers.routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, taxYear).url),
         toRange
       )
     ).flatten
@@ -105,7 +105,7 @@ class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter) {
       case _ =>
         Some(
           AnswerSection(
-            Some(HtmlFormat.escape(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", toRange))),
+            Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", toRange)),
             answerRows
           )
         )

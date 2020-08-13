@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,25 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import viewmodels.AnswerRow
+package models
 
-@(row: AnswerRow)(implicit messages: Messages)
+sealed trait Status
 
-<li>
-    <div class="cya-question">@messages(row.label, row.labelArg)</div>
-    <div class="cya-answer">
-    @row.answer
-    </div>
-    @if(row.canEdit) {
-        <div class="cya-change">
-        @row.changeUrl.map { url =>
-            <a href='@url'>
-                <span aria-hidden="true">@messages("site.edit")</span>
-                <span class="visually-hidden">@messages("site.hidden-edit", messages(row.label, row.labelArg))</span>
-            </a>
-        }
-        </div>
-    }
-</li>
+object Status extends Enumerable.Implicits {
+
+  case object Completed extends WithName("completed") with Status
+
+  case object InProgress extends WithName("progress") with Status
+
+  val values: Set[Status] = Set(
+    Completed, InProgress
+  )
+
+  implicit val enumerable: Enumerable[Status] =
+    Enumerable(values.toSeq.map(v => v.toString -> v): _*)
+}

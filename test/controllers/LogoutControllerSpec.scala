@@ -33,7 +33,7 @@ class LogoutControllerSpec extends FreeSpec with MustMatchers with GuiceOneAppPe
       val result = route(app, request).value
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustBe "http://localhost:9514/feedback/estates"
+      redirectLocation(result).value mustBe "http://localhost:9514/feedback/trusts"
       session(result) mustBe empty
     }
   }

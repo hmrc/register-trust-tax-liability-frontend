@@ -34,11 +34,12 @@ import repositories.SessionRepository
 
 trait SpecBase extends PlaySpec with GuiceOneAppPerSuite with Mocked with TryValues with ScalaFutures with IntegrationPatience {
 
-  val userAnswersId = "id"
+  val draftId: String = "draftId"
+  val userInternalId = "id"
 
   val fakeNavigator = new FakeNavigator()
 
-  def emptyUserAnswers = UserAnswers(userAnswersId, Json.obj())
+  def emptyUserAnswers = UserAnswers(draftId, Json.obj(), userInternalId)
 
   def onwardRoute = Call("GET", "/foo")
 

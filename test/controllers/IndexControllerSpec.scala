@@ -41,6 +41,8 @@ class IndexControllerSpec extends SpecBase {
       override def now: LocalDate = date
     }
 
+    val draftId = "draftId"
+    
     "for an existing session" when {
 
       "continue session if date of death is not changed" in {
@@ -61,7 +63,7 @@ class IndexControllerSpec extends SpecBase {
 
         when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
-        val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
         val result = route(application, request).value
 
@@ -93,7 +95,7 @@ class IndexControllerSpec extends SpecBase {
 
         when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
-        val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
         val result = route(application, request).value
 
@@ -125,7 +127,7 @@ class IndexControllerSpec extends SpecBase {
 
         when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
-        val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
         val result = route(application, request).value
 
@@ -155,7 +157,7 @@ class IndexControllerSpec extends SpecBase {
 
         when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
-        val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
         val result = route(application, request).value
 
@@ -185,7 +187,7 @@ class IndexControllerSpec extends SpecBase {
 
         when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
-        val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
         val result = route(application, request).value
 
@@ -216,7 +218,7 @@ class IndexControllerSpec extends SpecBase {
 
           when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
-          val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+          val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
           val result = route(application, request).value
 
@@ -243,7 +245,7 @@ class IndexControllerSpec extends SpecBase {
 
           when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
-          val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+          val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
           val result = route(application, request).value
 
@@ -275,7 +277,7 @@ class IndexControllerSpec extends SpecBase {
 
           when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
-          val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+          val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
           val result = route(application, request).value
 
@@ -302,7 +304,7 @@ class IndexControllerSpec extends SpecBase {
 
           when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
-          val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+          val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
           val result = route(application, request).value
 
@@ -334,7 +336,7 @@ class IndexControllerSpec extends SpecBase {
 
           when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
-          val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+          val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
           val result = route(application, request).value
 
@@ -361,7 +363,7 @@ class IndexControllerSpec extends SpecBase {
 
           when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
-          val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+          val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
           val result = route(application, request).value
 

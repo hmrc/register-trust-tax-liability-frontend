@@ -41,32 +41,32 @@ class IndexController @Inject()(
                                  errorHandler: ErrorHandler
                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  private def startNewSession(dateOfDeath: LocalDate)(implicit request: OptionalDataRequest[AnyContent]) = for {
+  private def startNewSession(draftId: String, dateOfDeath: LocalDate)(implicit request: OptionalDataRequest[AnyContent]) = for {
     _ <- repository.resetCache(request.internalId)
     newSession <- Future.fromTry {
-      UserAnswers.startNewSession(request.internalId)
+      UserAnswers.startNewSession(draftId, request.internalId)
         .set(DateOfDeathPage, dateOfDeath)
     }
     _ <- repository.set(newSession)
     result <- redirect()
   } yield result
 
-  def onPageLoad: Action[AnyContent] = actions.authWithSession.async {
+  def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithSession.async {
     implicit request =>
 
       taxLiabilityService.dateOfDeath() flatMap { dateOfDeath =>
         val userAnswers: UserAnswers = request.userAnswers
-          .getOrElse(UserAnswers.startNewSession(request.internalId))
+          .getOrElse(UserAnswers.startNewSession(draftId, request.internalId))
 
         userAnswers.get(DateOfDeathPage) match {
           case Some(cachedDate) =>
             if (cachedDate.isEqual(dateOfDeath)) {
               redirect()
             } else {
-              startNewSession(dateOfDeath)
+              startNewSession(draftId, dateOfDeath)
             }
           case None =>
-            startNewSession(dateOfDeath)
+            startNewSession(draftId, dateOfDeath)
         }
       }
   }
