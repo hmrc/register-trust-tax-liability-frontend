@@ -27,8 +27,6 @@ import play.api.test.Helpers
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.WireMockHelper
 
-import scala.concurrent.ExecutionContext
-
 class TrustsConnectorSpec extends SpecBase
   with ScalaFutures
   with IntegrationPatience
@@ -49,7 +47,6 @@ class TrustsConnectorSpec extends SpecBase
             ): _*
           ).build()
 
-        implicit def ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
 
         val connector = application.injector.instanceOf[TrustsConnector]
 
@@ -82,7 +79,6 @@ class TrustsConnectorSpec extends SpecBase
             ): _*
           ).build()
 
-        implicit def ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
 
         val connector = application.injector.instanceOf[TrustsConnector]
 
@@ -112,7 +108,6 @@ class TrustsConnectorSpec extends SpecBase
           ): _*
         ).build()
 
-      implicit def ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
 
       val connector = application.injector.instanceOf[TrustsConnector]
 
@@ -147,8 +142,6 @@ class TrustsConnectorSpec extends SpecBase
             "auditing.enabled" -> false
           ): _*
         ).build()
-
-      implicit def ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
 
       val connector = application.injector.instanceOf[TrustsConnector]
 

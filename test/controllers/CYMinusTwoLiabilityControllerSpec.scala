@@ -49,7 +49,7 @@ class CYMinusTwoLiabilityControllerSpec extends SpecBase with MockitoSugar {
 
   val taxYear: String = s"$taxYearStart to $taxYearEnd"
 
-  lazy val cyMinusTwoLiabilityControllerRoute = routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode).url
+  lazy val cyMinusTwoLiabilityControllerRoute = routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode, draftId).url
 
   "CYMinusTwoLiability Controller" must {
 
@@ -68,7 +68,7 @@ class CYMinusTwoLiabilityControllerSpec extends SpecBase with MockitoSugar {
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(formWithArgs, taxYear, NormalMode)(fakeRequest, messages).toString
+        view(formWithArgs,draftId , taxYear, NormalMode)(fakeRequest, messages).toString
 
       application.stop()
     }
@@ -90,7 +90,7 @@ class CYMinusTwoLiabilityControllerSpec extends SpecBase with MockitoSugar {
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(formWithArgs.fill(true), taxYear, NormalMode)(fakeRequest, messages).toString
+        view(formWithArgs.fill(true),draftId , taxYear, NormalMode)(fakeRequest, messages).toString
 
       application.stop()
     }
@@ -138,7 +138,7 @@ class CYMinusTwoLiabilityControllerSpec extends SpecBase with MockitoSugar {
       status(result) mustEqual BAD_REQUEST
 
       contentAsString(result) mustEqual
-        view(boundForm, taxYear, NormalMode)(fakeRequest, messages).toString
+        view(boundForm,draftId , taxYear, NormalMode)(fakeRequest, messages).toString
 
       application.stop()
     }

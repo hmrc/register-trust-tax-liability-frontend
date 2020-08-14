@@ -44,19 +44,17 @@ class IndexController @Inject()(
                                  config: FrontendAppConfig
                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  private def startNewSession(draftId: String, dateOfDeath: LocalDate)
-                             (implicit request: OptionalDataRequest[AnyContent]) =
-    for {
-      _ <- repository.resetCache(request.internalId)
-      newSession <- Future.fromTry {
-        UserAnswers.startNewSession(draftId, request.internalId)
-          .set(DateOfDeathPage, dateOfDeath)
-      }
-      _ <- repository.set(newSession)
-      result <- redirect()
+  private def startNewSession(draftId: String, dateOfDeath: LocalDate)(implicit request: OptionalDataRequest[AnyContent]) = for {
+    _ <- repository.resetCache(request.internalId)
+    newSession <- Future.fromTry {
+      UserAnswers.startNewSession(draftId, request.internalId)
+        .set(DateOfDeathPage, dateOfDeath)
+    }
+    _ <- repository.set(newSession)
+    result <- redirect(draftId)
   } yield result
 
-  def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithSession.async {
+  def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithSession(draftId).async {
     implicit request =>
 
       taxLiabilityService.startDate() flatMap {
@@ -67,7 +65,7 @@ class IndexController @Inject()(
             userAnswers.get(DateOfDeathPage) match {
               case Some(cachedDate) =>
                 if (cachedDate.isEqual(date.startDate)) {
-                  redirect()
+                  redirect(draftId)
                 } else {
                   startNewSession(draftId, date.startDate)
                 }
@@ -80,7 +78,7 @@ class IndexController @Inject()(
         }
   }
 
-  private def redirect()(implicit request: OptionalDataRequest[AnyContent]) : Future[Result] = {
+  private def redirect(draftId: String)(implicit request: OptionalDataRequest[AnyContent]) : Future[Result] = {
     taxLiabilityService.getFirstYearOfTaxLiability().map { taxLiabilityYear =>
 
       val currentYear = TaxYear.current.startYear
@@ -89,20 +87,13 @@ class IndexController @Inject()(
       val numberOfYearsToAsk = currentYear - startYear
 
       numberOfYearsToAsk match {
-        case 4 if taxLiabilityYear.hasEarlierYearsToDeclare =>
-          Redirect(controllers.routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode))
-        case 4 =>
-          Redirect(controllers.routes.CYMinusFourLiabilityController.onPageLoad(NormalMode))
-        case 3 if taxLiabilityYear.hasEarlierYearsToDeclare =>
-          Redirect(controllers.routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode))
-        case 3 =>
-          Redirect(controllers.routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode))
-        case 2 =>
-          Redirect(controllers.routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode))
-        case 1 =>
-          Redirect(controllers.routes.CYMinusOneLiabilityController.onPageLoad(NormalMode))
-        case _ =>
-          InternalServerError(errorHandler.internalServerErrorTemplate)
+        case 4 if taxLiabilityYear.hasEarlierYearsToDeclare => Redirect(controllers.routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId))
+        case 4 => Redirect(controllers.routes.CYMinusFourLiabilityController.onPageLoad(NormalMode, draftId))
+        case 3 if taxLiabilityYear.hasEarlierYearsToDeclare => Redirect(controllers.routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId))
+        case 3 => Redirect(controllers.routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode, draftId))
+        case 2 => Redirect(controllers.routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode, draftId))
+        case 1 => Redirect(controllers.routes.CYMinusOneLiabilityController.onPageLoad(NormalMode, draftId))
+        case _ => InternalServerError(errorHandler.internalServerErrorTemplate)
       }
     }
   }

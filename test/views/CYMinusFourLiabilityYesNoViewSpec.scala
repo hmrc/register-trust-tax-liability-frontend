@@ -35,7 +35,7 @@ class CYMinusFourLiabilityYesNoViewSpec extends YesNoViewBehaviours {
     val view = viewFor[CYMinusFourYesNoView](Some(emptyUserAnswers))
 
     def applyView(form: Form[_]): HtmlFormat.Appendable =
-      view.apply(form, taxYear, NormalMode)(fakeRequest, messages)
+      view.apply(form, draftId, taxYear, NormalMode)(fakeRequest, messages)
 
     behave like dynamicTitlePage(applyView(form), messageKeyPrefix, taxYear)
 

@@ -42,7 +42,7 @@ class DidDeclareTaxToHMRCController @Inject()(
 
   def form(ranges: Seq[String]) = formProvider.withPrefix("didDeclareToHMRC", ranges)
 
-  def onPageLoad(mode: Mode, taxYear: TaxYear): Action[AnyContent] = actions.authWithData {
+  def onPageLoad(mode: Mode, draftId: String, taxYear: TaxYear): Action[AnyContent] = actions.authWithData(draftId) {
     implicit request =>
       val range = TaxYearRange(taxYear)
 
@@ -53,22 +53,22 @@ class DidDeclareTaxToHMRCController @Inject()(
         case Some(value) => f.fill(value)
       }
 
-      Ok(view(preparedForm, taxYear, range.toRange, mode))
+      Ok(view(preparedForm, draftId, taxYear, range.toRange, mode))
   }
 
-  def onSubmit(mode: Mode, taxYear: TaxYear): Action[AnyContent] = actions.authWithData.async {
+  def onSubmit(mode: Mode, draftId: String, taxYear: TaxYear): Action[AnyContent] = actions.authWithData(draftId).async {
     implicit request =>
       val range = TaxYearRange(taxYear)
       form(Seq(range.startYear, range.endYear)).bindFromRequest().fold(
         formWithErrors => {
-          Future.successful(BadRequest(view(formWithErrors, taxYear, range.toRange, mode)))
+          Future.successful(BadRequest(view(formWithErrors, draftId, taxYear, range.toRange, mode)))
         },
         value => {
           val page = DidDeclareTaxToHMRCYesNoPage(taxYear)
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(page, value))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(page, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(page, draftId, mode, updatedAnswers))
         }
       )
   }

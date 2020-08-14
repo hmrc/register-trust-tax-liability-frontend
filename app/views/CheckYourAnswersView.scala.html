@@ -24,13 +24,13 @@
     appConfig: FrontendAppConfig
 )
 
-@(answerSections: Seq[Section])(implicit request: Request[_], messages: Messages)
+@(answerSections: Seq[Section], draftId: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("checkYourAnswers.title")
     ) {
 
-    @formHelper(action = CheckYourAnswersController.onSubmit(), 'autoComplete -> "off") {
+    @formHelper(action = CheckYourAnswersController.onSubmit(draftId), 'autoComplete -> "off") {
 
     @components.back_link()
 

@@ -22,14 +22,14 @@ import play.api.mvc.{ActionBuilder, AnyContent}
 
 class Actions @Inject()(
                          identify: IdentifierAction,
-                         getData: DataRetrievalAction,
+                         getData: DraftIdRetrievalActionProvider,
                          requireData: DataRequiredAction
                        ) {
 
-  def authWithSession: ActionBuilder[OptionalDataRequest, AnyContent] =
-    identify andThen getData
+  def authWithSession(draftId: String): ActionBuilder[OptionalDataRequest, AnyContent] =
+    identify andThen getData(draftId)
 
-  def authWithData: ActionBuilder[DataRequest, AnyContent] =
-    authWithSession andThen requireData
+  def authWithData(draftId: String): ActionBuilder[DataRequest, AnyContent] =
+    authWithSession(draftId) andThen requireData
 
 }
