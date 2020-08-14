@@ -16,25 +16,23 @@
 
 package connectors
 
-import java.time.LocalDate
-
 import config.FrontendAppConfig
 import javax.inject.Inject
-import models.YearsReturns
+import models.{StartDate, YearsReturns}
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class EstatesConnector @Inject()(http: HttpClient, config: FrontendAppConfig) {
+class TrustsConnector @Inject()(http: HttpClient, config: FrontendAppConfig) {
 
-  private val getDateOfDeathUrl = s"${config.estatesUrl}/estates/date-of-death"
+  private def getTrustStartDateUrl(draftId: String) = s"${config.trustsUrl}/trusts/register/submission-drafts/$draftId/when-trust-setup"
 
   private val postTaxConsequences = s"${config.estatesUrl}/estates/tax-liability"
 
-  def getDateOfDeath()(implicit hc: HeaderCarrier, ec : ExecutionContext): Future[LocalDate] = {
-    http.GET[LocalDate](getDateOfDeathUrl)
+  def getTrustStartDate()(implicit hc: HeaderCarrier, ec : ExecutionContext): Future[Option[StartDate]] = {
+    http.GET[Option[StartDate]](getTrustStartDateUrl("draft-id"))
   }
 
   def saveTaxConsequence(taxYears: YearsReturns)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {

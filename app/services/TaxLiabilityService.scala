@@ -18,16 +18,16 @@ package services
 
 import java.time.LocalDate
 
-import connectors.EstatesConnector
+import connectors.TrustsConnector
 import javax.inject.Inject
-import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, TaxLiabilityYear, TaxYearsDue, UserAnswers, YearReturnType, YearsReturns}
+import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, StartDate, TaxLiabilityYear, TaxYearsDue, UserAnswers, YearReturnType, YearsReturns}
 import pages.DidDeclareTaxToHMRCYesNoPage
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.time.TaxYear
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxLiabilityService @Inject()(estatesConnector: EstatesConnector,
+class TaxLiabilityService @Inject()(estatesConnector: TrustsConnector,
                                     localDateService: LocalDateService
                                    )(implicit ec: ExecutionContext) {
 
@@ -74,19 +74,24 @@ class TaxLiabilityService @Inject()(estatesConnector: EstatesConnector,
   }
 
   def getTaxYearOfDeath()(implicit hc: HeaderCarrier): Future[TaxYear] = {
-    dateOfDeath().map { dateOfDeath =>
-      val beforeApril = dateOfDeath.getMonthValue < APRIL
-      val between1stAnd5thApril = dateOfDeath.getMonthValue == APRIL && dateOfDeath.getDayOfMonth < TAX_YEAR_START_DAY
 
-      if (beforeApril || between1stAnd5thApril) {
-        TaxYear(dateOfDeath.getYear - 1)
-      } else {
-        TaxYear(dateOfDeath.getYear)
-      }
+    startDate().map {
+      case Some(date) =>
+        val beforeApril = date.startDate.getMonthValue < APRIL
+        val between1stAnd5thApril = date.startDate.getMonthValue == APRIL && date.startDate.getDayOfMonth < TAX_YEAR_START_DAY
+
+        if (beforeApril || between1stAnd5thApril) {
+          TaxYear(date.startDate.getYear - 1)
+        } else {
+          TaxYear(date.startDate.getYear)
+        }
+      case None =>
+        throw new RuntimeException("No start date available") // DON'T DO THIS!
     }
   }
 
-  def dateOfDeath()(implicit hc: HeaderCarrier): Future[LocalDate] = estatesConnector.getDateOfDeath()
+  def startDate()(implicit hc: HeaderCarrier): Future[Option[StartDate]] =
+    estatesConnector.getTrustStartDate()
 
   def evaluateTaxYears(userAnswers: UserAnswers): List[YearReturnType] = {
 

@@ -19,17 +19,16 @@ package controllers
 import java.time.LocalDate
 
 import base.SpecBase
-import connectors.EstatesConnector
-import models.NormalMode
+import connectors.TrustsConnector
+import models.{NormalMode, StartDate}
 import org.mockito.Matchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, verify, when}
 import pages.DateOfDeathPage
 import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.LocalDateService
-import org.mockito.Mockito.{times, verify}
-import play.api.libs.json.Json
 
 import scala.concurrent.Future
 
@@ -45,21 +44,21 @@ class IndexControllerSpec extends SpecBase {
     
     "for an existing session" when {
 
-      "continue session if date of death is not changed" in {
-        val mockEstatesConnector = mock[EstatesConnector]
+      "continue session if trust start date is not changed" in {
+        val mockEstatesConnector = mock[TrustsConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
-        val initialDateOfDeath = LocalDate.of(2015, 5, 1)
+        val initialStartDate = LocalDate.of(2015, 5, 1)
 
-        val existingUserAnswers = emptyUserAnswers.set(DateOfDeathPage, initialDateOfDeath).success.value
+        val existingUserAnswers = emptyUserAnswers.set(DateOfDeathPage, initialStartDate).success.value
 
         val application = applicationBuilder(userAnswers = Some(existingUserAnswers))
-          .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+          .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
-        when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(initialDateOfDeath))
+        when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(initialStartDate))))
 
         when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
@@ -75,23 +74,23 @@ class IndexControllerSpec extends SpecBase {
         application.stop()
       }
 
-      "clear user answers if the user returns and the date of death has changed" in {
-        val mockEstatesConnector = mock[EstatesConnector]
+      "clear user answers if the user returns and the trust start date has changed" in {
+        val mockEstatesConnector = mock[TrustsConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
-        val initialDateOfDeath = LocalDate.of(2015, 5, 1)
+        val initialStartDate = LocalDate.of(2015, 5, 1)
 
-        val existingUserAnswers = emptyUserAnswers.set(DateOfDeathPage, initialDateOfDeath).success.value
+        val existingUserAnswers = emptyUserAnswers.set(DateOfDeathPage, initialStartDate).success.value
 
         val application = applicationBuilder(userAnswers = Some(existingUserAnswers))
-          .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+          .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
         val newDateOfDeath = LocalDate.of(2018, 5, 1)
 
-        when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(newDateOfDeath))
+        when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(newDateOfDeath))))
 
         when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
@@ -108,22 +107,47 @@ class IndexControllerSpec extends SpecBase {
       }
     }
 
+    "redirect back to register task list if no start date" in {
+
+      val mockEstatesConnector = mock[TrustsConnector]
+
+      val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
+
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
+        .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
+        .build()
+
+      when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(None))
+
+      when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
+
+      val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustBe "http://localhost:8822/register-an-estate/registration-progress"
+
+      application.stop()
+    }
+
     "redirect to CY-4 Earlier years liability controller" when {
 
-      "date of death is more than four years ago and current date is before 23rd Dec" in {
+      "trust start date is more than four years ago and current date is before 23rd Dec" in {
 
-        val mockEstatesConnector = mock[EstatesConnector]
+        val mockEstatesConnector = mock[TrustsConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+          .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
-        val dateOfDeath = LocalDate.of(2015, 5, 1)
+        val startDate = LocalDate.of(2015, 5, 1)
 
-        when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+        when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
         when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
@@ -140,20 +164,20 @@ class IndexControllerSpec extends SpecBase {
 
     "redirect to CY-4 liability controller" when {
 
-      "date of death is four years ago and current date is before 23rd Dec" in {
+      "trust start date is four years ago and current date is before 23rd Dec" in {
 
-        val mockEstatesConnector = mock[EstatesConnector]
+        val mockEstatesConnector = mock[TrustsConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+          .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
-        val dateOfDeath = LocalDate.of(2016, 5, 1)
+        val startDate = LocalDate.of(2016, 5, 1)
 
-        when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+        when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
         when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
@@ -170,20 +194,20 @@ class IndexControllerSpec extends SpecBase {
 
     "redirect to CY-3 Earlier years liability controller" when {
 
-      "date of death is more than three years ago and current date is after 23rd Dec" in {
+      "trust start date is more than three years ago and current date is after 23rd Dec" in {
 
-        val mockEstatesConnector = mock[EstatesConnector]
+        val mockEstatesConnector = mock[TrustsConnector]
 
         val dateAfterDec23rd = LocalDate.of(2020, 12, 25)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+          .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateAfterDec23rd)))
           .build()
 
-        val dateOfDeath = LocalDate.of(2015, 5, 1)
+        val startDate = LocalDate.of(2015, 5, 1)
 
-        when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+        when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
         when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
@@ -200,21 +224,22 @@ class IndexControllerSpec extends SpecBase {
 
     "redirect to CY-3 liability controller" when {
 
-      "date of death is three years ago" when {
+      "trust start date is three years ago" when {
+
         "current date is before 23rd Dec" in {
 
-          val mockEstatesConnector = mock[EstatesConnector]
+          val mockEstatesConnector = mock[TrustsConnector]
 
           val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
           val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+            .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
             .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
             .build()
 
-          val dateOfDeath = LocalDate.of(2017, 5, 1)
+          val trustStartDate = LocalDate.of(2017, 5, 1)
 
-          when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+          when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(trustStartDate))))
 
           when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
@@ -230,18 +255,18 @@ class IndexControllerSpec extends SpecBase {
 
         "current date is after 23rd Dec" in {
 
-          val mockEstatesConnector = mock[EstatesConnector]
+          val mockEstatesConnector = mock[TrustsConnector]
 
           val dateAfterDec23rd = LocalDate.of(2020, 12, 25)
 
           val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+            .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
             .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateAfterDec23rd)))
             .build()
 
-          val dateOfDeath = LocalDate.of(2017, 5, 1)
+          val startDate = LocalDate.of(2017, 5, 1)
 
-          when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+          when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
           when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
@@ -259,21 +284,22 @@ class IndexControllerSpec extends SpecBase {
 
     "redirect to CY-2 liability controller" when {
 
-      "date of death is two years ago" when {
+      "trust start date is two years ago" when {
+
         "current date is before 23rd Dec" in {
 
-          val mockEstatesConnector = mock[EstatesConnector]
+          val mockEstatesConnector = mock[TrustsConnector]
 
           val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
           val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+            .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
             .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
             .build()
 
-          val dateOfDeath = LocalDate.of(2018, 5, 1)
+          val startDate = LocalDate.of(2018, 5, 1)
 
-          when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+          when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
           when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
@@ -289,18 +315,18 @@ class IndexControllerSpec extends SpecBase {
 
         "current date is after 23rd Dec" in {
 
-          val mockEstatesConnector = mock[EstatesConnector]
+          val mockEstatesConnector = mock[TrustsConnector]
 
           val dateAfterDec23rd = LocalDate.of(2020, 12, 25)
 
           val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+            .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
             .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateAfterDec23rd)))
             .build()
 
-          val dateOfDeath = LocalDate.of(2018, 5, 1)
+          val startDate = LocalDate.of(2018, 5, 1)
 
-          when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+          when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
           when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
@@ -318,21 +344,22 @@ class IndexControllerSpec extends SpecBase {
 
     "redirect to CY-1 liability controller" when {
 
-      "date of death is one years ago" when {
+      "trust start date is one years ago" when {
+
         "current date is before 23rd Dec" in {
 
-          val mockEstatesConnector = mock[EstatesConnector]
+          val mockEstatesConnector = mock[TrustsConnector]
 
           val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
           val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+            .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
             .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
             .build()
 
-          val dateOfDeath = LocalDate.of(2019, 5, 1)
+          val startDate = LocalDate.of(2019, 5, 1)
 
-          when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+          when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
           when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 
@@ -348,18 +375,18 @@ class IndexControllerSpec extends SpecBase {
 
         "current date is after 23rd Dec" in {
 
-          val mockEstatesConnector = mock[EstatesConnector]
+          val mockEstatesConnector = mock[TrustsConnector]
 
           val dateAfterDec23rd = LocalDate.of(2020, 12, 25)
 
           val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+            .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
             .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateAfterDec23rd)))
             .build()
 
-          val dateOfDeath = LocalDate.of(2019, 5, 1)
+          val startDate = LocalDate.of(2019, 5, 1)
 
-          when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+          when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
           when(sessionRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
 

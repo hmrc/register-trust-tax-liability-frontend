@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import connectors.EstatesConnector
+import connectors.TrustsConnector
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind

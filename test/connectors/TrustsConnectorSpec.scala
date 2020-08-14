@@ -23,52 +23,84 @@ import com.github.tomakehurst.wiremock.client.WireMock.{okJson, urlEqualTo, _}
 import models.{YearReturnType, YearsReturns}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import play.api.libs.json.Json
-import play.api.test.Helpers._
+import play.api.test.Helpers
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.WireMockHelper
 
 import scala.concurrent.ExecutionContext
 
-class EstatesConnectorSpec extends SpecBase
+class TrustsConnectorSpec extends SpecBase
   with ScalaFutures
   with IntegrationPatience
   with WireMockHelper {
 
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
-  "estates connector" must {
+  "trusts connector" when {
 
-    "return OK with the deceased date of death" in {
-      val application = applicationBuilder()
-        .configure(
-          Seq(
-            "microservice.services.estates.port" -> server.port(),
-            "auditing.enabled" -> false
-          ): _*
-        ).build()
+    ".getStartDate" must {
 
-      implicit def ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
+      "parse start date of the trust" in {
+        val application = applicationBuilder()
+          .configure(
+            Seq(
+              "microservice.services.trusts.port" -> server.port(),
+              "auditing.enabled" -> false
+            ): _*
+          ).build()
 
-      val connector = application.injector.instanceOf[EstatesConnector]
+        implicit def ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
 
-      val json = Json.parse(
-        """
-          |"2010-10-10"
-          |""".stripMargin)
+        val connector = application.injector.instanceOf[TrustsConnector]
 
-      server.stubFor(
-        get(urlEqualTo("/estates/date-of-death"))
-          .willReturn(okJson(json.toString))
-      )
+        val json = Json.parse(
+          """
+            |{"startDate": "2010-10-10"}
+            |""".stripMargin)
 
-      val futureResult = connector.getDateOfDeath()
+        server.stubFor(
+          get(urlEqualTo("/trusts/register/submission-drafts/draft-id/when-trust-setup"))
+            .willReturn(okJson(json.toString))
+        )
 
-      whenReady(futureResult) {
-        r =>
-          r mustBe LocalDate.of(2010,10,10)
+        val futureResult = connector.getTrustStartDate()
+
+        whenReady(futureResult) {
+          r =>
+            r.value.startDate mustBe LocalDate.of(2010,10,10)
+        }
+
+        application.stop()
       }
 
-      application.stop()
+      "return None when no start date is present" in {
+        val application = applicationBuilder()
+          .configure(
+            Seq(
+              "microservice.services.trusts.port" -> server.port(),
+              "auditing.enabled" -> false
+            ): _*
+          ).build()
+
+        implicit def ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
+
+        val connector = application.injector.instanceOf[TrustsConnector]
+
+        server.stubFor(
+          get(urlEqualTo("/trusts/register/submission-drafts/draft-id/when-trust-setup"))
+            .willReturn(status(Helpers.NOT_FOUND))
+        )
+
+        val futureResult = connector.getTrustStartDate()
+
+        whenReady(futureResult) {
+          r =>
+            r mustNot be(defined)
+        }
+
+        application.stop()
+      }
+
     }
 
     "save tax consequences" in {
@@ -82,7 +114,7 @@ class EstatesConnectorSpec extends SpecBase
 
       implicit def ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
 
-      val connector = application.injector.instanceOf[EstatesConnector]
+      val connector = application.injector.instanceOf[TrustsConnector]
 
       server.stubFor(
         post(urlEqualTo("/estates/tax-liability"))
@@ -101,7 +133,7 @@ class EstatesConnectorSpec extends SpecBase
 
       whenReady(futureResult) {
         r =>
-          r.status mustBe OK
+          r.status mustBe Helpers.OK
       }
 
       application.stop()
@@ -118,7 +150,7 @@ class EstatesConnectorSpec extends SpecBase
 
       implicit def ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
 
-      val connector = application.injector.instanceOf[EstatesConnector]
+      val connector = application.injector.instanceOf[TrustsConnector]
 
       server.stubFor(
         post(urlEqualTo("/estates/reset-tax-liability"))
@@ -129,7 +161,7 @@ class EstatesConnectorSpec extends SpecBase
 
       whenReady(futureResult) {
         r =>
-          r.status mustBe OK
+          r.status mustBe Helpers.OK
       }
 
       application.stop()

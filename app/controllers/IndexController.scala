@@ -18,12 +18,14 @@ package controllers
 
 import java.time.LocalDate
 
+import config.FrontendAppConfig
 import controllers.actions.Actions
 import handlers.ErrorHandler
 import javax.inject.Inject
 import models.requests.OptionalDataRequest
 import models.{NormalMode, UserAnswers}
 import pages.DateOfDeathPage
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
@@ -38,7 +40,8 @@ class IndexController @Inject()(
                                  taxLiabilityService: TaxLiabilityService,
                                  actions: Actions,
                                  repository: SessionRepository,
-                                 errorHandler: ErrorHandler
+                                 errorHandler: ErrorHandler,
+                                 config: FrontendAppConfig
                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   private def startNewSession(draftId: String, dateOfDeath: LocalDate)(implicit request: OptionalDataRequest[AnyContent]) = for {
@@ -54,21 +57,25 @@ class IndexController @Inject()(
   def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithSession.async {
     implicit request =>
 
-      taxLiabilityService.dateOfDeath() flatMap { dateOfDeath =>
-        val userAnswers: UserAnswers = request.userAnswers
-          .getOrElse(UserAnswers.startNewSession(draftId, request.internalId))
+      taxLiabilityService.startDate() flatMap {
+          case Some(date) =>
+            val userAnswers: UserAnswers = request.userAnswers
+              .getOrElse(UserAnswers.startNewSession(draftId, request.internalId))
 
-        userAnswers.get(DateOfDeathPage) match {
-          case Some(cachedDate) =>
-            if (cachedDate.isEqual(dateOfDeath)) {
-              redirect()
-            } else {
-              startNewSession(draftId, dateOfDeath)
+            userAnswers.get(DateOfDeathPage) match {
+              case Some(cachedDate) =>
+                if (cachedDate.isEqual(date.startDate)) {
+                  redirect()
+                } else {
+                  startNewSession(draftId, date.startDate)
+                }
+              case None =>
+                startNewSession(draftId, date.startDate)
             }
           case None =>
-            startNewSession(draftId, dateOfDeath)
+            Logger.info(s"[IndexController] no start date available, returning to task-list")
+            Future.successful(Redirect(config.registerEstateHubOverview))
         }
-      }
   }
 
   private def redirect()(implicit request: OptionalDataRequest[AnyContent]) : Future[Result] = {
