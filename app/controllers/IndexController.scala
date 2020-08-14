@@ -49,8 +49,8 @@ class IndexController @Inject()(
       .set(TrustStartDatePage, dateOfDeath)
 
     for {
-      _ <- repository.resetCache(draftId)
       newSession <- Future.fromTry(answers)
+      _ <- repository.resetCache(newSession)
       _ <- repository.set(newSession)
       result <- redirect(draftId)
     } yield result

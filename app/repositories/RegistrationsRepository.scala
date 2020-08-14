@@ -65,8 +65,17 @@ class DefaultRegistrationsRepository @Inject()(submissionDraftConnector: Submiss
     }
   }
 
-  // Todo, implement reset cache for the registration repository
-  override def resetCache(internalId: String): Future[Option[JsObject]] = Future.successful(None)
+  override def resetCache(userAnswers: UserAnswers)
+                         (implicit hc: HeaderCarrier, messages: Messages): Future[Boolean] =
+  {
+    submissionDraftConnector.setDraftSectionSet(
+      userAnswers.draftId,
+      userAnswersSection,
+      submissionSetFactory.reset(userAnswers)
+    ) map {
+      response => response.status == http.Status.OK
+    }
+  }
 }
 
 trait RegistrationsRepository {
@@ -77,5 +86,5 @@ trait RegistrationsRepository {
 
   def getMainAnswers(draftId: String)(implicit hc: HeaderCarrier): Future[Option[ReadOnlyUserAnswers]]
 
-  def resetCache(internalId: String): Future[Option[JsObject]]
+  def resetCache(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, messages: Messages): Future[Boolean]
 }

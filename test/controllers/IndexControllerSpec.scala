@@ -60,7 +60,7 @@ class IndexControllerSpec extends SpecBase {
 
         when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(initialStartDate))))
 
-        when(registrationsRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
+        when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
         val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
@@ -69,7 +69,7 @@ class IndexControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId).url)
 
-        verify(registrationsRepository, times(0)).resetCache(any())
+        verify(registrationsRepository, times(0)).resetCache(any())(any(), any())
 
         application.stop()
       }
@@ -92,7 +92,7 @@ class IndexControllerSpec extends SpecBase {
 
         when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(newDateOfDeath))))
 
-        when(registrationsRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
+        when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
         val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
@@ -101,7 +101,7 @@ class IndexControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode, draftId).url)
 
-        verify(registrationsRepository, times(1)).resetCache(any())
+        verify(registrationsRepository, times(1)).resetCache(any())(any(), any())
 
         application.stop()
       }
@@ -120,7 +120,7 @@ class IndexControllerSpec extends SpecBase {
 
       when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(None))
 
-      when(registrationsRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
+      when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
       val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
@@ -149,7 +149,7 @@ class IndexControllerSpec extends SpecBase {
 
         when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
-        when(registrationsRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
+        when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
         val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
@@ -179,7 +179,7 @@ class IndexControllerSpec extends SpecBase {
 
         when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
-        when(registrationsRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
+        when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
         val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
@@ -209,7 +209,7 @@ class IndexControllerSpec extends SpecBase {
 
         when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
-        when(registrationsRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
+        when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
         val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
@@ -241,7 +241,7 @@ class IndexControllerSpec extends SpecBase {
 
           when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(trustStartDate))))
 
-          when(registrationsRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
+          when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
           val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
@@ -268,7 +268,7 @@ class IndexControllerSpec extends SpecBase {
 
           when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
-          when(registrationsRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
+          when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
           val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
@@ -301,7 +301,7 @@ class IndexControllerSpec extends SpecBase {
 
           when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
-          when(registrationsRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
+          when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
           val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
@@ -328,7 +328,7 @@ class IndexControllerSpec extends SpecBase {
 
           when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
-          when(registrationsRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
+          when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
           val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
@@ -361,7 +361,7 @@ class IndexControllerSpec extends SpecBase {
 
           when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
-          when(registrationsRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
+          when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
           val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
@@ -388,7 +388,7 @@ class IndexControllerSpec extends SpecBase {
 
           when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
-          when(registrationsRepository.resetCache(any())).thenReturn(Future.successful(Some(Json.obj())))
+          when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
           val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 

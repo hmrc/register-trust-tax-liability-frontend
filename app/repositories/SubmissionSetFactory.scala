@@ -20,13 +20,22 @@ import javax.inject.Inject
 import models._
 import pages.TaxLiabilityTaskStatus
 import play.api.i18n.Messages
-import play.api.libs.json.Json
+import play.api.libs.json.{JsNull, Json}
 import services.TaxLiabilityService
 import utils.{AnswerRowConverter, CheckYourAnswersHelper}
 import viewmodels.{AnswerRow, AnswerSection}
 
 class SubmissionSetFactory @Inject()(checkYourAnswersHelper: CheckYourAnswersHelper,
                                     taxLiabilityService: TaxLiabilityService) {
+
+  def reset(userAnswers: UserAnswers): RegistrationSubmission.DataSet = {
+    RegistrationSubmission.DataSet(
+      data = Json.toJson(userAnswers),
+      status = Some(Status.InProgress),
+      registrationPieces = List(RegistrationSubmission.MappedPiece("yearsReturns", JsNull)),
+      answerSections = Nil
+    )
+  }
 
   def createFrom(userAnswers: UserAnswers)(implicit messages: Messages): RegistrationSubmission.DataSet = {
     val status = userAnswers.get(TaxLiabilityTaskStatus).orElse(Some(Status.InProgress))
@@ -40,14 +49,15 @@ class SubmissionSetFactory @Inject()(checkYourAnswersHelper: CheckYourAnswersHel
   }
 
   private def mappedDataIfCompleted(userAnswers: UserAnswers, status: Option[Status]) = {
-        if (status.contains(Status.Completed)) {
-          taxLiabilityService.evaluateTaxYears(userAnswers) match {
-            case Nil => List.empty
-            case yearsReturns => List(RegistrationSubmission.MappedPiece("yearsReturns", Json.toJson(yearsReturns)))
-          }
-        } else {
-          List.empty
-        }
+    if (status.contains(Status.Completed)) {
+      taxLiabilityService.evaluateTaxYears(userAnswers) match {
+        case Nil => List.empty
+        case yearsReturns =>
+          List(RegistrationSubmission.MappedPiece("yearsReturns", Json.toJson(yearsReturns)))
+      }
+    } else {
+      List.empty
+    }
   }
 
   def answerSectionsIfCompleted(userAnswers: UserAnswers, status: Option[Status])

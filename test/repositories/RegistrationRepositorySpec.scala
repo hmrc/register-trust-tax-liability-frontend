@@ -42,7 +42,9 @@ class RegistrationRepositorySpec extends SpecBase with MustMatchers with Mockito
   }
 
   "RegistrationRepository" when {
+
     "getting user answers" must {
+
       "read answers from my section" in {
         implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
@@ -63,6 +65,7 @@ class RegistrationRepositorySpec extends SpecBase with MustMatchers with Mockito
         result mustBe Some(userAnswers)
         verify(mockConnector).getDraftSection(draftId, frontendAppConfig.repositoryKey)(hc, executionContext)
       }
+
       "read answers from main section" in {
         implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
@@ -97,6 +100,7 @@ class RegistrationRepositorySpec extends SpecBase with MustMatchers with Mockito
     }
 
     "setting user answers" must {
+
       "write answers to my section" in {
         implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
@@ -125,6 +129,39 @@ class RegistrationRepositorySpec extends SpecBase with MustMatchers with Mockito
         result mustBe true
         verify(mockConnector).setDraftSectionSet(draftId, frontendAppConfig.repositoryKey, submissionSet)(hc, executionContext)
       }
+    }
+
+    "resetting user answers" must {
+
+      "reset status, mapped data and answer rows" in {
+        implicit lazy val hc: HeaderCarrier = HeaderCarrier()
+
+        val draftId = "DraftId"
+
+        val userAnswers = UserAnswers(draftId = draftId, internalAuthId = "internalAuthId")
+
+        val mockConnector = mock[SubmissionDraftConnector]
+
+        val submissionSet = RegistrationSubmission.DataSet(
+          Json.obj(),
+          None,
+          List.empty,
+          List.empty
+        )
+
+        val mockSubmissionSetFactory = mock[SubmissionSetFactory]
+        when(mockSubmissionSetFactory.reset(any())).thenReturn(submissionSet)
+
+        val repository = createRepository(mockConnector, mockSubmissionSetFactory)
+
+        when(mockConnector.setDraftSectionSet(any(), any(), any())(any(), any())).thenReturn(Future.successful(HttpResponse(http.Status.OK)))
+
+        val result = Await.result(repository.resetCache(userAnswers), Duration.Inf)
+
+        result mustBe true
+        verify(mockConnector).setDraftSectionSet(draftId, frontendAppConfig.repositoryKey, submissionSet)(hc, executionContext)
+      }
+
     }
   }
 }

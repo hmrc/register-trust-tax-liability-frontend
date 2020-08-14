@@ -19,8 +19,9 @@ package repositories
 import base.SpecBase
 import models.RegistrationSubmission.{AnswerRow, AnswerSection}
 import models.Status.{Completed, InProgress}
-import models.UserAnswers
+import models.{RegistrationSubmission, UserAnswers}
 import pages.{CYMinusOneYesNoPage, CYMinusTwoYesNoPage, TaxLiabilityTaskStatus}
+import play.api.libs.json.{JsNull, Json}
 
 import scala.collection.immutable.Nil
 
@@ -29,6 +30,18 @@ class SubmissionSetFactorySpec extends SpecBase {
   "Submission set factory" must {
 
     val factory = injector.instanceOf[SubmissionSetFactory]
+
+    "reset answer sections and statuses" in {
+      val userAnswers: UserAnswers = emptyUserAnswers
+
+      factory.reset(userAnswers) mustBe
+        RegistrationSubmission.DataSet(
+          Json.toJson(userAnswers),
+          Some(InProgress),
+          List(RegistrationSubmission.MappedPiece("yearsReturns", JsNull)),
+          Nil
+        )
+    }
 
     "return no answer sections if not completed" in {
 
