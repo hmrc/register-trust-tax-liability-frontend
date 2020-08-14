@@ -51,10 +51,10 @@ class IndexController @Inject()(
         .set(DateOfDeathPage, dateOfDeath)
     }
     _ <- repository.set(newSession)
-    result <- redirect()
+    result <- redirect(draftId)
   } yield result
 
-  def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithSession.async {
+  def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithSession(draftId).async {
     implicit request =>
 
       taxLiabilityService.startDate() flatMap {
@@ -65,7 +65,7 @@ class IndexController @Inject()(
             userAnswers.get(DateOfDeathPage) match {
               case Some(cachedDate) =>
                 if (cachedDate.isEqual(date.startDate)) {
-                  redirect()
+                  redirect(draftId)
                 } else {
                   startNewSession(draftId, date.startDate)
                 }
@@ -78,18 +78,18 @@ class IndexController @Inject()(
         }
   }
 
-  private def redirect()(implicit request: OptionalDataRequest[AnyContent]) : Future[Result] = {
+  private def redirect(draftId: String)(implicit request: OptionalDataRequest[AnyContent]) : Future[Result] = {
     taxLiabilityService.getFirstYearOfTaxLiability().map { taxLiabilityYear =>
       val currentYear = TaxYear.current.startYear
       val startYear = taxLiabilityYear.firstYearAvailable.startYear
 
       (currentYear - startYear) match {
-        case 4 if taxLiabilityYear.earlierYears => Redirect(controllers.routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode))
-        case 4 => Redirect(controllers.routes.CYMinusFourLiabilityController.onPageLoad(NormalMode))
-        case 3 if taxLiabilityYear.earlierYears => Redirect(controllers.routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode))
-        case 3 => Redirect(controllers.routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode))
-        case 2 => Redirect(controllers.routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode))
-        case 1 => Redirect(controllers.routes.CYMinusOneLiabilityController.onPageLoad(NormalMode))
+        case 4 if taxLiabilityYear.earlierYears => Redirect(controllers.routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId))
+        case 4 => Redirect(controllers.routes.CYMinusFourLiabilityController.onPageLoad(NormalMode, draftId))
+        case 3 if taxLiabilityYear.earlierYears => Redirect(controllers.routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId))
+        case 3 => Redirect(controllers.routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode, draftId))
+        case 2 => Redirect(controllers.routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode, draftId))
+        case 1 => Redirect(controllers.routes.CYMinusOneLiabilityController.onPageLoad(NormalMode, draftId))
         case _ => InternalServerError(errorHandler.internalServerErrorTemplate)
       }
     }

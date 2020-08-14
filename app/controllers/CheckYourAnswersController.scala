@@ -42,7 +42,7 @@ class CheckYourAnswersController @Inject()(
                                             val appConfig : FrontendAppConfig
                                           ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = actions.authWithData {
+  def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithData(draftId) {
     implicit request =>
       val taxFor4Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(request.userAnswers, CYMinus4TaxYear)
       val taxFor3Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(request.userAnswers, CYMinus3TaxYear)
@@ -56,10 +56,10 @@ class CheckYourAnswersController @Inject()(
         taxFor1Years
       ).flatten
 
-      Ok(view(sections))
+      Ok(view(sections, draftId))
   }
 
-  def onSubmit(): Action[AnyContent] = actions.authWithData.async {
+  def onSubmit(draftId: String): Action[AnyContent] = actions.authWithData(draftId).async {
     implicit request =>
 
       for {

@@ -42,7 +42,7 @@ class CYMinusOneLiabilityController @Inject()(
 
   def form(ranges: Seq[String]) = formProvider.withPrefix("cyMinusOne.liability", ranges)
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = actions.authWithData {
+  def onPageLoad(mode: Mode, draftId: String): Action[AnyContent] = actions.authWithData(draftId) {
     implicit request =>
 
       val range = TaxYearRange(CYMinus1TaxYear)
@@ -54,10 +54,10 @@ class CYMinusOneLiabilityController @Inject()(
         case Some(value) => f.fill(value)
       }
 
-      Ok(view(preparedForm, range.toRange, mode))
+      Ok(view(preparedForm, draftId, range.toRange, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = actions.authWithData.async {
+  def onSubmit(mode: Mode, draftId: String): Action[AnyContent] = actions.authWithData(draftId).async {
     implicit request =>
 
       val range = TaxYearRange(CYMinus1TaxYear)
@@ -66,13 +66,13 @@ class CYMinusOneLiabilityController @Inject()(
 
       f.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, range.toRange, mode))),
+          Future.successful(BadRequest(view(formWithErrors, draftId, range.toRange, mode))),
 
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(CYMinusOneYesNoPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(CYMinusOneYesNoPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(CYMinusOneYesNoPage, draftId, mode, updatedAnswers))
       )
   }
 }

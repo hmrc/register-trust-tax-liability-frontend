@@ -40,9 +40,9 @@ class CYMinusFourEarlierYearsLiabilityControllerSpec extends SpecBase with Mocki
 
   val taxYear: String = TaxYear.current.back(4).startYear.toString
 
-  lazy val cyMinusFourEarlierYearsLiabilityControllerRoute = routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode).url
+  lazy val cyMinusFourEarlierYearsLiabilityControllerRoute = routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId).url
 
-  lazy val submitRoute = routes.CYMinusFourEarlierYearsLiabilityController.onSubmit(NormalMode)
+  lazy val submitRoute = routes.CYMinusFourEarlierYearsLiabilityController.onSubmit(NormalMode, draftId)
 
   "CYMinusFourEarlierYearsLiability Controller" must {
 

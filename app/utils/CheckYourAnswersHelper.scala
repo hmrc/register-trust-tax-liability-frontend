@@ -20,7 +20,6 @@ import com.google.inject.Inject
 import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, NormalMode, TaxYear, TaxYearRange, UserAnswers}
 import pages._
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
 import viewmodels.{AnswerRow, AnswerSection}
 
 class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter) {
@@ -34,7 +33,7 @@ class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter) {
       bound.yesNoQuestion(
         CYMinusFourEarlierYearsYesNoPage,
         "earlierYearsLiability",
-        Some(controllers.routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode).url),
+        Some(controllers.routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode, userAnswers.draftId).url),
         date
       )
     ).flatten
@@ -60,7 +59,7 @@ class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter) {
       bound.yesNoQuestion(
         CYMinusThreeEarlierYearsYesNoPage,
         "earlierYearsLiability",
-        Some(controllers.routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode).url),
+        Some(controllers.routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode, userAnswers.draftId).url),
         date
       )
     ).flatten
@@ -83,7 +82,7 @@ class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter) {
 
     val toRange = TaxYearRange(taxYear).toRange
     val page = yesNoPageForTaxYear(taxYear)
-    val changeRoute = changeRouteForTaxYear(taxYear)
+    val changeRoute = changeRouteForTaxYear(taxYear, userAnswers.draftId)
 
     val answerRows : Seq[AnswerRow] = Seq(
       bound.yesNoQuestion(
@@ -95,7 +94,7 @@ class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter) {
       bound.yesNoQuestion(
         DidDeclareTaxToHMRCYesNoPage(taxYear),
         "didDeclareToHMRC",
-        Some(controllers.routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, taxYear).url),
+        Some(controllers.routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, userAnswers.draftId, taxYear).url),
         toRange
       )
     ).flatten
@@ -112,11 +111,11 @@ class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter) {
     }
   }
 
-  private def changeRouteForTaxYear(taxYear: TaxYear): String = taxYear match {
-    case CYMinus4TaxYear => controllers.routes.CYMinusFourLiabilityController.onPageLoad(NormalMode).url
-    case CYMinus3TaxYear => controllers.routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode).url
-    case CYMinus2TaxYear => controllers.routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode).url
-    case CYMinus1TaxYear => controllers.routes.CYMinusOneLiabilityController.onPageLoad(NormalMode).url
+  private def changeRouteForTaxYear(taxYear: TaxYear, draftId: String): String = taxYear match {
+    case CYMinus4TaxYear => controllers.routes.CYMinusFourLiabilityController.onPageLoad(NormalMode, draftId).url
+    case CYMinus3TaxYear => controllers.routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode, draftId).url
+    case CYMinus2TaxYear => controllers.routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode, draftId).url
+    case CYMinus1TaxYear => controllers.routes.CYMinusOneLiabilityController.onPageLoad(NormalMode, draftId).url
   }
 
   private def yesNoPageForTaxYear(taxYear: TaxYear) : QuestionPage[Boolean] = taxYear match {

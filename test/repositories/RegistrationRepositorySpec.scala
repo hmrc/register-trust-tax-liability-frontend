@@ -37,8 +37,6 @@ class RegistrationRepositorySpec extends SpecBase with MustMatchers with Mockito
 
   private val unusedSubmissionSetFactory = mock[SubmissionSetFactory];
 
-  implicit def executionContext = injector.instanceOf[ExecutionContext]
-
   private def createRepository(connector: SubmissionDraftConnector, submissionSetFactory: SubmissionSetFactory) = {
     new DefaultRegistrationsRepository(connector, frontendAppConfig, submissionSetFactory)
   }

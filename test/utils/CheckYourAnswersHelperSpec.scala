@@ -41,7 +41,7 @@ class CheckYourAnswersHelperSpec extends SpecBase {
           headingKey = Some("Tax liability before 2016"),
           rows = Seq(
             AnswerRow(label = "Did the estate need to pay tax before 2016?", answer = Html("Yes"),
-              changeUrl = Some(routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode).url),
+              changeUrl = Some(routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode ,draftId).url),
               canEdit = true
             )
           )
@@ -61,7 +61,7 @@ class CheckYourAnswersHelperSpec extends SpecBase {
           headingKey = Some("Tax liability before 2017"),
           rows = Seq(
             AnswerRow(label = "Did the estate need to pay tax before 2017?", answer = Html("Yes"),
-              changeUrl = Some(routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode).url),
+              changeUrl = Some(routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode ,draftId).url),
               canEdit = true
             )
           )
@@ -89,13 +89,13 @@ class CheckYourAnswersHelperSpec extends SpecBase {
             AnswerRow(
               label = "Did the estate need to pay any tax from 6 April 2016 to 5 April 2017?",
               answer = Html("Yes"),
-              changeUrl = Some(routes.CYMinusFourLiabilityController.onPageLoad(NormalMode).url),
+              changeUrl = Some(routes.CYMinusFourLiabilityController.onPageLoad(NormalMode ,draftId).url),
               canEdit = true
             ),
             AnswerRow(
               label = "Was the tax from 6 April 2016 to 5 April 2017 declared?",
               answer = Html("Yes"),
-              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, taxYear).url),
+              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode ,draftId, taxYear).url),
               canEdit = true
             )
           )
@@ -122,13 +122,13 @@ class CheckYourAnswersHelperSpec extends SpecBase {
             AnswerRow(
               label = "Did the estate need to pay any tax from 6 April 2017 to 5 April 2018?",
               answer = Html("Yes"),
-              changeUrl = Some(routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode).url),
+              changeUrl = Some(routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode ,draftId).url),
               canEdit = true
             ),
             AnswerRow(
               label = "Was the tax from 6 April 2017 to 5 April 2018 declared?",
               answer = Html("Yes"),
-              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, taxYear).url),
+              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode ,draftId, taxYear).url),
               canEdit = true
             )
           )
@@ -155,13 +155,13 @@ class CheckYourAnswersHelperSpec extends SpecBase {
             AnswerRow(
               label = "Did the estate need to pay any tax from 6 April 2018 to 5 April 2019?",
               answer = Html("Yes"),
-              changeUrl = Some(routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode).url),
+              changeUrl = Some(routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode ,draftId).url),
               canEdit = true
             ),
             AnswerRow(
               label = "Was the tax from 6 April 2018 to 5 April 2019 declared?",
               answer = Html("Yes"),
-              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, taxYear).url),
+              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode ,draftId, taxYear).url),
               canEdit = true
             )
           )
@@ -188,13 +188,13 @@ class CheckYourAnswersHelperSpec extends SpecBase {
             AnswerRow(
               label = "Did the estate need to pay any tax from 6 April 2019 to 5 April 2020?",
               answer = Html("Yes"),
-              changeUrl = Some(routes.CYMinusOneLiabilityController.onPageLoad(NormalMode).url),
+              changeUrl = Some(routes.CYMinusOneLiabilityController.onPageLoad(NormalMode ,draftId).url),
               canEdit = true
             ),
             AnswerRow(
               label = "Was the tax from 6 April 2019 to 5 April 2020 declared?",
               answer = Html("Yes"),
-              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, taxYear).url),
+              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode ,draftId, taxYear).url),
               canEdit = true
             )
           )
