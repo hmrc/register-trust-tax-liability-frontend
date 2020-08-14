@@ -17,9 +17,10 @@
 package repositories
 
 import base.SpecBase
-import models.RegistrationSubmission.AnswerSection
+import models.RegistrationSubmission.{AnswerRow, AnswerSection}
 import models.Status.{Completed, InProgress}
 import models.UserAnswers
+import pages.{CYMinusOneYesNoPage, CYMinusTwoYesNoPage, TaxLiabilityTaskStatus}
 
 import scala.collection.immutable.Nil
 
@@ -29,161 +30,50 @@ class SubmissionSetFactorySpec extends SpecBase {
 
     val factory = injector.instanceOf[SubmissionSetFactory]
 
-    "return no answer sections if no completed years" in {
+    "return no answer sections if not completed" in {
 
       factory.answerSectionsIfCompleted(emptyUserAnswers, Some(InProgress))
         .mustBe(Nil)
     }
 
-//    "return completed answer sections" when {
-//
-//      "only one beneficiary" must {
-//        "have 'Beneficiaries' as section key" when {
-//          "individual beneficiary only" in {
-//            val userAnswers: UserAnswers = emptyUserAnswers
-//              .set(IndividualBeneficiaryStatus(0), Completed).success.value
-//
-//            factory.answerSectionsIfCompleted(userAnswers, Some(Completed)) mustBe
-//              List(
-//                AnswerSection(
-//                  Some("Individual beneficiary 1"),
-//                  Nil,
-//                  Some("Beneficiaries")
-//                )
-//              )
-//          }
-//
-//          "class of beneficiary only" in {
-//            val userAnswers: UserAnswers = emptyUserAnswers
-//              .set(ClassBeneficiaryStatus(0), Completed).success.value
-//
-//            factory.answerSectionsIfCompleted(userAnswers, Some(Completed)) mustBe
-//              List(
-//                AnswerSection(
-//                  Some("Class of beneficiary 1"),
-//                  Nil,
-//                  Some("Beneficiaries")
-//                )
-//              )
-//          }
-//
-//          "charity beneficiary only" in {
-//            val userAnswers: UserAnswers = emptyUserAnswers
-//              .set(CharityBeneficiaryStatus(0), Completed).success.value
-//
-//            factory.answerSectionsIfCompleted(userAnswers, Some(Completed)) mustBe
-//              List(
-//                AnswerSection(
-//                  Some("Charity beneficiary 1"),
-//                  Nil,
-//                  Some("Beneficiaries")
-//                )
-//              )
-//          }
-//
-//          "trust beneficiary only" in {
-//            val userAnswers: UserAnswers = emptyUserAnswers
-//              .set(TrustBeneficiaryStatus(0), Completed).success.value
-//
-//            factory.answerSectionsIfCompleted(userAnswers, Some(Completed)) mustBe
-//              List(
-//                AnswerSection(
-//                  Some("Trust beneficiary 1"),
-//                  Nil,
-//                  Some("Beneficiaries")
-//                )
-//              )
-//          }
-//
-//          "company beneficiary only" in {
-//            val userAnswers: UserAnswers = emptyUserAnswers
-//              .set(CompanyBeneficiaryStatus(0), Completed).success.value
-//
-//            factory.answerSectionsIfCompleted(userAnswers, Some(Completed)) mustBe
-//              List(
-//                AnswerSection(
-//                  Some("Company beneficiary 1"),
-//                  Nil,
-//                  Some("Beneficiaries")
-//                )
-//              )
-//          }
-//
-//          "large beneficiary only" in {
-//            val userAnswers: UserAnswers = emptyUserAnswers
-//              .set(LargeBeneficiaryStatus(0), Completed).success.value
-//
-//            factory.answerSectionsIfCompleted(userAnswers, Some(Completed)) mustBe
-//              List(
-//                AnswerSection(
-//                  Some("Employment related beneficiary 1"),
-//                  Nil,
-//                  Some("Beneficiaries")
-//                )
-//              )
-//          }
-//
-//          "other beneficiary only" in {
-//            val userAnswers: UserAnswers = emptyUserAnswers
-//              .set(OtherBeneficiaryStatus(0), Completed).success.value
-//
-//            factory.answerSectionsIfCompleted(userAnswers, Some(Completed)) mustBe
-//              List(
-//                AnswerSection(
-//                  Some("Other beneficiary 1"),
-//                  Nil,
-//                  Some("Beneficiaries")
-//                )
-//              )
-//          }
-//        }
-//      }
-//
-//      "more than one beneficiary" must {
-//        "have 'Beneficiaries' as section key of the topmost section" when {
-//          "individual beneficiary and class of beneficiary" in {
-//            val userAnswers: UserAnswers = emptyUserAnswers
-//              .set(IndividualBeneficiaryStatus(0), Completed).success.value
-//              .set(ClassBeneficiaryStatus(0), Completed).success.value
-//
-//            factory.answerSectionsIfCompleted(userAnswers, Some(Completed)) mustBe
-//              List(
-//                AnswerSection(
-//                  Some("Individual beneficiary 1"),
-//                  Nil,
-//                  Some("Beneficiaries")
-//                ),
-//                AnswerSection(
-//                  Some("Class of beneficiary 1"),
-//                  Nil,
-//                  None
-//                )
-//              )
-//          }
-//
-//          "class of beneficiary and trust beneficiary" in {
-//            val userAnswers: UserAnswers = emptyUserAnswers
-//              .set(ClassBeneficiaryStatus(0), Completed).success.value
-//              .set(TrustBeneficiaryStatus(0), Completed).success.value
-//
-//            factory.answerSectionsIfCompleted(userAnswers, Some(Completed)) mustBe
-//              List(
-//                AnswerSection(
-//                  Some("Class of beneficiary 1"),
-//                  Nil,
-//                  Some("Beneficiaries")
-//                ),
-//                AnswerSection(
-//                  Some("Trust beneficiary 1"),
-//                  Nil,
-//                  None
-//                )
-//              )
-//          }
-//        }
-//      }
-//
-//    }
+    "return completed answer sections" when {
+
+      "task is completed with one year" in {
+            val userAnswers: UserAnswers = emptyUserAnswers
+              .set(TaxLiabilityTaskStatus, Completed).success.value
+              .set(CYMinusOneYesNoPage, true).success.value
+
+            factory.answerSectionsIfCompleted(userAnswers, Some(Completed)) mustBe
+        List(
+          AnswerSection(
+            Some("Tax liability 6 April 2019 to 5 April 2020"),
+            List(AnswerRow("Did the estate need to pay any tax from 6 April 2019 to 5 April 2020?", "Yes", "")),
+            None
+          )
+        )
+      }
+
+      "task is completed with more than one year" in {
+        val userAnswers: UserAnswers = emptyUserAnswers
+          .set(TaxLiabilityTaskStatus, Completed).success.value
+          .set(CYMinusOneYesNoPage, true).success.value
+          .set(CYMinusTwoYesNoPage, true).success.value
+
+        factory.answerSectionsIfCompleted(userAnswers, Some(Completed)) mustBe
+          List(
+            AnswerSection(
+              Some("Tax liability 6 April 2018 to 5 April 2019"),
+              List(AnswerRow("Did the estate need to pay any tax from 6 April 2018 to 5 April 2019?", "Yes", "")),
+              None
+            ),
+            AnswerSection(
+              Some("Tax liability 6 April 2019 to 5 April 2020"),
+              List(AnswerRow("Did the estate need to pay any tax from 6 April 2019 to 5 April 2020?", "Yes", "")),
+              None
+            )
+          )
+      }
+    }
   }
 
 }

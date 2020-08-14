@@ -19,7 +19,9 @@ package controllers
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.Actions
+import models.Status.Completed
 import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear}
+import pages.TaxLiabilityTaskStatus
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.TaxLiabilityService
@@ -28,6 +30,7 @@ import utils.CheckYourAnswersHelper
 import views.html.CheckYourAnswersView
 
 import scala.concurrent.ExecutionContext.Implicits._
+import scala.concurrent.Future
 
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
@@ -60,8 +63,8 @@ class CheckYourAnswersController @Inject()(
     implicit request =>
 
       for {
-        _ <- estatesService.submitTaxLiability(request.userAnswers)
-        //TODO: Set the task as completed?
+        updatedAnswers <- Future.fromTry(request.userAnswers.set(TaxLiabilityTaskStatus, Completed))
+        _ <- estatesService.submitTaxLiability(updatedAnswers)
       } yield {
         Redirect(appConfig.registerEstateHubOverview)
       }

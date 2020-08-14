@@ -18,6 +18,7 @@ package repositories
 
 import javax.inject.Inject
 import models._
+import pages.TaxLiabilityTaskStatus
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 import services.TaxLiabilityService
@@ -28,8 +29,7 @@ class SubmissionSetFactory @Inject()(checkYourAnswersHelper: CheckYourAnswersHel
                                     taxLiabilityService: TaxLiabilityService) {
 
   def createFrom(userAnswers: UserAnswers)(implicit messages: Messages): RegistrationSubmission.DataSet = {
-    val status = Some(Status.InProgress)
-    answerSectionsIfCompleted(userAnswers, status)
+    val status = userAnswers.get(TaxLiabilityTaskStatus).orElse(Some(Status.InProgress))
 
     RegistrationSubmission.DataSet(
       Json.toJson(userAnswers),
