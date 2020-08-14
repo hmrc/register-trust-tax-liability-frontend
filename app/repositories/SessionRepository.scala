@@ -16,8 +16,6 @@
 
 package repositories
 
-import java.time.LocalDateTime
-
 import akka.stream.Materializer
 import javax.inject.Inject
 import models.UserAnswers
