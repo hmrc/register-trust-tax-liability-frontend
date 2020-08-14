@@ -16,4 +16,4 @@
 
 package models
 
-case class TaxLiabilityYear(firstYearAvailable: uk.gov.hmrc.time.TaxYear, earlierYears: Boolean)
+case class TaxLiabilityYear(firstYearAvailable: uk.gov.hmrc.time.TaxYear, hasEarlierYearsToDeclare: Boolean)

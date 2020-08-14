@@ -66,9 +66,9 @@ class TaxLiabilityService @Inject()(estatesConnector: TrustsConnector,
       val deathWasBeforeMaximum4Years = taxYearOfDeath.startYear < oldestYearToShow.startYear
 
       if (deathWasBeforeMaximum4Years) {
-        TaxLiabilityYear(oldestYearToShow, earlierYears = true)
+        TaxLiabilityYear(oldestYearToShow, hasEarlierYearsToDeclare = true)
       } else {
-        TaxLiabilityYear(taxYearOfDeath, earlierYears = false)
+        TaxLiabilityYear(taxYearOfDeath, hasEarlierYearsToDeclare = false)
       }
     }
   }

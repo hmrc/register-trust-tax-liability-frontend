@@ -62,7 +62,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val result = service.getFirstYearOfTaxLiability()
 
-        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2016), earlierYears = true)
+        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2016), hasEarlierYearsToDeclare = true)
       }
 
       "the current date is on the december deadline and date of death is more than 4 years ago" in {
@@ -84,7 +84,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val result = service.getFirstYearOfTaxLiability()
 
-        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2016), earlierYears = true)
+        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2016), hasEarlierYearsToDeclare = true)
       }
     }
 
@@ -109,7 +109,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val result = service.getFirstYearOfTaxLiability()
 
-        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2017), earlierYears = true)
+        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2017), hasEarlierYearsToDeclare = true)
       }
     }
 
@@ -133,7 +133,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val result = service.getFirstYearOfTaxLiability()
 
-        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2016), earlierYears = false)
+        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2016), hasEarlierYearsToDeclare = false)
       }
     }
 
@@ -157,7 +157,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val result = service.getFirstYearOfTaxLiability()
 
-        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2017), earlierYears = false)
+        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2017), hasEarlierYearsToDeclare = false)
       }
 
       "the current date is after the december deadline and date of death is 3 years ago" in {
@@ -179,7 +179,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val result = service.getFirstYearOfTaxLiability()
 
-        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2017), earlierYears = false)
+        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2017), hasEarlierYearsToDeclare = false)
       }
     }
 
@@ -203,7 +203,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val result = service.getFirstYearOfTaxLiability()
 
-        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2018), earlierYears = false)
+        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2018), hasEarlierYearsToDeclare = false)
       }
 
       "the current date is after the december deadline and date of death is 2 years ago" in {
@@ -225,7 +225,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val result = service.getFirstYearOfTaxLiability()
 
-        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2018), earlierYears = false)
+        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2018), hasEarlierYearsToDeclare = false)
       }
     }
 
@@ -249,7 +249,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val result = service.getFirstYearOfTaxLiability()
 
-        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2019), earlierYears = false)
+        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2019), hasEarlierYearsToDeclare = false)
       }
 
       "the current date is after the december deadline and date of death is 3 years ago" in {
@@ -271,7 +271,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val result = service.getFirstYearOfTaxLiability()
 
-        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2019), earlierYears = false)
+        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2019), hasEarlierYearsToDeclare = false)
       }
     }
   }

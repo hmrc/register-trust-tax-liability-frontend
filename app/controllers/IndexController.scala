@@ -44,14 +44,16 @@ class IndexController @Inject()(
                                  config: FrontendAppConfig
                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  private def startNewSession(draftId: String, dateOfDeath: LocalDate)(implicit request: OptionalDataRequest[AnyContent]) = for {
-    _ <- repository.resetCache(request.internalId)
-    newSession <- Future.fromTry {
-      UserAnswers.startNewSession(draftId, request.internalId)
-        .set(DateOfDeathPage, dateOfDeath)
-    }
-    _ <- repository.set(newSession)
-    result <- redirect()
+  private def startNewSession(draftId: String, dateOfDeath: LocalDate)
+                             (implicit request: OptionalDataRequest[AnyContent]) =
+    for {
+      _ <- repository.resetCache(request.internalId)
+      newSession <- Future.fromTry {
+        UserAnswers.startNewSession(draftId, request.internalId)
+          .set(DateOfDeathPage, dateOfDeath)
+      }
+      _ <- repository.set(newSession)
+      result <- redirect()
   } yield result
 
   def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithSession.async {
@@ -80,17 +82,27 @@ class IndexController @Inject()(
 
   private def redirect()(implicit request: OptionalDataRequest[AnyContent]) : Future[Result] = {
     taxLiabilityService.getFirstYearOfTaxLiability().map { taxLiabilityYear =>
+
       val currentYear = TaxYear.current.startYear
       val startYear = taxLiabilityYear.firstYearAvailable.startYear
 
-      (currentYear - startYear) match {
-        case 4 if taxLiabilityYear.earlierYears => Redirect(controllers.routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode))
-        case 4 => Redirect(controllers.routes.CYMinusFourLiabilityController.onPageLoad(NormalMode))
-        case 3 if taxLiabilityYear.earlierYears => Redirect(controllers.routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode))
-        case 3 => Redirect(controllers.routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode))
-        case 2 => Redirect(controllers.routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode))
-        case 1 => Redirect(controllers.routes.CYMinusOneLiabilityController.onPageLoad(NormalMode))
-        case _ => InternalServerError(errorHandler.internalServerErrorTemplate)
+      val numberOfYearsToAsk = currentYear - startYear
+
+      numberOfYearsToAsk match {
+        case 4 if taxLiabilityYear.hasEarlierYearsToDeclare =>
+          Redirect(controllers.routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode))
+        case 4 =>
+          Redirect(controllers.routes.CYMinusFourLiabilityController.onPageLoad(NormalMode))
+        case 3 if taxLiabilityYear.hasEarlierYearsToDeclare =>
+          Redirect(controllers.routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode))
+        case 3 =>
+          Redirect(controllers.routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode))
+        case 2 =>
+          Redirect(controllers.routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode))
+        case 1 =>
+          Redirect(controllers.routes.CYMinusOneLiabilityController.onPageLoad(NormalMode))
+        case _ =>
+          InternalServerError(errorHandler.internalServerErrorTemplate)
       }
     }
   }
