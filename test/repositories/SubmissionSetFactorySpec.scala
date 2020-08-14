@@ -47,7 +47,7 @@ class SubmissionSetFactorySpec extends SpecBase {
         List(
           AnswerSection(
             Some("Tax liability 6 April 2019 to 5 April 2020"),
-            List(AnswerRow("Did the estate need to pay any tax from 6 April 2019 to 5 April 2020?", "Yes", "")),
+            List(AnswerRow("Did the trust need to pay any tax from 6 April 2019 to 5 April 2020?", "Yes", "")),
             None
           )
         )
@@ -63,12 +63,12 @@ class SubmissionSetFactorySpec extends SpecBase {
           List(
             AnswerSection(
               Some("Tax liability 6 April 2018 to 5 April 2019"),
-              List(AnswerRow("Did the estate need to pay any tax from 6 April 2018 to 5 April 2019?", "Yes", "")),
+              List(AnswerRow("Did the trust need to pay any tax from 6 April 2018 to 5 April 2019?", "Yes", "")),
               None
             ),
             AnswerSection(
               Some("Tax liability 6 April 2019 to 5 April 2020"),
-              List(AnswerRow("Did the estate need to pay any tax from 6 April 2019 to 5 April 2020?", "Yes", "")),
+              List(AnswerRow("Did the trust need to pay any tax from 6 April 2019 to 5 April 2020?", "Yes", "")),
               None
             )
           )

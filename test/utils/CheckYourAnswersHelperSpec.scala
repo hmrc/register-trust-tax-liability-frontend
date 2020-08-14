@@ -40,7 +40,7 @@ class CheckYourAnswersHelperSpec extends SpecBase {
         result.value mustBe AnswerSection(
           headingKey = Some("Tax liability before 2016"),
           rows = Seq(
-            AnswerRow(label = "Did the estate need to pay tax before 2016?", answer = Html("Yes"),
+            AnswerRow(label = "Did the trust need to pay tax before 2016?", answer = Html("Yes"),
               changeUrl = Some(routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode ,draftId).url),
               canEdit = true
             )
@@ -60,7 +60,7 @@ class CheckYourAnswersHelperSpec extends SpecBase {
         result.value mustBe AnswerSection(
           headingKey = Some("Tax liability before 2017"),
           rows = Seq(
-            AnswerRow(label = "Did the estate need to pay tax before 2017?", answer = Html("Yes"),
+            AnswerRow(label = "Did the trust need to pay tax before 2017?", answer = Html("Yes"),
               changeUrl = Some(routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode ,draftId).url),
               canEdit = true
             )
@@ -87,7 +87,7 @@ class CheckYourAnswersHelperSpec extends SpecBase {
           headingKey = Some("Tax liability 6 April 2016 to 5 April 2017"),
           rows = Seq(
             AnswerRow(
-              label = "Did the estate need to pay any tax from 6 April 2016 to 5 April 2017?",
+              label = "Did the trust need to pay any tax from 6 April 2016 to 5 April 2017?",
               answer = Html("Yes"),
               changeUrl = Some(routes.CYMinusFourLiabilityController.onPageLoad(NormalMode ,draftId).url),
               canEdit = true
@@ -120,7 +120,7 @@ class CheckYourAnswersHelperSpec extends SpecBase {
           headingKey = Some("Tax liability 6 April 2017 to 5 April 2018"),
           rows = Seq(
             AnswerRow(
-              label = "Did the estate need to pay any tax from 6 April 2017 to 5 April 2018?",
+              label = "Did the trust need to pay any tax from 6 April 2017 to 5 April 2018?",
               answer = Html("Yes"),
               changeUrl = Some(routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode ,draftId).url),
               canEdit = true
@@ -153,7 +153,7 @@ class CheckYourAnswersHelperSpec extends SpecBase {
           headingKey = Some("Tax liability 6 April 2018 to 5 April 2019"),
           rows = Seq(
             AnswerRow(
-              label = "Did the estate need to pay any tax from 6 April 2018 to 5 April 2019?",
+              label = "Did the trust need to pay any tax from 6 April 2018 to 5 April 2019?",
               answer = Html("Yes"),
               changeUrl = Some(routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode ,draftId).url),
               canEdit = true
@@ -186,7 +186,7 @@ class CheckYourAnswersHelperSpec extends SpecBase {
           headingKey = Some("Tax liability 6 April 2019 to 5 April 2020"),
           rows = Seq(
             AnswerRow(
-              label = "Did the estate need to pay any tax from 6 April 2019 to 5 April 2020?",
+              label = "Did the trust need to pay any tax from 6 April 2019 to 5 April 2020?",
               answer = Html("Yes"),
               changeUrl = Some(routes.CYMinusOneLiabilityController.onPageLoad(NormalMode ,draftId).url),
               canEdit = true
