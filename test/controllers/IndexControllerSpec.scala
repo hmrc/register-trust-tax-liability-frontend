@@ -23,7 +23,7 @@ import connectors.TrustsConnector
 import models.{NormalMode, StartDate}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
-import pages.DateOfDeathPage
+import pages.TrustStartDatePage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -51,7 +51,7 @@ class IndexControllerSpec extends SpecBase {
 
         val initialStartDate = LocalDate.of(2015, 5, 1)
 
-        val existingUserAnswers = emptyUserAnswers.set(DateOfDeathPage, initialStartDate).success.value
+        val existingUserAnswers = emptyUserAnswers.set(TrustStartDatePage, initialStartDate).success.value
 
         val application = applicationBuilder(userAnswers = Some(existingUserAnswers))
           .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
@@ -81,7 +81,7 @@ class IndexControllerSpec extends SpecBase {
 
         val initialStartDate = LocalDate.of(2015, 5, 1)
 
-        val existingUserAnswers = emptyUserAnswers.set(DateOfDeathPage, initialStartDate).success.value
+        val existingUserAnswers = emptyUserAnswers.set(TrustStartDatePage, initialStartDate).success.value
 
         val application = applicationBuilder(userAnswers = Some(existingUserAnswers))
           .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))

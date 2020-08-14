@@ -20,10 +20,10 @@ import java.time.LocalDate
 
 import play.api.libs.json.JsPath
 
-case object DateOfDeathPage extends QuestionPage[LocalDate] {
+case object TrustStartDatePage extends QuestionPage[LocalDate] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "dateOfDeath"
+  override def toString: String = "trustStartDate"
 
 }
