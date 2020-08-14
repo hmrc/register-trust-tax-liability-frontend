@@ -36,6 +36,7 @@ class AffinityGroupIdentifierAction[A] @Inject()(action: Action[A],
                                                  trustsAuthFunctions: TrustsAuthorisedFunctions,
                                                  config: FrontendAppConfig
                                                 ) extends Action[A]  {
+
   private val logger = LoggerFactory.getLogger("application.controllers.actions.AffinityGroupIdentifierAction")
 
   private def authoriseAgent(request : Request[A],

@@ -29,7 +29,7 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
+import repositories.RegistrationsRepository
 import views.html.CYMinusThreeYesNoView
 
 import scala.concurrent.Future
@@ -96,9 +96,9 @@ class CYMinusThreeLiabilityControllerSpec extends SpecBase with MockitoSugar {
 
     "redirect to the next page when valid data is submitted" in {
 
-      val mockPlaybackRepository = mock[SessionRepository]
+      val mockPlaybackRepository = mock[RegistrationsRepository]
 
-      when(mockPlaybackRepository.set(any())) thenReturn Future.successful(true)
+      when(mockPlaybackRepository.set(any())(any(), any())) thenReturn Future.successful(true)
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))

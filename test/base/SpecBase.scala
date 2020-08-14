@@ -17,7 +17,7 @@
 package base
 
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRequiredActionImpl, DraftIdRetrievalActionProvider, FakeDraftIdRetrievalActionProvider, FakeIdentifierAction, IdentifierAction, TrustsAuthorisedFunctions}
+import controllers.actions._
 import models.{Status, UserAnswers}
 import navigation.FakeNavigator
 import org.scalatest.TryValues
@@ -30,7 +30,7 @@ import play.api.inject.{Injector, bind}
 import play.api.libs.json.Json
 import play.api.mvc.{BodyParsers, Call}
 import play.api.test.FakeRequest
-import repositories.SessionRepository
+import repositories.RegistrationsRepository
 import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, Enrolments}
 
 import scala.concurrent.ExecutionContext
@@ -80,6 +80,6 @@ trait SpecBase extends PlaySpec with GuiceOneAppPerSuite with Mocked with TryVal
           new FakeIdentifierAction(affinityGroup, frontendAppConfig)(injectedParsers, trustsAuth, enrolments)
         ),
         bind[DraftIdRetrievalActionProvider].toInstance(fakeDraftIdAction(userAnswers)),
-        bind[SessionRepository].toInstance(sessionRepository)
+        bind[RegistrationsRepository].toInstance(registrationsRepository)
       )
 }

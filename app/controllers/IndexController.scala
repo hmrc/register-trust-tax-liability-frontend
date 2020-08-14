@@ -28,7 +28,7 @@ import pages.DateOfDeathPage
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import repositories.SessionRepository
+import repositories.RegistrationsRepository
 import services.TaxLiabilityService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.time.TaxYear
@@ -39,13 +39,13 @@ class IndexController @Inject()(
                                  val controllerComponents: MessagesControllerComponents,
                                  taxLiabilityService: TaxLiabilityService,
                                  actions: Actions,
-                                 repository: SessionRepository,
+                                 repository: RegistrationsRepository,
                                  errorHandler: ErrorHandler,
                                  config: FrontendAppConfig
                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   private def startNewSession(draftId: String, dateOfDeath: LocalDate)(implicit request: OptionalDataRequest[AnyContent]) = for {
-    _ <- repository.resetCache(request.internalId)
+    _ <- repository.resetCache(draftId)
     newSession <- Future.fromTry {
       UserAnswers.startNewSession(draftId, request.internalId)
         .set(DateOfDeathPage, dateOfDeath)

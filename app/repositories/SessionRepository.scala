@@ -88,6 +88,7 @@ class DefaultSessionRepository @Inject()(
   }
 }
 
+@deprecated("removed")
 trait SessionRepository {
 
   val started: Future[Unit]

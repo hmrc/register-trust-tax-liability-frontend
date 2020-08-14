@@ -25,7 +25,7 @@ import navigation.Navigator
 import pages.DidDeclareTaxToHMRCYesNoPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
+import repositories.RegistrationsRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import views.html.DidDeclareTaxToHMRCYesNoView
 
@@ -36,7 +36,7 @@ class DidDeclareTaxToHMRCController @Inject()(
                                                @TaxLiability navigator: Navigator,
                                                actions: Actions,
                                                formProvider: YesNoFormProviderWithArguments,
-                                               sessionRepository: SessionRepository,
+                                               sessionRepository: RegistrationsRepository,
                                                view: DidDeclareTaxToHMRCYesNoView
                                              )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 

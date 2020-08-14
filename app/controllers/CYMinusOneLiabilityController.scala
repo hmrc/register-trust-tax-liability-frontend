@@ -25,19 +25,19 @@ import navigation.Navigator
 import pages.CYMinusOneYesNoPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
+import repositories.RegistrationsRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import views.html.CYMinusOneYesNoView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class CYMinusOneLiabilityController @Inject()(
-                                 val controllerComponents: MessagesControllerComponents,
-                                 @TaxLiability navigator: Navigator,
-                                 actions: Actions,
-                                 formProvider: YesNoFormProviderWithArguments,
-                                 sessionRepository: SessionRepository,
-                                 view: CYMinusOneYesNoView
+                                               val controllerComponents: MessagesControllerComponents,
+                                               @TaxLiability navigator: Navigator,
+                                               actions: Actions,
+                                               formProvider: YesNoFormProviderWithArguments,
+                                               sessionRepository: RegistrationsRepository,
+                                               view: CYMinusOneYesNoView
                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def form(ranges: Seq[String]) = formProvider.withPrefix("cyMinusOne.liability", ranges)
