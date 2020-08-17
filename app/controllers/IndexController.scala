@@ -59,7 +59,7 @@ class IndexController @Inject()(
   def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithSession(draftId).async {
     implicit request =>
 
-      taxLiabilityService.startDate() flatMap {
+      taxLiabilityService.startDate(draftId) flatMap {
           case Some(date) =>
             val userAnswers: UserAnswers = request.userAnswers
               .getOrElse(UserAnswers.startNewSession(draftId, request.internalId))
@@ -84,7 +84,7 @@ class IndexController @Inject()(
   }
 
   private def redirect(draftId: String)(implicit request: OptionalDataRequest[AnyContent]) : Future[Result] = {
-    taxLiabilityService.getFirstYearOfTaxLiability().map { taxLiabilityYear =>
+    taxLiabilityService.getFirstYearOfTaxLiability(draftId).map { taxLiabilityYear =>
 
       val currentYear = TaxYear.current.startYear
       val startYear = taxLiabilityYear.firstYearAvailable.startYear

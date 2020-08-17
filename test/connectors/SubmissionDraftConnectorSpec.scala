@@ -16,7 +16,7 @@
 
 package connectors
 
-import java.time.LocalDateTime
+import java.time.{LocalDate, LocalDateTime}
 
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
@@ -27,6 +27,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import play.api.test.Helpers
 import play.api.test.Helpers.CONTENT_TYPE
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.WireMockHelper
@@ -121,6 +122,69 @@ class SubmissionDraftConnectorSpec extends SpecBase with MustMatchers with Optio
         result.createdAt mustBe LocalDateTime.of(2012, 2, 3, 9, 30)
         result.data mustBe draftData
       }
+    }
+
+    ".getStartDate" must {
+
+      "parse start date of the trust" in {
+        val application = applicationBuilder()
+          .configure(
+            Seq(
+              "microservice.services.trusts.port" -> server.port(),
+              "auditing.enabled" -> false
+            ): _*
+          ).build()
+
+
+        val connector = application.injector.instanceOf[SubmissionDraftConnector]
+
+        val json = Json.parse(
+          """
+            |{"startDate": "2010-10-10"}
+            |""".stripMargin)
+
+        server.stubFor(
+          get(urlEqualTo(s"/trusts/register/submission-drafts/$draftId/when-trust-setup"))
+            .willReturn(okJson(json.toString))
+        )
+
+        val futureResult = connector.getTrustStartDate(draftId)
+
+        whenReady(futureResult) {
+          r =>
+            r.value.startDate mustBe LocalDate.of(2010,10,10)
+        }
+
+        application.stop()
+      }
+
+      "return None when no start date is present" in {
+        val application = applicationBuilder()
+          .configure(
+            Seq(
+              "microservice.services.trusts.port" -> server.port(),
+              "auditing.enabled" -> false
+            ): _*
+          ).build()
+
+
+        val connector = application.injector.instanceOf[SubmissionDraftConnector]
+
+        server.stubFor(
+          get(urlEqualTo("/trusts/register/submission-drafts/draft-id/when-trust-setup"))
+            .willReturn(status(Helpers.NOT_FOUND))
+        )
+
+        val futureResult = connector.getTrustStartDate(draftId)
+
+        whenReady(futureResult) {
+          r =>
+            r mustNot be(defined)
+        }
+
+        application.stop()
+      }
+
     }
   }
 }

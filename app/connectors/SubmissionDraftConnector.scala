@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import javax.inject.Inject
-import models.{RegistrationSubmission, SubmissionDraftResponse}
+import models.{RegistrationSubmission, StartDate, SubmissionDraftResponse}
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -36,5 +36,11 @@ class SubmissionDraftConnector @Inject()(http: HttpClient, config : FrontendAppC
 
   def getDraftSection(draftId: String, section: String)(implicit hc: HeaderCarrier, ec : ExecutionContext): Future[SubmissionDraftResponse] = {
     http.GET[SubmissionDraftResponse](s"$submissionsBaseUrl/$draftId/$section")
+  }
+
+  private def getTrustStartDateUrl(draftId: String) = s"${config.trustsUrl}/trusts/register/submission-drafts/$draftId/when-trust-setup"
+
+  def getTrustStartDate(draftId: String)(implicit hc: HeaderCarrier, ec : ExecutionContext): Future[Option[StartDate]] = {
+    http.GET[Option[StartDate]](getTrustStartDateUrl(draftId))
   }
 }

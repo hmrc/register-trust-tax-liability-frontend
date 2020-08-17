@@ -19,7 +19,7 @@ package services
 import java.time.LocalDate
 
 import base.SpecBase
-import connectors.TrustsConnector
+import connectors.SubmissionDraftConnector
 import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, StartDate, TaxLiabilityYear, YearReturnType}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
@@ -44,45 +44,45 @@ class TaxLiabilityServiceSpec extends SpecBase {
     "return the cy minus four tax liability and and true to earlier years" when {
 
       "the current date is before the december deadline and date of death is more than 4 years ago" in {
-        val mockTrustsConnector = mock[TrustsConnector]
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
         val startDate = LocalDate.of(2015, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
           .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability(draftId)
 
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2016), hasEarlierYearsToDeclare = true)
       }
 
       "the current date is on the december deadline and date of death is more than 4 years ago" in {
-        val mockTrustsConnector = mock[TrustsConnector]
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 12, 22)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
         val startDate = LocalDate.of(2015, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
           .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability(draftId)
 
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2016), hasEarlierYearsToDeclare = true)
       }
@@ -91,23 +91,23 @@ class TaxLiabilityServiceSpec extends SpecBase {
     "return the cy minus three tax liability and and true to earlier years" when {
 
       "the current date is after the december deadline and date of death is more than 3 years ago" in {
-        val mockTrustsConnector = mock[TrustsConnector]
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateAfterDec23rd = LocalDate.of(2020, 12, 23)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateAfterDec23rd)))
           .build()
 
         val startDate = LocalDate.of(2015, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
           .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability(draftId)
 
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2017), hasEarlierYearsToDeclare = true)
       }
@@ -115,23 +115,23 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
     "return the cy minus four tax liability and and false to earlier years" when {
       "the current date is before the december deadline and date of death is 4 years ago" in {
-        val mockTrustsConnector = mock[TrustsConnector]
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
         val startDate = LocalDate.of(2016, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
           .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability(draftId)
 
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2016), hasEarlierYearsToDeclare = false)
       }
@@ -139,45 +139,45 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
     "return the cy minus three tax liability and and false to earlier years" when {
       "the current date is before the december deadline and date of death is 3 years ago" in {
-        val mockTrustsConnector = mock[TrustsConnector]
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
         val startDate = LocalDate.of(2017, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
           .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability(draftId)
 
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2017), hasEarlierYearsToDeclare = false)
       }
 
       "the current date is after the december deadline and date of death is 3 years ago" in {
-        val mockTrustsConnector = mock[TrustsConnector]
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 12, 23)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
         val startDate = LocalDate.of(2017, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
           .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability(draftId)
 
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2017), hasEarlierYearsToDeclare = false)
       }
@@ -185,45 +185,45 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
     "return the cy minus two tax liability and and false to earlier years" when {
       "the current date is before the december deadline and date of death is 2 years ago" in {
-        val mockTrustsConnector = mock[TrustsConnector]
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
         val startDate = LocalDate.of(2018, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
           .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability(draftId)
 
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2018), hasEarlierYearsToDeclare = false)
       }
 
       "the current date is after the december deadline and date of death is 2 years ago" in {
-        val mockTrustsConnector = mock[TrustsConnector]
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 12, 23)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
         val startDate = LocalDate.of(2018, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
           .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability(draftId)
 
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2018), hasEarlierYearsToDeclare = false)
       }
@@ -231,45 +231,45 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
     "return the cy minus one tax liability and and false to earlier years" when {
       "the current date is before the december deadline and date of death is 1 years ago" in {
-        val mockTrustsConnector = mock[TrustsConnector]
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
         val startDate = LocalDate.of(2019, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
           .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability(draftId)
 
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2019), hasEarlierYearsToDeclare = false)
       }
 
       "the current date is after the december deadline and date of death is 3 years ago" in {
-        val mockTrustsConnector = mock[TrustsConnector]
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 12, 23)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
         val startDate = LocalDate.of(2019, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
           .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability(draftId)
 
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2019), hasEarlierYearsToDeclare = false)
       }
@@ -280,40 +280,40 @@ class TaxLiabilityServiceSpec extends SpecBase {
     "return the correct tax year the date of death falls in" when {
       "date of death is between Jan 1st and April 5th (inclusive)" in {
 
-      val mockTrustsConnector = mock[TrustsConnector]
+      val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
       val application = applicationBuilder(userAnswers = None)
-        .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+        .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
         .build()
 
       val startDate = LocalDate.of(2018, 1, 1)
 
-      when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+      when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
         .thenReturn(Future.successful(Some(StartDate(startDate))))
 
       val service = application.injector.instanceOf[TaxLiabilityService]
 
-      val result = service.getTaxYearOfStartDate()
+      val result = service.getTaxYearOfStartDate(draftId)
 
       result.futureValue mustEqual TaxYear(2017)
       }
 
       "date of death is between April 6th and Dec 31st (inclusive)" in {
 
-        val mockTrustsConnector = mock[TrustsConnector]
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .build()
 
         val startDate = LocalDate.of(2018, 6, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
           .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getTaxYearOfStartDate()
+        val result = service.getTaxYearOfStartDate(draftId)
 
         result.futureValue mustEqual TaxYear(2018)
       }
