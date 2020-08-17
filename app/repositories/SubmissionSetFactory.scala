@@ -22,7 +22,7 @@ import pages.TaxLiabilityTaskStatus
 import play.api.i18n.Messages
 import play.api.libs.json.{JsNull, Json}
 import services.TaxLiabilityService
-import utils.{AnswerRowConverter, CheckYourAnswersHelper}
+import utils.CheckYourAnswersHelper
 import viewmodels.{AnswerRow, AnswerSection}
 
 class SubmissionSetFactory @Inject()(checkYourAnswersHelper: CheckYourAnswersHelper,

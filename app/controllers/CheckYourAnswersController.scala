@@ -25,7 +25,6 @@ import pages.TaxLiabilityTaskStatus
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.RegistrationsRepository
-import services.TaxLiabilityService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.CheckYourAnswersHelper
 import views.html.CheckYourAnswersView
