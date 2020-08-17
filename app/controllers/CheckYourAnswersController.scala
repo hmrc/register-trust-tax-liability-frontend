@@ -24,6 +24,7 @@ import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYea
 import pages.TaxLiabilityTaskStatus
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.RegistrationsRepository
 import services.TaxLiabilityService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.CheckYourAnswersHelper
@@ -38,7 +39,7 @@ class CheckYourAnswersController @Inject()(
                                             view: CheckYourAnswersView,
                                             checkYourAnswersHelper: CheckYourAnswersHelper,
                                             actions: Actions,
-                                            estatesService: TaxLiabilityService,
+                                            registrationsRepository: RegistrationsRepository,
                                             val appConfig : FrontendAppConfig
                                           ) extends FrontendBaseController with I18nSupport {
 
@@ -64,9 +65,9 @@ class CheckYourAnswersController @Inject()(
 
       for {
         updatedAnswers <- Future.fromTry(request.userAnswers.set(TaxLiabilityTaskStatus, Completed))
-        _ <- estatesService.submitTaxLiability(updatedAnswers)
+        _ <- registrationsRepository.set(updatedAnswers)
       } yield {
-        Redirect(appConfig.registerTrustHubOverview(draftId))
+        Redirect(appConfig.registrationProgressUrl(draftId))
       }
   }
 }

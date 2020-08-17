@@ -59,7 +59,7 @@ class CYMinusThreeEarlierYearsLiabilityControllerSpec extends SpecBase with Mock
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(taxYear, NormalMode, submitRoute, draftId)(fakeRequest, messages).toString
+        view(taxYear, draftId, NormalMode, submitRoute)(fakeRequest, messages).toString
 
       application.stop()
     }
@@ -79,7 +79,7 @@ class CYMinusThreeEarlierYearsLiabilityControllerSpec extends SpecBase with Mock
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(taxYear, NormalMode, submitRoute, draftId)(fakeRequest, messages).toString
+        view(taxYear, draftId, NormalMode, submitRoute)(fakeRequest, messages).toString
 
       application.stop()
     }

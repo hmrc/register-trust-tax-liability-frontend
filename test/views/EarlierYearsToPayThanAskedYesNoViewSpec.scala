@@ -33,7 +33,7 @@ class EarlierYearsToPayThanAskedYesNoViewSpec extends ViewBehaviours {
     val view = viewFor[EarlierYearsToPayThanAskedYesNoView](Some(emptyUserAnswers))
 
     def applyView(): HtmlFormat.Appendable =
-      view.apply(taxYear, NormalMode, submitRoute, "draftId")(fakeRequest, messages)
+      view.apply(taxYear, draftId, NormalMode, submitRoute)(fakeRequest, messages)
 
     behave like dynamicTitlePage(applyView(), messageKeyPrefix, taxYear)
 

@@ -27,7 +27,7 @@ import uk.gov.hmrc.time.TaxYear
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxLiabilityService @Inject()(estatesConnector: TrustsConnector,
+class TaxLiabilityService @Inject()(trustsConnector: TrustsConnector,
                                     localDateService: LocalDateService
                                    )(implicit ec: ExecutionContext) {
 
@@ -61,7 +61,7 @@ class TaxLiabilityService @Inject()(estatesConnector: TrustsConnector,
       TaxYear.current.back(LAST_3_TAX_YEARS)
     }
 
-    getTaxYearOfDeath().map{ taxYearOfDeath =>
+    getTaxYearOfStartDate().map{ taxYearOfDeath =>
 
       val deathWasBeforeMaximum4Years = taxYearOfDeath.startYear < oldestYearToShow.startYear
 
@@ -73,7 +73,7 @@ class TaxLiabilityService @Inject()(estatesConnector: TrustsConnector,
     }
   }
 
-  def getTaxYearOfDeath()(implicit hc: HeaderCarrier): Future[TaxYear] = {
+  def getTaxYearOfStartDate()(implicit hc: HeaderCarrier): Future[TaxYear] = {
 
     startDate().map {
       case Some(date) =>
@@ -91,7 +91,7 @@ class TaxLiabilityService @Inject()(estatesConnector: TrustsConnector,
   }
 
   def startDate()(implicit hc: HeaderCarrier): Future[Option[StartDate]] =
-    estatesConnector.getTrustStartDate()
+    trustsConnector.getTrustStartDate()
 
   def evaluateTaxYears(userAnswers: UserAnswers): List[YearReturnType] = {
 
@@ -105,15 +105,4 @@ class TaxLiabilityService @Inject()(estatesConnector: TrustsConnector,
     yearsDeclared.toList
   }
 
-  def submitTaxLiability(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    evaluateTaxYears(userAnswers) match {
-      case Nil =>
-        estatesConnector.resetTaxLiability()
-      case years =>
-        for {
-          _ <- estatesConnector.resetTaxLiability()
-          r <- estatesConnector.saveTaxConsequence(YearsReturns(years))
-        } yield r
-    }
-  }
 }

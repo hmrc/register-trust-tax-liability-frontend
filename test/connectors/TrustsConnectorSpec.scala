@@ -99,67 +99,6 @@ class TrustsConnectorSpec extends SpecBase
 
     }
 
-    "save tax consequences" in {
-      val application = applicationBuilder()
-        .configure(
-          Seq(
-            "microservice.services.estates.port" -> server.port(),
-            "auditing.enabled" -> false
-          ): _*
-        ).build()
-
-
-      val connector = application.injector.instanceOf[TrustsConnector]
-
-      server.stubFor(
-        post(urlEqualTo("/estates/tax-liability"))
-          .withRequestBody(equalTo(
-            Json.stringify(Json.parse("""
-              |{
-              | "returns": [
-              |   {"taxReturnYear":"20", "taxConsequence": true}
-              | ]
-              |}
-              |""".stripMargin))))
-          .willReturn(ok())
-      )
-
-      val futureResult = connector.saveTaxConsequence(YearsReturns(List(YearReturnType("20", true))))
-
-      whenReady(futureResult) {
-        r =>
-          r.status mustBe Helpers.OK
-      }
-
-      application.stop()
-    }
-
-    "reset tax liability transforms" in {
-      val application = applicationBuilder()
-        .configure(
-          Seq(
-            "microservice.services.estates.port" -> server.port(),
-            "auditing.enabled" -> false
-          ): _*
-        ).build()
-
-      val connector = application.injector.instanceOf[TrustsConnector]
-
-      server.stubFor(
-        post(urlEqualTo("/estates/reset-tax-liability"))
-          .willReturn(ok())
-      )
-
-      val futureResult = connector.resetTaxLiability()
-
-      whenReady(futureResult) {
-        r =>
-          r.status mustBe Helpers.OK
-      }
-
-      application.stop()
-    }
-
   }
 
 }
