@@ -29,8 +29,8 @@ class TrustsConnector @Inject()(http: HttpClient, config: FrontendAppConfig) {
 
   private def getTrustStartDateUrl(draftId: String) = s"${config.trustsUrl}/trusts/register/submission-drafts/$draftId/when-trust-setup"
 
-  def getTrustStartDate()(implicit hc: HeaderCarrier, ec : ExecutionContext): Future[Option[StartDate]] = {
-    http.GET[Option[StartDate]](getTrustStartDateUrl("draft-id"))
+  def getTrustStartDate(draftId: String)(implicit hc: HeaderCarrier, ec : ExecutionContext): Future[Option[StartDate]] = {
+    http.GET[Option[StartDate]](getTrustStartDateUrl(draftId))
   }
 
 }

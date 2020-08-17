@@ -60,7 +60,7 @@ class TrustsConnectorSpec extends SpecBase
             .willReturn(okJson(json.toString))
         )
 
-        val futureResult = connector.getTrustStartDate()
+        val futureResult = connector.getTrustStartDate("draft-id")
 
         whenReady(futureResult) {
           r =>
@@ -87,7 +87,7 @@ class TrustsConnectorSpec extends SpecBase
             .willReturn(status(Helpers.NOT_FOUND))
         )
 
-        val futureResult = connector.getTrustStartDate()
+        val futureResult = connector.getTrustStartDate("draft-id")
 
         whenReady(futureResult) {
           r =>

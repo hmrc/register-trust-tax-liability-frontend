@@ -58,7 +58,7 @@ class IndexControllerSpec extends SpecBase {
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(initialStartDate))))
+        when(mockTrustsConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(initialStartDate))))
 
         when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -90,7 +90,7 @@ class IndexControllerSpec extends SpecBase {
 
         val newDateOfDeath = LocalDate.of(2018, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(newDateOfDeath))))
+        when(mockTrustsConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(newDateOfDeath))))
 
         when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -118,7 +118,7 @@ class IndexControllerSpec extends SpecBase {
         .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
         .build()
 
-      when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(None))
+      when(mockTrustsConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(None))
 
       when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -147,7 +147,7 @@ class IndexControllerSpec extends SpecBase {
 
         val startDate = LocalDate.of(2015, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
+        when(mockTrustsConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
         when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -177,7 +177,7 @@ class IndexControllerSpec extends SpecBase {
 
         val startDate = LocalDate.of(2016, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
+        when(mockTrustsConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
         when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -207,7 +207,7 @@ class IndexControllerSpec extends SpecBase {
 
         val startDate = LocalDate.of(2015, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
+        when(mockTrustsConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
         when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -239,7 +239,7 @@ class IndexControllerSpec extends SpecBase {
 
           val trustStartDate = LocalDate.of(2017, 5, 1)
 
-          when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(trustStartDate))))
+          when(mockTrustsConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(trustStartDate))))
 
           when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -266,7 +266,7 @@ class IndexControllerSpec extends SpecBase {
 
           val startDate = LocalDate.of(2017, 5, 1)
 
-          when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
+          when(mockTrustsConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
           when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -299,7 +299,7 @@ class IndexControllerSpec extends SpecBase {
 
           val startDate = LocalDate.of(2018, 5, 1)
 
-          when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
+          when(mockTrustsConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
           when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -326,7 +326,7 @@ class IndexControllerSpec extends SpecBase {
 
           val startDate = LocalDate.of(2018, 5, 1)
 
-          when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
+          when(mockTrustsConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
           when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -359,7 +359,7 @@ class IndexControllerSpec extends SpecBase {
 
           val startDate = LocalDate.of(2019, 5, 1)
 
-          when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
+          when(mockTrustsConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
           when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -386,7 +386,7 @@ class IndexControllerSpec extends SpecBase {
 
           val startDate = LocalDate.of(2019, 5, 1)
 
-          when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
+          when(mockTrustsConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
           when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 

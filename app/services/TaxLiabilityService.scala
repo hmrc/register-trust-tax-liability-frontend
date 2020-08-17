@@ -48,7 +48,7 @@ class TaxLiabilityService @Inject()(trustsConnector: TrustsConnector,
 
   private val decemberDeadline = LocalDate.of(TaxYear.current.starts.getYear, DEADLINE_MONTH, DEADLINE_DAY)
 
-  def getFirstYearOfTaxLiability()(implicit hc: HeaderCarrier): Future[TaxLiabilityYear] = {
+  def getFirstYearOfTaxLiability(draftId: String)(implicit hc: HeaderCarrier): Future[TaxLiabilityYear] = {
 
     val today = localDateService.now
 
@@ -61,7 +61,7 @@ class TaxLiabilityService @Inject()(trustsConnector: TrustsConnector,
       TaxYear.current.back(LAST_3_TAX_YEARS)
     }
 
-    getTaxYearOfStartDate().map{ taxYearOfDeath =>
+    getTaxYearOfStartDate(draftId).map{ taxYearOfDeath =>
 
       val deathWasBeforeMaximum4Years = taxYearOfDeath.startYear < oldestYearToShow.startYear
 
@@ -73,9 +73,9 @@ class TaxLiabilityService @Inject()(trustsConnector: TrustsConnector,
     }
   }
 
-  def getTaxYearOfStartDate()(implicit hc: HeaderCarrier): Future[TaxYear] = {
+  def getTaxYearOfStartDate(draftId: String)(implicit hc: HeaderCarrier): Future[TaxYear] = {
 
-    startDate().map {
+    startDate(draftId).map {
       case Some(date) =>
         val beforeApril = date.startDate.getMonthValue < APRIL
         val between1stAnd5thApril = date.startDate.getMonthValue == APRIL && date.startDate.getDayOfMonth < TAX_YEAR_START_DAY
@@ -90,8 +90,8 @@ class TaxLiabilityService @Inject()(trustsConnector: TrustsConnector,
     }
   }
 
-  def startDate()(implicit hc: HeaderCarrier): Future[Option[StartDate]] =
-    trustsConnector.getTrustStartDate()
+  def startDate(draftId: String)(implicit hc: HeaderCarrier): Future[Option[StartDate]] =
+    trustsConnector.getTrustStartDate(draftId)
 
   def evaluateTaxYears(userAnswers: UserAnswers): List[YearReturnType] = {
 

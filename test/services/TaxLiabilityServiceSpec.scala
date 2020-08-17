@@ -55,12 +55,12 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val startDate = LocalDate.of(2015, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+        when(mockTrustsConnector.getTrustStartDate(any())(any(), any()))
           .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability("draft-id")
 
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2016), hasEarlierYearsToDeclare = true)
       }
@@ -77,12 +77,12 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val startDate = LocalDate.of(2015, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+        when(mockTrustsConnector.getTrustStartDate(any())(any(), any()))
           .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability("draft-id")
 
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2016), hasEarlierYearsToDeclare = true)
       }
@@ -102,12 +102,12 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val startDate = LocalDate.of(2015, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+        when(mockTrustsConnector.getTrustStartDate(any())(any(), any()))
           .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability("draft-id")
 
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2017), hasEarlierYearsToDeclare = true)
       }
@@ -126,12 +126,12 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val startDate = LocalDate.of(2016, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+        when(mockTrustsConnector.getTrustStartDate(any())(any(), any()))
           .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability("draft-id")
 
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2016), hasEarlierYearsToDeclare = false)
       }
@@ -150,12 +150,12 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val startDate = LocalDate.of(2017, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+        when(mockTrustsConnector.getTrustStartDate(any())(any(), any()))
           .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability("draft-id")
 
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2017), hasEarlierYearsToDeclare = false)
       }
@@ -172,12 +172,12 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val startDate = LocalDate.of(2017, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+        when(mockTrustsConnector.getTrustStartDate(any())(any(), any()))
           .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability("draft-id")
 
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2017), hasEarlierYearsToDeclare = false)
       }
@@ -196,12 +196,12 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val startDate = LocalDate.of(2018, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+        when(mockTrustsConnector.getTrustStartDate(any())(any(), any()))
           .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability("draft-id")
 
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2018), hasEarlierYearsToDeclare = false)
       }
@@ -218,12 +218,12 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val startDate = LocalDate.of(2018, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+        when(mockTrustsConnector.getTrustStartDate(any())(any(), any()))
           .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability("draft-id")
 
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2018), hasEarlierYearsToDeclare = false)
       }
@@ -242,12 +242,12 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val startDate = LocalDate.of(2019, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+        when(mockTrustsConnector.getTrustStartDate(any())(any(), any()))
           .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability("draft-id")
 
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2019), hasEarlierYearsToDeclare = false)
       }
@@ -264,12 +264,12 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val startDate = LocalDate.of(2019, 5, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+        when(mockTrustsConnector.getTrustStartDate(any())(any(), any()))
           .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability("draft-id")
 
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2019), hasEarlierYearsToDeclare = false)
       }
@@ -288,12 +288,12 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
       val startDate = LocalDate.of(2018, 1, 1)
 
-      when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+      when(mockTrustsConnector.getTrustStartDate(any())(any(), any()))
         .thenReturn(Future.successful(Some(StartDate(startDate))))
 
       val service = application.injector.instanceOf[TaxLiabilityService]
 
-      val result = service.getTaxYearOfStartDate()
+      val result = service.getTaxYearOfStartDate("draft-id")
 
       result.futureValue mustEqual TaxYear(2017)
       }
@@ -308,12 +308,12 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val startDate = LocalDate.of(2018, 6, 1)
 
-        when(mockTrustsConnector.getTrustStartDate()(any(), any()))
+        when(mockTrustsConnector.getTrustStartDate(any())(any(), any()))
           .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getTaxYearOfStartDate()
+        val result = service.getTaxYearOfStartDate("draft-id")
 
         result.futureValue mustEqual TaxYear(2018)
       }
