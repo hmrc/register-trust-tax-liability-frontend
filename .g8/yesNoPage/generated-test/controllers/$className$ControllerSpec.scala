@@ -1,6 +1,5 @@
 package controllers
 
-import base.SpecBase
 import forms.$className$FormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -13,7 +12,7 @@ import play.api.libs.json.{JsBoolean, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
+import repositories.RegistrationsRepository
 import views.html.$className$View
 
 import scala.concurrent.Future
@@ -69,7 +68,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
     "redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
+      val mockSessionRepository = mock[RegistrationsRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -77,7 +76,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[RegistrationsRepository].toInstance(mockSessionRepository)
           )
           .build()
 

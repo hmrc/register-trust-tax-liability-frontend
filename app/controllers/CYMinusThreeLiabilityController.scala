@@ -25,24 +25,24 @@ import navigation.Navigator
 import pages.CYMinusThreeYesNoPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
+import repositories.RegistrationsRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import views.html.CYMinusThreeYesNoView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class CYMinusThreeLiabilityController @Inject()(
-                                 val controllerComponents: MessagesControllerComponents,
-                                 @TaxLiability navigator: Navigator,
-                                 actions: Actions,
-                                 formProvider: YesNoFormProviderWithArguments,
-                                 sessionRepository: SessionRepository,
-                                 view: CYMinusThreeYesNoView
+                                                 val controllerComponents: MessagesControllerComponents,
+                                                 @TaxLiability navigator: Navigator,
+                                                 actions: Actions,
+                                                 formProvider: YesNoFormProviderWithArguments,
+                                                 sessionRepository: RegistrationsRepository,
+                                                 view: CYMinusThreeYesNoView
                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def form(ranges: Seq[String]) = formProvider.withPrefix("cyMinusThree.liability", ranges)
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = actions.authWithData {
+  def onPageLoad(mode: Mode, draftId: String): Action[AnyContent] = actions.authWithData(draftId) {
     implicit request =>
 
       val range = TaxYearRange(CYMinus3TaxYear)
@@ -54,10 +54,10 @@ class CYMinusThreeLiabilityController @Inject()(
         case Some(value) => f.fill(value)
       }
 
-      Ok(view(preparedForm, range.toRange, mode))
+      Ok(view(preparedForm, draftId, range.toRange, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = actions.authWithData.async {
+  def onSubmit(mode: Mode, draftId: String): Action[AnyContent] = actions.authWithData(draftId).async {
     implicit request =>
 
       val range = TaxYearRange(CYMinus3TaxYear)
@@ -66,13 +66,13 @@ class CYMinusThreeLiabilityController @Inject()(
 
       f.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, range.toRange, mode))),
+          Future.successful(BadRequest(view(formWithErrors, draftId, range.toRange, mode))),
 
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(CYMinusThreeYesNoPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(CYMinusThreeYesNoPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(CYMinusThreeYesNoPage, draftId, mode, updatedAnswers))
       )
   }
 }

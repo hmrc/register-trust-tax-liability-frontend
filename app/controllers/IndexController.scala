@@ -18,15 +18,17 @@ package controllers
 
 import java.time.LocalDate
 
+import config.FrontendAppConfig
 import controllers.actions.Actions
 import handlers.ErrorHandler
 import javax.inject.Inject
 import models.requests.OptionalDataRequest
 import models.{NormalMode, UserAnswers}
-import pages.DateOfDeathPage
+import pages.TrustStartDatePage
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import repositories.SessionRepository
+import repositories.RegistrationsRepository
 import services.TaxLiabilityService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.time.TaxYear
@@ -37,52 +39,65 @@ class IndexController @Inject()(
                                  val controllerComponents: MessagesControllerComponents,
                                  taxLiabilityService: TaxLiabilityService,
                                  actions: Actions,
-                                 repository: SessionRepository,
-                                 errorHandler: ErrorHandler
+                                 repository: RegistrationsRepository,
+                                 errorHandler: ErrorHandler,
+                                 config: FrontendAppConfig
                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  private def startNewSession(dateOfDeath: LocalDate)(implicit request: OptionalDataRequest[AnyContent]) = for {
-    _ <- repository.resetCache(request.internalId)
-    newSession <- Future.fromTry {
-      UserAnswers.startNewSession(request.internalId)
-        .set(DateOfDeathPage, dateOfDeath)
-    }
-    _ <- repository.set(newSession)
-    result <- redirect()
-  } yield result
+  private def startNewSession(draftId: String, startDate: LocalDate)(implicit request: OptionalDataRequest[AnyContent]) = {
+    val answers = UserAnswers.startNewSession(draftId, request.internalId)
+      .set(TrustStartDatePage, startDate)
 
-  def onPageLoad: Action[AnyContent] = actions.authWithSession.async {
-    implicit request =>
-
-      taxLiabilityService.dateOfDeath() flatMap { dateOfDeath =>
-        val userAnswers: UserAnswers = request.userAnswers
-          .getOrElse(UserAnswers.startNewSession(request.internalId))
-
-        userAnswers.get(DateOfDeathPage) match {
-          case Some(cachedDate) =>
-            if (cachedDate.isEqual(dateOfDeath)) {
-              redirect()
-            } else {
-              startNewSession(dateOfDeath)
-            }
-          case None =>
-            startNewSession(dateOfDeath)
-        }
-      }
+    for {
+      newSession <- Future.fromTry(answers)
+      _ <- repository.resetCache(newSession)
+      _ <- repository.set(newSession)
+      result <- redirect(draftId)
+    } yield result
   }
 
-  private def redirect()(implicit request: OptionalDataRequest[AnyContent]) : Future[Result] = {
-    taxLiabilityService.getFirstYearOfTaxLiability().map { taxLiabilityYear =>
+  def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithSession(draftId).async {
+    implicit request =>
+
+      taxLiabilityService.startDate(draftId) flatMap {
+          case Some(date) =>
+            val userAnswers: UserAnswers = request.userAnswers
+              .getOrElse(UserAnswers.startNewSession(draftId, request.internalId))
+
+            userAnswers.get(TrustStartDatePage) match {
+              case Some(cachedDate) =>
+                if (cachedDate.isEqual(date.startDate)) {
+                  Logger.info(s"[IndexController] trust start date has not changed, continuing session")
+                  redirect(draftId)
+                } else {
+                  Logger.info(s"[IndexController] trust start date has changed, starting new session")
+                  startNewSession(draftId, date.startDate)
+                }
+              case None =>
+                Logger.info(s"[IndexController] no existing trust start date saved, starting new session")
+                startNewSession(draftId, date.startDate)
+            }
+          case None =>
+            Logger.info(s"[IndexController] no start date available, returning to /registration-progress")
+            Future.successful(Redirect(config.registrationProgressUrl(draftId)))
+        }
+  }
+
+  private def redirect(draftId: String)(implicit request: OptionalDataRequest[AnyContent]) : Future[Result] = {
+    taxLiabilityService.getFirstYearOfTaxLiability(draftId).map { taxLiabilityYear =>
+
       val currentYear = TaxYear.current.startYear
       val startYear = taxLiabilityYear.firstYearAvailable.startYear
 
-      (currentYear - startYear) match {
-        case 4 if taxLiabilityYear.earlierYears => Redirect(controllers.routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode))
-        case 4 => Redirect(controllers.routes.CYMinusFourLiabilityController.onPageLoad(NormalMode))
-        case 3 if taxLiabilityYear.earlierYears => Redirect(controllers.routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode))
-        case 3 => Redirect(controllers.routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode))
-        case 2 => Redirect(controllers.routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode))
-        case 1 => Redirect(controllers.routes.CYMinusOneLiabilityController.onPageLoad(NormalMode))
+      val numberOfYearsToAsk = currentYear - startYear
+
+      numberOfYearsToAsk match {
+        case 4 if taxLiabilityYear.hasEarlierYearsToDeclare => Redirect(controllers.routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId))
+        case 4 => Redirect(controllers.routes.CYMinusFourLiabilityController.onPageLoad(NormalMode, draftId))
+        case 3 if taxLiabilityYear.hasEarlierYearsToDeclare => Redirect(controllers.routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId))
+        case 3 => Redirect(controllers.routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode, draftId))
+        case 2 => Redirect(controllers.routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode, draftId))
+        case 1 => Redirect(controllers.routes.CYMinusOneLiabilityController.onPageLoad(NormalMode, draftId))
         case _ => InternalServerError(errorHandler.internalServerErrorTemplate)
       }
     }

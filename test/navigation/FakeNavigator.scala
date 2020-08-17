@@ -22,7 +22,7 @@ import play.api.mvc.Call
 
 class FakeNavigator(val desiredRoute: Call = Call("GET", "/foo"), mode: Mode = NormalMode) extends Navigator {
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
+  override def nextPage(page: Page, draftId: String, mode: Mode, userAnswers: UserAnswers): Call =
     desiredRoute
 
 }

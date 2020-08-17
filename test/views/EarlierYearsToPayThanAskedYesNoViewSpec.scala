@@ -26,14 +26,14 @@ class EarlierYearsToPayThanAskedYesNoViewSpec extends ViewBehaviours {
   val messageKeyPrefix = "earlierYearsLiability"
   val taxYear = "2000"
 
-  lazy val submitRoute = controllers.routes.CYMinusThreeEarlierYearsLiabilityController.onSubmit(NormalMode)
+  lazy val submitRoute = controllers.routes.CYMinusThreeEarlierYearsLiabilityController.onSubmit(NormalMode, draftId)
 
   "EarlierYearsToPayThanAskedYesNoView view" must {
 
     val view = viewFor[EarlierYearsToPayThanAskedYesNoView](Some(emptyUserAnswers))
 
     def applyView(): HtmlFormat.Appendable =
-      view.apply(taxYear, NormalMode, submitRoute)(fakeRequest, messages)
+      view.apply(taxYear, draftId, NormalMode, submitRoute)(fakeRequest, messages)
 
     behave like dynamicTitlePage(applyView(), messageKeyPrefix, taxYear)
 

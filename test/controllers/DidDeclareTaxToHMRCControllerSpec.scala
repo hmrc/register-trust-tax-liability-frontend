@@ -29,7 +29,7 @@ package controllers
  import play.api.mvc.Call
  import play.api.test.FakeRequest
  import play.api.test.Helpers._
- import repositories.SessionRepository
+ import repositories.RegistrationsRepository
  import views.html.DidDeclareTaxToHMRCYesNoView
 
  import scala.concurrent.Future
@@ -41,7 +41,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
   val formProvider = new YesNoFormProviderWithArguments()
   def form(arguments: Seq[Any]) = formProvider.withPrefix("didDeclareToHMRC", arguments)
 
-  def didDeclareRoute(year: TaxYear) = routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, year).url
+  def didDeclareRoute(year: TaxYear) = routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, draftId, year).url
 
   "DidDeclareTaxToHMRC Controller" when {
 
@@ -61,7 +61,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs, CYMinus1TaxYear, TaxYearRange(CYMinus1TaxYear).toRange, NormalMode)(fakeRequest, messages).toString
+          view(formWithArgs, draftId, CYMinus1TaxYear, TaxYearRange(CYMinus1TaxYear).toRange, NormalMode)(fakeRequest, messages).toString
 
         application.stop()
       }
@@ -83,16 +83,16 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs.fill(true), CYMinus1TaxYear, TaxYearRange(CYMinus1TaxYear).toRange, NormalMode)(fakeRequest, messages).toString
+          view(formWithArgs.fill(true), draftId, CYMinus1TaxYear, TaxYearRange(CYMinus1TaxYear).toRange, NormalMode)(fakeRequest, messages).toString
 
         application.stop()
       }
 
       "redirect to the next page when valid data is submitted" in {
 
-        val mockPlaybackRepository = mock[SessionRepository]
+        val mockPlaybackRepository = mock[RegistrationsRepository]
 
-        when(mockPlaybackRepository.set(any())) thenReturn Future.successful(true)
+        when(mockPlaybackRepository.set(any())(any(), any())) thenReturn Future.successful(true)
 
         val application =
           applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -131,7 +131,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, CYMinus1TaxYear, TaxYearRange(CYMinus1TaxYear).toRange, NormalMode)(fakeRequest, messages).toString
+          view(boundForm, draftId, CYMinus1TaxYear, TaxYearRange(CYMinus1TaxYear).toRange, NormalMode)(fakeRequest, messages).toString
 
         application.stop()
       }
@@ -187,7 +187,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs, CYMinus2TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
+          view(formWithArgs, draftId, CYMinus2TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
 
         application.stop()
       }
@@ -211,16 +211,16 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         val formWithArgs = form(Seq("6 April 2018", "5 April 2019"))
 
         contentAsString(result) mustEqual
-          view(formWithArgs.fill(true), CYMinus2TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
+          view(formWithArgs.fill(true), draftId, CYMinus2TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
 
         application.stop()
       }
 
       "redirect to the next page when valid data is submitted" in {
 
-        val mockPlaybackRepository = mock[SessionRepository]
+        val mockPlaybackRepository = mock[RegistrationsRepository]
 
-        when(mockPlaybackRepository.set(any())) thenReturn Future.successful(true)
+        when(mockPlaybackRepository.set(any())(any(), any())) thenReturn Future.successful(true)
 
         val application =
           applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -261,7 +261,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, CYMinus2TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
+          view(boundForm, draftId, CYMinus2TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
 
         application.stop()
       }
@@ -317,7 +317,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs, CYMinus3TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
+          view(formWithArgs, draftId, CYMinus3TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
 
         application.stop()
       }
@@ -341,16 +341,16 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs.fill(true), CYMinus3TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
+          view(formWithArgs.fill(true), draftId, CYMinus3TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
 
         application.stop()
       }
 
       "redirect to the next page when valid data is submitted" in {
 
-        val mockPlaybackRepository = mock[SessionRepository]
+        val mockPlaybackRepository = mock[RegistrationsRepository]
 
-        when(mockPlaybackRepository.set(any())) thenReturn Future.successful(true)
+        when(mockPlaybackRepository.set(any())(any(), any())) thenReturn Future.successful(true)
 
         val application =
           applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -391,7 +391,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, CYMinus3TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
+          view(boundForm, draftId, CYMinus3TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
 
         application.stop()
       }
@@ -447,7 +447,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs, CYMinus4TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
+          view(formWithArgs, draftId, CYMinus4TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
 
         application.stop()
       }
@@ -471,16 +471,16 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs.fill(true), CYMinus4TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
+          view(formWithArgs.fill(true), draftId, CYMinus4TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
 
         application.stop()
       }
 
       "redirect to the next page when valid data is submitted" in {
 
-        val mockPlaybackRepository = mock[SessionRepository]
+        val mockPlaybackRepository = mock[RegistrationsRepository]
 
-        when(mockPlaybackRepository.set(any())) thenReturn Future.successful(true)
+        when(mockPlaybackRepository.set(any())(any(), any())) thenReturn Future.successful(true)
 
         val application =
           applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -521,7 +521,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, CYMinus4TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
+          view(boundForm, draftId, CYMinus4TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
 
         application.stop()
       }

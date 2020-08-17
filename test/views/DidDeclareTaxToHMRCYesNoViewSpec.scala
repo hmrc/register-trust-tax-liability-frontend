@@ -35,7 +35,7 @@ class DidDeclareTaxToHMRCYesNoViewSpec extends YesNoViewBehaviours {
     val view = viewFor[DidDeclareTaxToHMRCYesNoView](Some(emptyUserAnswers))
 
     def applyView(form: Form[_]): HtmlFormat.Appendable =
-      view.apply(form, CYMinus1TaxYear, "6 April 2019 to 5 April 2020", NormalMode)(fakeRequest, messages)
+      view.apply(form, draftId, CYMinus1TaxYear, "6 April 2019 to 5 April 2020", NormalMode)(fakeRequest, messages)
 
     behave like dynamicTitlePage(applyView(form), messageKeyPrefix, "6 April 2019 to 5 April 2020")
 

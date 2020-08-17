@@ -18,16 +18,16 @@ package services
 
 import java.time.LocalDate
 
-import connectors.EstatesConnector
+import connectors.SubmissionDraftConnector
 import javax.inject.Inject
-import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, TaxLiabilityYear, TaxYearsDue, UserAnswers, YearReturnType, YearsReturns}
+import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, StartDate, TaxLiabilityYear, TaxYearsDue, UserAnswers, YearReturnType, YearsReturns}
 import pages.DidDeclareTaxToHMRCYesNoPage
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.time.TaxYear
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxLiabilityService @Inject()(estatesConnector: EstatesConnector,
+class TaxLiabilityService @Inject()(trustsConnector: SubmissionDraftConnector,
                                     localDateService: LocalDateService
                                    )(implicit ec: ExecutionContext) {
 
@@ -48,7 +48,7 @@ class TaxLiabilityService @Inject()(estatesConnector: EstatesConnector,
 
   private val decemberDeadline = LocalDate.of(TaxYear.current.starts.getYear, DEADLINE_MONTH, DEADLINE_DAY)
 
-  def getFirstYearOfTaxLiability()(implicit hc: HeaderCarrier): Future[TaxLiabilityYear] = {
+  def getFirstYearOfTaxLiability(draftId: String)(implicit hc: HeaderCarrier): Future[TaxLiabilityYear] = {
 
     val today = localDateService.now
 
@@ -61,32 +61,37 @@ class TaxLiabilityService @Inject()(estatesConnector: EstatesConnector,
       TaxYear.current.back(LAST_3_TAX_YEARS)
     }
 
-    getTaxYearOfDeath().map{ taxYearOfDeath =>
+    getTaxYearOfStartDate(draftId).map{ taxYearOfDeath =>
 
       val deathWasBeforeMaximum4Years = taxYearOfDeath.startYear < oldestYearToShow.startYear
 
       if (deathWasBeforeMaximum4Years) {
-        TaxLiabilityYear(oldestYearToShow, earlierYears = true)
+        TaxLiabilityYear(oldestYearToShow, hasEarlierYearsToDeclare = true)
       } else {
-        TaxLiabilityYear(taxYearOfDeath, earlierYears = false)
+        TaxLiabilityYear(taxYearOfDeath, hasEarlierYearsToDeclare = false)
       }
     }
   }
 
-  def getTaxYearOfDeath()(implicit hc: HeaderCarrier): Future[TaxYear] = {
-    dateOfDeath().map { dateOfDeath =>
-      val beforeApril = dateOfDeath.getMonthValue < APRIL
-      val between1stAnd5thApril = dateOfDeath.getMonthValue == APRIL && dateOfDeath.getDayOfMonth < TAX_YEAR_START_DAY
+  def getTaxYearOfStartDate(draftId: String)(implicit hc: HeaderCarrier): Future[TaxYear] = {
 
-      if (beforeApril || between1stAnd5thApril) {
-        TaxYear(dateOfDeath.getYear - 1)
-      } else {
-        TaxYear(dateOfDeath.getYear)
-      }
+    startDate(draftId).map {
+      case Some(date) =>
+        val beforeApril = date.startDate.getMonthValue < APRIL
+        val between1stAnd5thApril = date.startDate.getMonthValue == APRIL && date.startDate.getDayOfMonth < TAX_YEAR_START_DAY
+
+        if (beforeApril || between1stAnd5thApril) {
+          TaxYear(date.startDate.getYear - 1)
+        } else {
+          TaxYear(date.startDate.getYear)
+        }
+      case None =>
+        throw new RuntimeException("No start date available") // DON'T DO THIS!
     }
   }
 
-  def dateOfDeath()(implicit hc: HeaderCarrier): Future[LocalDate] = estatesConnector.getDateOfDeath()
+  def startDate(draftId: String)(implicit hc: HeaderCarrier): Future[Option[StartDate]] =
+    trustsConnector.getTrustStartDate(draftId)
 
   def evaluateTaxYears(userAnswers: UserAnswers): List[YearReturnType] = {
 
@@ -100,15 +105,4 @@ class TaxLiabilityService @Inject()(estatesConnector: EstatesConnector,
     yearsDeclared.toList
   }
 
-  def submitTaxLiability(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    evaluateTaxYears(userAnswers) match {
-      case Nil =>
-        estatesConnector.resetTaxLiability()
-      case years =>
-        for {
-          _ <- estatesConnector.resetTaxLiability()
-          r <- estatesConnector.saveTaxConsequence(YearsReturns(years))
-        } yield r
-    }
-  }
 }

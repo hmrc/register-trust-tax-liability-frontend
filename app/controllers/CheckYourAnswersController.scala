@@ -18,17 +18,19 @@ package controllers
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.EstatesStoreConnector
 import controllers.actions.Actions
+import models.Status.Completed
 import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear}
+import pages.TaxLiabilityTaskStatus
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.TaxLiabilityService
+import repositories.RegistrationsRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import utils.CheckYourAnswersHelper
 import views.html.CheckYourAnswersView
 
 import scala.concurrent.ExecutionContext.Implicits._
+import scala.concurrent.Future
 
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
@@ -36,12 +38,11 @@ class CheckYourAnswersController @Inject()(
                                             view: CheckYourAnswersView,
                                             checkYourAnswersHelper: CheckYourAnswersHelper,
                                             actions: Actions,
-                                            estatesService: TaxLiabilityService,
-                                            estatesStoreConnector: EstatesStoreConnector,
+                                            registrationsRepository: RegistrationsRepository,
                                             val appConfig : FrontendAppConfig
                                           ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = actions.authWithData {
+  def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithData(draftId) {
     implicit request =>
       val taxFor4Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(request.userAnswers, CYMinus4TaxYear)
       val taxFor3Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(request.userAnswers, CYMinus3TaxYear)
@@ -55,17 +56,17 @@ class CheckYourAnswersController @Inject()(
         taxFor1Years
       ).flatten
 
-      Ok(view(sections))
+      Ok(view(sections, draftId))
   }
 
-  def onSubmit(): Action[AnyContent] = actions.authWithData.async {
+  def onSubmit(draftId: String): Action[AnyContent] = actions.authWithData(draftId).async {
     implicit request =>
 
       for {
-        _ <- estatesService.submitTaxLiability(request.userAnswers)
-        _ <- estatesStoreConnector.setTaskComplete()
+        updatedAnswers <- Future.fromTry(request.userAnswers.set(TaxLiabilityTaskStatus, Completed))
+        _ <- registrationsRepository.set(updatedAnswers)
       } yield {
-        Redirect(appConfig.registerEstateHubOverview)
+        Redirect(appConfig.registrationProgressUrl(draftId))
       }
   }
 }

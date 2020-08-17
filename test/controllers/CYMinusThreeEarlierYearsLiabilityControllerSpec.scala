@@ -28,7 +28,7 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
+import repositories.RegistrationsRepository
 import uk.gov.hmrc.time.TaxYear
 import views.html.EarlierYearsToPayThanAskedYesNoView
 
@@ -40,9 +40,9 @@ class CYMinusThreeEarlierYearsLiabilityControllerSpec extends SpecBase with Mock
 
   val taxYear: String = TaxYear.current.back(3).startYear.toString
 
-  lazy val cyMinusThreeEarlierYearsLiabilityControllerRoute = routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode).url
+  lazy val cyMinusThreeEarlierYearsLiabilityControllerRoute = routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId).url
 
-  lazy val submitRoute = routes.CYMinusThreeEarlierYearsLiabilityController.onSubmit(NormalMode)
+  lazy val submitRoute = routes.CYMinusThreeEarlierYearsLiabilityController.onSubmit(NormalMode, draftId)
 
   "CYMinusThreeEarlierYearsLiability Controller" must {
 
@@ -59,7 +59,7 @@ class CYMinusThreeEarlierYearsLiabilityControllerSpec extends SpecBase with Mock
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(taxYear, NormalMode, submitRoute)(fakeRequest, messages).toString
+        view(taxYear, draftId, NormalMode, submitRoute)(fakeRequest, messages).toString
 
       application.stop()
     }
@@ -79,16 +79,16 @@ class CYMinusThreeEarlierYearsLiabilityControllerSpec extends SpecBase with Mock
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(taxYear, NormalMode, submitRoute)(fakeRequest, messages).toString
+        view(taxYear, draftId, NormalMode, submitRoute)(fakeRequest, messages).toString
 
       application.stop()
     }
 
     "redirect to the next page when valid data is submitted" in {
 
-      val mockPlaybackRepository = mock[SessionRepository]
+      val mockPlaybackRepository = mock[RegistrationsRepository]
 
-      when(mockPlaybackRepository.set(any())) thenReturn Future.successful(true)
+      when(mockPlaybackRepository.set(any())(any(), any())) thenReturn Future.successful(true)
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))

@@ -24,32 +24,30 @@ import navigation.Navigator
 import pages.CYMinusFourEarlierYearsYesNoPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import views.html.EarlierYearsToPayThanAskedYesNoView
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class CYMinusFourEarlierYearsLiabilityController @Inject()(
-                                 val controllerComponents: MessagesControllerComponents,
-                                 @TaxLiability navigator: Navigator,
-                                 actions: Actions,
-                                 sessionRepository: SessionRepository,
-                                 view: EarlierYearsToPayThanAskedYesNoView
+                                                            val controllerComponents: MessagesControllerComponents,
+                                                            @TaxLiability navigator: Navigator,
+                                                            actions: Actions,
+                                                            view: EarlierYearsToPayThanAskedYesNoView
                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = actions.authWithData {
+  def onPageLoad(mode: Mode, draftId: String): Action[AnyContent] = actions.authWithData(draftId) {
     implicit request =>
 
       val start = TaxYearRange(CYMinus4TaxYear).yearAtStart
 
-      val continueUrl = routes.CYMinusFourEarlierYearsLiabilityController.onSubmit(mode)
+      val continueUrl = routes.CYMinusFourEarlierYearsLiabilityController.onSubmit(mode, draftId)
 
-      Ok(view(start, mode, continueUrl))
+      Ok(view(start, draftId, mode, continueUrl))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = actions.authWithData.async {
+  def onSubmit(mode: Mode, draftId: String): Action[AnyContent] = actions.authWithData(draftId).async {
     implicit request =>
-      Future.successful(Redirect(navigator.nextPage(CYMinusFourEarlierYearsYesNoPage, mode, request.userAnswers)))
+      Future.successful(Redirect(navigator.nextPage(CYMinusFourEarlierYearsYesNoPage, draftId, mode, request.userAnswers)))
   }
 }

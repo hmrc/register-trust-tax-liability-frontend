@@ -17,13 +17,12 @@
 package controllers
 
 import base.SpecBase
-import connectors.{EstatesConnector, EstatesStoreConnector}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
+import repositories.RegistrationsRepository
 import services.TaxLiabilityService
 import uk.gov.hmrc.http.HttpResponse
 import views.html.CheckYourAnswersView
@@ -38,7 +37,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(draftId).url)
 
       val result = route(application, request).value
 
@@ -47,7 +46,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(Nil)(fakeRequest, messages).toString
+        view(Nil, draftId)(fakeRequest, messages).toString
 
       application.stop()
     }
@@ -56,7 +55,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(draftId).url)
 
       val result = route(application, request).value
 
@@ -69,27 +68,21 @@ class CheckYourAnswersControllerSpec extends SpecBase {
 
     "redirect to the next page when valid data is submitted" in {
 
-      val mockService = mock[TaxLiabilityService]
-      val mockEstatesStoreConnector = mock[EstatesStoreConnector]
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[TaxLiabilityService].toInstance(mockService))
-        .overrides(bind[EstatesStoreConnector].toInstance(mockEstatesStoreConnector))
-        .build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-      when(mockService.submitTaxLiability(any())(any())).thenReturn(Future.successful(HttpResponse(200)))
-      when(mockEstatesStoreConnector.setTaskComplete()(any(), any())).thenReturn(Future.successful(HttpResponse(200)))
+      when(registrationsRepository.set(any())(any(), any())).thenReturn(Future.successful(true))
 
       val controller = application.injector.instanceOf[CheckYourAnswersController]
 
       val request =
-        FakeRequest(POST, routes.CheckYourAnswersController.onSubmit().url)
+        FakeRequest(POST, routes.CheckYourAnswersController.onSubmit(draftId).url)
 
-      val result = controller.onSubmit().apply(request)
+      val result = controller.onSubmit(draftId).apply(request)
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "http://localhost:8822/register-an-estate/registration-progress"
+      redirectLocation(result).value mustEqual "http://localhost:9781/trusts-registration/draftId/registration-progress"
 
       application.stop()
     }
@@ -99,7 +92,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, routes.CheckYourAnswersController.onSubmit().url)
+        FakeRequest(POST, routes.CheckYourAnswersController.onSubmit(draftId).url)
 
       val result = route(application, request).value
 

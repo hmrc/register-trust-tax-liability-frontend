@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package connectors
+package models
 
-import config.FrontendAppConfig
-import javax.inject.Inject
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+sealed trait Status
 
-import scala.concurrent.{ExecutionContext, Future}
+object Status extends Enumerable.Implicits {
 
-class EstatesStoreConnector @Inject()(http: HttpClient, config: FrontendAppConfig) {
+  case object Completed extends WithName("completed") with Status
 
-  private def registerTasksUrl() = s"${config.estatesStoreUrl}/estates-store/register/tasks/tax-liability"
+  case object InProgress extends WithName("progress") with Status
 
-  def setTaskComplete()(implicit hc: HeaderCarrier, ec : ExecutionContext): Future[HttpResponse] = {
-    http.POSTEmpty[HttpResponse](registerTasksUrl())
-  }
+  val values: Set[Status] = Set(
+    Completed, InProgress
+  )
 
+  implicit val enumerable: Enumerable[Status] =
+    Enumerable(values.toSeq.map(v => v.toString -> v): _*)
 }

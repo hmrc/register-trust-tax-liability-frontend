@@ -24,37 +24,37 @@ import play.api.mvc.Call
 
 class TaxLiabilityNavigator @Inject()() extends Navigator {
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = routes(mode)(page)(userAnswers)
+  override def nextPage(page: Page, draftId: String, mode: Mode, userAnswers: UserAnswers): Call = routes(mode, draftId)(page)(userAnswers)
 
-  private def simpleNavigation(mode: Mode): PartialFunction[Page, Call] = {
-    case CYMinusFourEarlierYearsYesNoPage => rts.CYMinusFourLiabilityController.onPageLoad(NormalMode)
-    case CYMinusThreeEarlierYearsYesNoPage => rts.CYMinusThreeLiabilityController.onPageLoad(NormalMode)
-    case DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYear) => rts.CYMinusThreeLiabilityController.onPageLoad(NormalMode)
-    case DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYear) => rts.CYMinusTwoLiabilityController.onPageLoad(NormalMode)
-    case DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYear) => rts.CYMinusOneLiabilityController.onPageLoad(NormalMode)
-    case DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear) => rts.CheckYourAnswersController.onPageLoad()
+  private def simpleNavigation(mode: Mode, draftId: String): PartialFunction[Page, Call] = {
+    case CYMinusFourEarlierYearsYesNoPage => rts.CYMinusFourLiabilityController.onPageLoad(NormalMode, draftId)
+    case CYMinusThreeEarlierYearsYesNoPage => rts.CYMinusThreeLiabilityController.onPageLoad(NormalMode, draftId)
+    case DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYear) => rts.CYMinusThreeLiabilityController.onPageLoad(NormalMode, draftId)
+    case DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYear) => rts.CYMinusTwoLiabilityController.onPageLoad(NormalMode, draftId)
+    case DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYear) => rts.CYMinusOneLiabilityController.onPageLoad(NormalMode, draftId)
+    case DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear) => rts.CheckYourAnswersController.onPageLoad(draftId)
   }
 
-  private def conditionalNavigation(mode: Mode): PartialFunction[Page, UserAnswers => Call] = {
+  private def conditionalNavigation(mode: Mode, draftId: String): PartialFunction[Page, UserAnswers => Call] = {
     case CYMinusFourYesNoPage => ua => yesNoNav(ua, CYMinusFourYesNoPage,
-      yesCall = rts.DidDeclareTaxToHMRCController.onPageLoad(mode, CYMinus4TaxYear),
-      noCall = rts.CYMinusThreeLiabilityController.onPageLoad(mode)
+      yesCall = rts.DidDeclareTaxToHMRCController.onPageLoad(mode, draftId, CYMinus4TaxYear),
+      noCall = rts.CYMinusThreeLiabilityController.onPageLoad(mode, draftId)
     )
     case CYMinusThreeYesNoPage => ua => yesNoNav(ua, CYMinusThreeYesNoPage,
-      yesCall = rts.DidDeclareTaxToHMRCController.onPageLoad(mode, CYMinus3TaxYear),
-      noCall = rts.CYMinusTwoLiabilityController.onPageLoad(mode)
+      yesCall = rts.DidDeclareTaxToHMRCController.onPageLoad(mode, draftId, CYMinus3TaxYear),
+      noCall = rts.CYMinusTwoLiabilityController.onPageLoad(mode, draftId)
     )
     case CYMinusTwoYesNoPage => ua => yesNoNav(ua, CYMinusTwoYesNoPage,
-      yesCall = rts.DidDeclareTaxToHMRCController.onPageLoad(mode, CYMinus2TaxYear),
-      noCall = rts.CYMinusOneLiabilityController.onPageLoad(mode)
+      yesCall = rts.DidDeclareTaxToHMRCController.onPageLoad(mode, draftId, CYMinus2TaxYear),
+      noCall = rts.CYMinusOneLiabilityController.onPageLoad(mode, draftId)
     )
     case CYMinusOneYesNoPage => ua => yesNoNav(ua, CYMinusOneYesNoPage,
-      yesCall = rts.DidDeclareTaxToHMRCController.onPageLoad(mode, CYMinus1TaxYear),
-      noCall = rts.CheckYourAnswersController.onPageLoad()
+      yesCall = rts.DidDeclareTaxToHMRCController.onPageLoad(mode, draftId, CYMinus1TaxYear),
+      noCall = rts.CheckYourAnswersController.onPageLoad(draftId)
     )
   }
 
-  private def routes(mode: Mode): PartialFunction[Page, UserAnswers => Call] =
-    simpleNavigation(mode) andThen (c => (_:UserAnswers) => c) orElse
-      conditionalNavigation(mode)
+  private def routes(mode: Mode, draftId: String): PartialFunction[Page, UserAnswers => Call] =
+    simpleNavigation(mode, draftId) andThen (c => (_:UserAnswers) => c) orElse
+      conditionalNavigation(mode, draftId)
 }

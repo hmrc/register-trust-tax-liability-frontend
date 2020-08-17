@@ -19,17 +19,16 @@ package services
 import java.time.LocalDate
 
 import base.SpecBase
-import connectors.EstatesConnector
-import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, TaxLiabilityYear, YearReturnType}
+import connectors.SubmissionDraftConnector
+import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, StartDate, TaxLiabilityYear, YearReturnType}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import pages.DidDeclareTaxToHMRCYesNoPage
 import play.api.inject.bind
+import play.api.test.Helpers._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.time.TaxYear
-import play.api.test.Helpers._
 
-import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.Future
 
 class TaxLiabilityServiceSpec extends SpecBase {
@@ -44,316 +43,280 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
     "return the cy minus four tax liability and and true to earlier years" when {
 
-      "the current date is before the december deadline and date of death is more than 4 years ago" in {
-        val mockEstatesConnector = mock[EstatesConnector]
+      "the current date is before the december deadline and start date is more than 4 years ago" in {
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
-        val dateOfDeath = LocalDate.of(2015, 5, 1)
+        val startDate = LocalDate.of(2015, 5, 1)
 
-        when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
+          .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability(draftId)
 
-        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2016), earlierYears = true)
+        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2016), hasEarlierYearsToDeclare = true)
       }
 
-      "the current date is on the december deadline and date of death is more than 4 years ago" in {
-        val mockEstatesConnector = mock[EstatesConnector]
+      "the current date is on the december deadline and start date is more than 4 years ago" in {
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 12, 22)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
-        val dateOfDeath = LocalDate.of(2015, 5, 1)
+        val startDate = LocalDate.of(2015, 5, 1)
 
-        when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
+          .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability(draftId)
 
-        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2016), earlierYears = true)
+        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2016), hasEarlierYearsToDeclare = true)
       }
     }
 
     "return the cy minus three tax liability and and true to earlier years" when {
 
-      "the current date is after the december deadline and date of death is more than 3 years ago" in {
-        val mockEstatesConnector = mock[EstatesConnector]
+      "the current date is after the december deadline and start date is more than 3 years ago" in {
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateAfterDec23rd = LocalDate.of(2020, 12, 23)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateAfterDec23rd)))
           .build()
 
-        val dateOfDeath = LocalDate.of(2015, 5, 1)
+        val startDate = LocalDate.of(2015, 5, 1)
 
-        when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
+          .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability(draftId)
 
-        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2017), earlierYears = true)
+        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2017), hasEarlierYearsToDeclare = true)
       }
     }
 
     "return the cy minus four tax liability and and false to earlier years" when {
-      "the current date is before the december deadline and date of death is 4 years ago" in {
-        val mockEstatesConnector = mock[EstatesConnector]
+      "the current date is before the december deadline and start date is 4 years ago" in {
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
-        val dateOfDeath = LocalDate.of(2016, 5, 1)
+        val startDate = LocalDate.of(2016, 5, 1)
 
-        when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
+          .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability(draftId)
 
-        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2016), earlierYears = false)
+        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2016), hasEarlierYearsToDeclare = false)
       }
     }
 
     "return the cy minus three tax liability and and false to earlier years" when {
-      "the current date is before the december deadline and date of death is 3 years ago" in {
-        val mockEstatesConnector = mock[EstatesConnector]
+      "the current date is before the december deadline and start date is 3 years ago" in {
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
-        val dateOfDeath = LocalDate.of(2017, 5, 1)
+        val startDate = LocalDate.of(2017, 5, 1)
 
-        when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
+          .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability(draftId)
 
-        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2017), earlierYears = false)
+        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2017), hasEarlierYearsToDeclare = false)
       }
 
-      "the current date is after the december deadline and date of death is 3 years ago" in {
-        val mockEstatesConnector = mock[EstatesConnector]
+      "the current date is after the december deadline and start date is 3 years ago" in {
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 12, 23)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
-        val dateOfDeath = LocalDate.of(2017, 5, 1)
+        val startDate = LocalDate.of(2017, 5, 1)
 
-        when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
+          .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability(draftId)
 
-        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2017), earlierYears = false)
+        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2017), hasEarlierYearsToDeclare = false)
       }
     }
 
     "return the cy minus two tax liability and and false to earlier years" when {
-      "the current date is before the december deadline and date of death is 2 years ago" in {
-        val mockEstatesConnector = mock[EstatesConnector]
+      "the current date is before the december deadline and start date is 2 years ago" in {
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
-        val dateOfDeath = LocalDate.of(2018, 5, 1)
+        val startDate = LocalDate.of(2018, 5, 1)
 
-        when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
+          .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability(draftId)
 
-        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2018), earlierYears = false)
+        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2018), hasEarlierYearsToDeclare = false)
       }
 
-      "the current date is after the december deadline and date of death is 2 years ago" in {
-        val mockEstatesConnector = mock[EstatesConnector]
+      "the current date is after the december deadline and start date is 2 years ago" in {
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 12, 23)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
-        val dateOfDeath = LocalDate.of(2018, 5, 1)
+        val startDate = LocalDate.of(2018, 5, 1)
 
-        when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
+          .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability(draftId)
 
-        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2018), earlierYears = false)
+        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2018), hasEarlierYearsToDeclare = false)
       }
     }
 
     "return the cy minus one tax liability and and false to earlier years" when {
-      "the current date is before the december deadline and date of death is 1 years ago" in {
-        val mockEstatesConnector = mock[EstatesConnector]
+      "the current date is before the december deadline and start date is 1 years ago" in {
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
-        val dateOfDeath = LocalDate.of(2019, 5, 1)
+        val startDate = LocalDate.of(2019, 5, 1)
 
-        when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
+          .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability(draftId)
 
-        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2019), earlierYears = false)
+        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2019), hasEarlierYearsToDeclare = false)
       }
 
-      "the current date is after the december deadline and date of death is 3 years ago" in {
-        val mockEstatesConnector = mock[EstatesConnector]
+      "the current date is after the december deadline and start date is 3 years ago" in {
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 12, 23)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
-        val dateOfDeath = LocalDate.of(2019, 5, 1)
+        val startDate = LocalDate.of(2019, 5, 1)
 
-        when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
+          .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getFirstYearOfTaxLiability()
+        val result = service.getFirstYearOfTaxLiability(draftId)
 
-        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2019), earlierYears = false)
+        result.futureValue mustEqual TaxLiabilityYear(TaxYear(2019), hasEarlierYearsToDeclare = false)
       }
     }
   }
 
   "getTaxYearOfDeath" must {
-    "return the correct tax year the date of death falls in" when {
-      "date of death is between Jan 1st and April 5th (inclusive)" in {
+    "return the correct tax year the start date falls in" when {
+      "start date is between Jan 1st and April 5th (inclusive)" in {
 
-      val mockEstatesConnector = mock[EstatesConnector]
+      val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
       val application = applicationBuilder(userAnswers = None)
-        .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+        .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
         .build()
 
-      val dateOfDeath = LocalDate.of(2018, 1, 1)
+      val startDate = LocalDate.of(2018, 1, 1)
 
-      when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+      when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
+        .thenReturn(Future.successful(Some(StartDate(startDate))))
 
       val service = application.injector.instanceOf[TaxLiabilityService]
 
-      val result = service.getTaxYearOfDeath()
+      val result = service.getTaxYearOfStartDate(draftId)
 
       result.futureValue mustEqual TaxYear(2017)
       }
 
-      "date of death is between April 6th and Dec 31st (inclusive)" in {
+      "start date is between April 6th and Dec 31st (inclusive)" in {
 
-        val mockEstatesConnector = mock[EstatesConnector]
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .build()
 
-        val dateOfDeath = LocalDate.of(2018, 6, 1)
+        val startDate = LocalDate.of(2018, 6, 1)
 
-        when(mockEstatesConnector.getDateOfDeath()(any(), any())).thenReturn(Future.successful(dateOfDeath))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
+          .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         val service = application.injector.instanceOf[TaxLiabilityService]
 
-        val result = service.getTaxYearOfDeath()
+        val result = service.getTaxYearOfStartDate(draftId)
 
         result.futureValue mustEqual TaxYear(2018)
       }
-    }
-  }
-
-  ".sendTaxLiability" must {
-
-    "clear out and send tax liability transform to estates when there is a liability" in {
-      val mockEstatesConnector = mock[EstatesConnector]
-
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
-        .build()
-
-      when(mockEstatesConnector.resetTaxLiability()(any(), any())).thenReturn(Future.successful(HttpResponse(200)))
-      when(mockEstatesConnector.saveTaxConsequence(any())(any(), any())).thenReturn(Future.successful(HttpResponse(200)))
-
-      val service = application.injector.instanceOf[TaxLiabilityService]
-
-      val userAnswers = emptyUserAnswers
-        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYear), false).success.value
-        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYear), false).success.value
-        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYear), false).success.value
-        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
-
-      val result = service.submitTaxLiability(userAnswers)
-
-      result.futureValue.status mustBe OK
-    }
-
-    "clear out tax liability transforms when there is no liability" in {
-      val mockEstatesConnector = mock[EstatesConnector]
-
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(bind[EstatesConnector].toInstance(mockEstatesConnector))
-        .build()
-
-      when(mockEstatesConnector.resetTaxLiability()(any(), any())).thenReturn(Future.successful(HttpResponse(200)))
-
-      val service = application.injector.instanceOf[TaxLiabilityService]
-
-      val userAnswers = emptyUserAnswers
-        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYear), true).success.value
-        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYear), true).success.value
-        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYear), true).success.value
-        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), true).success.value
-
-      val result = service.submitTaxLiability(userAnswers)
-
-      result.futureValue.status mustBe OK
     }
   }
 

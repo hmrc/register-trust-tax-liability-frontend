@@ -26,7 +26,9 @@ import play.api.mvc.Call
 class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   private val contactHost = configuration.get[String]("contact-frontend.host")
-  private val contactFormServiceIdentifier = "estates"
+  private val contactFormServiceIdentifier = "trusts"
+
+  val repositoryKey: String = "tax-liability"
 
   val analyticsToken: String = configuration.get[String](s"google-analytics.token")
   val analyticsHost: String = configuration.get[String](s"google-analytics.host")
@@ -40,13 +42,17 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
   lazy val logoutUrl: String = configuration.get[String]("urls.logout")
 
+  lazy val registrationStartUrl: String = configuration.get[String]("urls.registrationStart")
+
   lazy val locationCanonicalList: String = configuration.get[String]("location.canonical.list.all")
   lazy val locationCanonicalListNonUK: String = configuration.get[String]("location.canonical.list.nonUK")
 
-  lazy val estatesUrl: String = configuration.get[Service]("microservice.services.estates").baseUrl
-  lazy val estatesStoreUrl: String = configuration.get[Service]("microservice.services.estates-store").baseUrl
+  lazy val trustsUrl: String = configuration.get[Service]("microservice.services.trusts").baseUrl
+  lazy val createAgentServicesAccountUrl : String = configuration.get[String]("urls.createAgentServicesAccount")
+  lazy val maintainATrustFrontendUrl : String = configuration.get[String]("urls.maintainATrust")
 
-  lazy val registerEstateHubOverview: String = configuration.get[String]("urls.registerEstateHubOverview")
+  def registrationProgressUrl(draftId: String): String =
+    configuration.get[String]("urls.registrationProgress").replace(":draftId", draftId)
 
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")

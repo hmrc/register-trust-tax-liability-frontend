@@ -18,7 +18,7 @@ package base
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.UserAnswers
+import models.{Status, UserAnswers}
 import navigation.FakeNavigator
 import org.scalatest.TryValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -28,17 +28,21 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.inject.{Injector, bind}
 import play.api.libs.json.Json
-import play.api.mvc.Call
+import play.api.mvc.{BodyParsers, Call}
 import play.api.test.FakeRequest
-import repositories.SessionRepository
+import repositories.RegistrationsRepository
+import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, Enrolments}
+
+import scala.concurrent.ExecutionContext
 
 trait SpecBase extends PlaySpec with GuiceOneAppPerSuite with Mocked with TryValues with ScalaFutures with IntegrationPatience {
 
-  val userAnswersId = "id"
+  val draftId: String = "draftId"
+  val userInternalId = "id"
 
   val fakeNavigator = new FakeNavigator()
 
-  def emptyUserAnswers = UserAnswers(userAnswersId, Json.obj())
+  def emptyUserAnswers = UserAnswers(draftId, Json.obj(), userInternalId)
 
   def onwardRoute = Call("GET", "/foo")
 
@@ -50,14 +54,32 @@ trait SpecBase extends PlaySpec with GuiceOneAppPerSuite with Mocked with TryVal
 
   def fakeRequest = FakeRequest("", "")
 
+  def trustsAuth = injector.instanceOf[TrustsAuthorisedFunctions]
+
+  def injectedParsers = injector.instanceOf[BodyParsers.Default]
+
+  implicit def executionContext = injector.instanceOf[ExecutionContext]
+
   implicit def messages: Messages = messagesApi.preferred(fakeRequest)
 
-  protected def applicationBuilder(userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
+  private def fakeDraftIdAction(userAnswers: Option[UserAnswers]): FakeDraftIdRetrievalActionProvider =
+    new FakeDraftIdRetrievalActionProvider(
+      draftId,
+      Status.InProgress,
+      userAnswers,
+      registrationsRepository
+    )
+  protected def applicationBuilder(userAnswers: Option[UserAnswers] = None,
+                                   affinityGroup: AffinityGroup = AffinityGroup.Organisation,
+                                   enrolments: Enrolments = Enrolments(Set.empty[Enrolment])
+                                  ): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
-        bind[IdentifierAction].to[FakeIdentifierAction],
-        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
-        bind[SessionRepository].toInstance(sessionRepository)
+        bind[IdentifierAction].toInstance(
+          new FakeIdentifierAction(affinityGroup, frontendAppConfig)(injectedParsers, trustsAuth, enrolments)
+        ),
+        bind[DraftIdRetrievalActionProvider].toInstance(fakeDraftIdAction(userAnswers)),
+        bind[RegistrationsRepository].toInstance(registrationsRepository)
       )
 }

@@ -23,13 +23,13 @@
         appConfig: FrontendAppConfig
 )
 
-@(form: Form[_], taxYear: String, mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], draftId: String, taxYear: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = s"${errorPrefix(form)} ${messages("cyMinusThree.liability.title", taxYear)}"
 ) {
 
-    @formHelper(action = CYMinusThreeLiabilityController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = CYMinusThreeLiabilityController.onSubmit(mode, draftId), 'autoComplete -> "off") {
 
         @components.back_link()
 
@@ -49,6 +49,6 @@
 
         @components.submit_button()
 
-        <p><a href="@appConfig.registerEstateHubOverview">@messages("site.returnToRegistrationProgress")</a></p>
+        <p><a href="@{appConfig.registrationProgressUrl(draftId)}">@messages("site.returnToRegistrationProgress")</a></p>
     }
 }

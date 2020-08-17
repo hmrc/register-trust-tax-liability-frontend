@@ -29,7 +29,7 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
+import repositories.RegistrationsRepository
 import views.html.CYMinusTwoYesNoView
 
 import scala.concurrent.Future
@@ -49,7 +49,7 @@ class CYMinusTwoLiabilityControllerSpec extends SpecBase with MockitoSugar {
 
   val taxYear: String = s"$taxYearStart to $taxYearEnd"
 
-  lazy val cyMinusTwoLiabilityControllerRoute = routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode).url
+  lazy val cyMinusTwoLiabilityControllerRoute = routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode, draftId).url
 
   "CYMinusTwoLiability Controller" must {
 
@@ -68,7 +68,7 @@ class CYMinusTwoLiabilityControllerSpec extends SpecBase with MockitoSugar {
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(formWithArgs, taxYear, NormalMode)(fakeRequest, messages).toString
+        view(formWithArgs,draftId , taxYear, NormalMode)(fakeRequest, messages).toString
 
       application.stop()
     }
@@ -90,16 +90,16 @@ class CYMinusTwoLiabilityControllerSpec extends SpecBase with MockitoSugar {
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(formWithArgs.fill(true), taxYear, NormalMode)(fakeRequest, messages).toString
+        view(formWithArgs.fill(true),draftId , taxYear, NormalMode)(fakeRequest, messages).toString
 
       application.stop()
     }
 
     "redirect to the next page when valid data is submitted" in {
 
-      val mockPlaybackRepository = mock[SessionRepository]
+      val mockPlaybackRepository = mock[RegistrationsRepository]
 
-      when(mockPlaybackRepository.set(any())) thenReturn Future.successful(true)
+      when(mockPlaybackRepository.set(any())(any(), any())) thenReturn Future.successful(true)
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -138,7 +138,7 @@ class CYMinusTwoLiabilityControllerSpec extends SpecBase with MockitoSugar {
       status(result) mustEqual BAD_REQUEST
 
       contentAsString(result) mustEqual
-        view(boundForm, taxYear, NormalMode)(fakeRequest, messages).toString
+        view(boundForm,draftId , taxYear, NormalMode)(fakeRequest, messages).toString
 
       application.stop()
     }
