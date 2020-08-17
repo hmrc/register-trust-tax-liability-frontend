@@ -44,9 +44,9 @@ class IndexController @Inject()(
                                  config: FrontendAppConfig
                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  private def startNewSession(draftId: String, dateOfDeath: LocalDate)(implicit request: OptionalDataRequest[AnyContent]) = {
+  private def startNewSession(draftId: String, startDate: LocalDate)(implicit request: OptionalDataRequest[AnyContent]) = {
     val answers = UserAnswers.startNewSession(draftId, request.internalId)
-      .set(TrustStartDatePage, dateOfDeath)
+      .set(TrustStartDatePage, startDate)
 
     for {
       newSession <- Future.fromTry(answers)

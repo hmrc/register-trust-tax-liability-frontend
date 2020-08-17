@@ -88,9 +88,9 @@ class IndexControllerSpec extends SpecBase {
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
-        val newDateOfDeath = LocalDate.of(2018, 5, 1)
+        val newStartDate = LocalDate.of(2018, 5, 1)
 
-        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(newDateOfDeath))))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(newStartDate))))
 
         when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 

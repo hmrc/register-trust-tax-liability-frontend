@@ -43,7 +43,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
     "return the cy minus four tax liability and and true to earlier years" when {
 
-      "the current date is before the december deadline and date of death is more than 4 years ago" in {
+      "the current date is before the december deadline and start date is more than 4 years ago" in {
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
@@ -65,7 +65,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2016), hasEarlierYearsToDeclare = true)
       }
 
-      "the current date is on the december deadline and date of death is more than 4 years ago" in {
+      "the current date is on the december deadline and start date is more than 4 years ago" in {
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 12, 22)
@@ -90,7 +90,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
     "return the cy minus three tax liability and and true to earlier years" when {
 
-      "the current date is after the december deadline and date of death is more than 3 years ago" in {
+      "the current date is after the december deadline and start date is more than 3 years ago" in {
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateAfterDec23rd = LocalDate.of(2020, 12, 23)
@@ -114,7 +114,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
     }
 
     "return the cy minus four tax liability and and false to earlier years" when {
-      "the current date is before the december deadline and date of death is 4 years ago" in {
+      "the current date is before the december deadline and start date is 4 years ago" in {
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
@@ -138,7 +138,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
     }
 
     "return the cy minus three tax liability and and false to earlier years" when {
-      "the current date is before the december deadline and date of death is 3 years ago" in {
+      "the current date is before the december deadline and start date is 3 years ago" in {
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
@@ -160,7 +160,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2017), hasEarlierYearsToDeclare = false)
       }
 
-      "the current date is after the december deadline and date of death is 3 years ago" in {
+      "the current date is after the december deadline and start date is 3 years ago" in {
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 12, 23)
@@ -184,7 +184,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
     }
 
     "return the cy minus two tax liability and and false to earlier years" when {
-      "the current date is before the december deadline and date of death is 2 years ago" in {
+      "the current date is before the december deadline and start date is 2 years ago" in {
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
@@ -206,7 +206,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2018), hasEarlierYearsToDeclare = false)
       }
 
-      "the current date is after the december deadline and date of death is 2 years ago" in {
+      "the current date is after the december deadline and start date is 2 years ago" in {
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 12, 23)
@@ -230,7 +230,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
     }
 
     "return the cy minus one tax liability and and false to earlier years" when {
-      "the current date is before the december deadline and date of death is 1 years ago" in {
+      "the current date is before the december deadline and start date is 1 years ago" in {
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
@@ -252,7 +252,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
         result.futureValue mustEqual TaxLiabilityYear(TaxYear(2019), hasEarlierYearsToDeclare = false)
       }
 
-      "the current date is after the december deadline and date of death is 3 years ago" in {
+      "the current date is after the december deadline and start date is 3 years ago" in {
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 12, 23)
@@ -277,8 +277,8 @@ class TaxLiabilityServiceSpec extends SpecBase {
   }
 
   "getTaxYearOfDeath" must {
-    "return the correct tax year the date of death falls in" when {
-      "date of death is between Jan 1st and April 5th (inclusive)" in {
+    "return the correct tax year the start date falls in" when {
+      "start date is between Jan 1st and April 5th (inclusive)" in {
 
       val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
@@ -298,7 +298,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
       result.futureValue mustEqual TaxYear(2017)
       }
 
-      "date of death is between April 6th and Dec 31st (inclusive)" in {
+      "start date is between April 6th and Dec 31st (inclusive)" in {
 
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
