@@ -22,6 +22,7 @@ import org.mockito.Mockito.when
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.RegistrationsRepository
 import services.TaxLiabilityService
 import uk.gov.hmrc.http.HttpResponse
 import views.html.CheckYourAnswersView
@@ -67,13 +68,10 @@ class CheckYourAnswersControllerSpec extends SpecBase {
 
     "redirect to the next page when valid data is submitted" in {
 
-      val mockService = mock[TaxLiabilityService]
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(bind[TaxLiabilityService].toInstance(mockService))
-        .build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-      when(mockService.submitTaxLiability(any())(any())).thenReturn(Future.successful(HttpResponse(200)))
+      when(registrationsRepository.set(any())(any(), any())).thenReturn(Future.successful(true))
 
       val controller = application.injector.instanceOf[CheckYourAnswersController]
 
@@ -84,7 +82,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "http://localhost:8822/register-an-estate/registration-progress"
+      redirectLocation(result).value mustEqual "http://localhost:9781/trusts-registration/draftId/registration-progress"
 
       application.stop()
     }

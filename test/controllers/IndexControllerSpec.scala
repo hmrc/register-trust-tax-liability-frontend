@@ -45,7 +45,7 @@ class IndexControllerSpec extends SpecBase {
     "for an existing session" when {
 
       "continue session if trust start date is not changed" in {
-        val mockEstatesConnector = mock[TrustsConnector]
+        val mockTrustsConnector = mock[TrustsConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
@@ -54,11 +54,11 @@ class IndexControllerSpec extends SpecBase {
         val existingUserAnswers = emptyUserAnswers.set(TrustStartDatePage, initialStartDate).success.value
 
         val application = applicationBuilder(userAnswers = Some(existingUserAnswers))
-          .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
+          .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
-        when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(initialStartDate))))
+        when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(initialStartDate))))
 
         when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -75,7 +75,7 @@ class IndexControllerSpec extends SpecBase {
       }
 
       "clear user answers if the user returns and the trust start date has changed" in {
-        val mockEstatesConnector = mock[TrustsConnector]
+        val mockTrustsConnector = mock[TrustsConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
@@ -84,13 +84,13 @@ class IndexControllerSpec extends SpecBase {
         val existingUserAnswers = emptyUserAnswers.set(TrustStartDatePage, initialStartDate).success.value
 
         val application = applicationBuilder(userAnswers = Some(existingUserAnswers))
-          .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
+          .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
         val newDateOfDeath = LocalDate.of(2018, 5, 1)
 
-        when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(newDateOfDeath))))
+        when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(newDateOfDeath))))
 
         when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -109,16 +109,16 @@ class IndexControllerSpec extends SpecBase {
 
     "redirect back to register task list if no start date" in {
 
-      val mockEstatesConnector = mock[TrustsConnector]
+      val mockTrustsConnector = mock[TrustsConnector]
 
       val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
       val application = applicationBuilder(userAnswers = None)
-        .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
+        .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
         .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
         .build()
 
-      when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(None))
+      when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(None))
 
       when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -127,7 +127,7 @@ class IndexControllerSpec extends SpecBase {
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustBe "http://localhost:8822/register-an-estate/registration-progress"
+      redirectLocation(result).value mustBe "http://localhost:9781/trusts-registration/draftId/registration-progress"
 
       application.stop()
     }
@@ -136,18 +136,18 @@ class IndexControllerSpec extends SpecBase {
 
       "trust start date is more than four years ago and current date is before 23rd Dec" in {
 
-        val mockEstatesConnector = mock[TrustsConnector]
+        val mockTrustsConnector = mock[TrustsConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
+          .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
         val startDate = LocalDate.of(2015, 5, 1)
 
-        when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
+        when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
         when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -166,18 +166,18 @@ class IndexControllerSpec extends SpecBase {
 
       "trust start date is four years ago and current date is before 23rd Dec" in {
 
-        val mockEstatesConnector = mock[TrustsConnector]
+        val mockTrustsConnector = mock[TrustsConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
+          .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
         val startDate = LocalDate.of(2016, 5, 1)
 
-        when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
+        when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
         when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -196,18 +196,18 @@ class IndexControllerSpec extends SpecBase {
 
       "trust start date is more than three years ago and current date is after 23rd Dec" in {
 
-        val mockEstatesConnector = mock[TrustsConnector]
+        val mockTrustsConnector = mock[TrustsConnector]
 
         val dateAfterDec23rd = LocalDate.of(2020, 12, 25)
 
         val application = applicationBuilder(userAnswers = None)
-          .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
+          .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateAfterDec23rd)))
           .build()
 
         val startDate = LocalDate.of(2015, 5, 1)
 
-        when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
+        when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
         when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -228,18 +228,18 @@ class IndexControllerSpec extends SpecBase {
 
         "current date is before 23rd Dec" in {
 
-          val mockEstatesConnector = mock[TrustsConnector]
+          val mockTrustsConnector = mock[TrustsConnector]
 
           val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
           val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
+            .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
             .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
             .build()
 
           val trustStartDate = LocalDate.of(2017, 5, 1)
 
-          when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(trustStartDate))))
+          when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(trustStartDate))))
 
           when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -255,18 +255,18 @@ class IndexControllerSpec extends SpecBase {
 
         "current date is after 23rd Dec" in {
 
-          val mockEstatesConnector = mock[TrustsConnector]
+          val mockTrustsConnector = mock[TrustsConnector]
 
           val dateAfterDec23rd = LocalDate.of(2020, 12, 25)
 
           val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
+            .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
             .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateAfterDec23rd)))
             .build()
 
           val startDate = LocalDate.of(2017, 5, 1)
 
-          when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
+          when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
           when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -288,18 +288,18 @@ class IndexControllerSpec extends SpecBase {
 
         "current date is before 23rd Dec" in {
 
-          val mockEstatesConnector = mock[TrustsConnector]
+          val mockTrustsConnector = mock[TrustsConnector]
 
           val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
           val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
+            .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
             .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
             .build()
 
           val startDate = LocalDate.of(2018, 5, 1)
 
-          when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
+          when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
           when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -315,18 +315,18 @@ class IndexControllerSpec extends SpecBase {
 
         "current date is after 23rd Dec" in {
 
-          val mockEstatesConnector = mock[TrustsConnector]
+          val mockTrustsConnector = mock[TrustsConnector]
 
           val dateAfterDec23rd = LocalDate.of(2020, 12, 25)
 
           val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
+            .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
             .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateAfterDec23rd)))
             .build()
 
           val startDate = LocalDate.of(2018, 5, 1)
 
-          when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
+          when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
           when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -348,18 +348,18 @@ class IndexControllerSpec extends SpecBase {
 
         "current date is before 23rd Dec" in {
 
-          val mockEstatesConnector = mock[TrustsConnector]
+          val mockTrustsConnector = mock[TrustsConnector]
 
           val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
           val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
+            .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
             .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
             .build()
 
           val startDate = LocalDate.of(2019, 5, 1)
 
-          when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
+          when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
           when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -375,18 +375,18 @@ class IndexControllerSpec extends SpecBase {
 
         "current date is after 23rd Dec" in {
 
-          val mockEstatesConnector = mock[TrustsConnector]
+          val mockTrustsConnector = mock[TrustsConnector]
 
           val dateAfterDec23rd = LocalDate.of(2020, 12, 25)
 
           val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[TrustsConnector].toInstance(mockEstatesConnector))
+            .overrides(bind[TrustsConnector].toInstance(mockTrustsConnector))
             .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateAfterDec23rd)))
             .build()
 
           val startDate = LocalDate.of(2019, 5, 1)
 
-          when(mockEstatesConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
+          when(mockTrustsConnector.getTrustStartDate()(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
 
           when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 

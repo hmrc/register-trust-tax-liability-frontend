@@ -29,20 +29,8 @@ class TrustsConnector @Inject()(http: HttpClient, config: FrontendAppConfig) {
 
   private def getTrustStartDateUrl(draftId: String) = s"${config.trustsUrl}/trusts/register/submission-drafts/$draftId/when-trust-setup"
 
-  private val postTaxConsequences = s"${config.estatesUrl}/estates/tax-liability"
-
   def getTrustStartDate()(implicit hc: HeaderCarrier, ec : ExecutionContext): Future[Option[StartDate]] = {
     http.GET[Option[StartDate]](getTrustStartDateUrl("draft-id"))
-  }
-
-  def saveTaxConsequence(taxYears: YearsReturns)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-    http.POST[JsValue, HttpResponse](postTaxConsequences, Json.toJson(taxYears))
-  }
-
-  private lazy val resetTaxLiabilityUrl = s"${config.estatesUrl}/estates/reset-tax-liability"
-
-  def resetTaxLiability()(implicit hc: HeaderCarrier, ec : ExecutionContext): Future[HttpResponse] = {
-    http.POSTEmpty[HttpResponse](resetTaxLiabilityUrl)
   }
 
 }

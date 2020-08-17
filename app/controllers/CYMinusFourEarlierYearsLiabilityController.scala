@@ -43,7 +43,7 @@ class CYMinusFourEarlierYearsLiabilityController @Inject()(
 
       val continueUrl = routes.CYMinusFourEarlierYearsLiabilityController.onSubmit(mode, draftId)
 
-      Ok(view(start, mode, continueUrl))
+      Ok(view(start, draftId, mode, continueUrl))
   }
 
   def onSubmit(mode: Mode, draftId: String): Action[AnyContent] = actions.authWithData(draftId).async {

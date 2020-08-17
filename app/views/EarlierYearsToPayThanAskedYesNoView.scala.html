@@ -23,7 +23,7 @@
         appConfig: FrontendAppConfig
 )
 
-@(date: String, mode: Mode, continueUrl: Call)(implicit request: Request[_], messages: Messages)
+@(date: String, draftId: String, mode: Mode, continueUrl: Call)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = s"${messages("earlierYearsLiability.title", date)}"
@@ -41,5 +41,5 @@
 
         }
 
-        <p><a href="@appConfig.registerEstateHubOverview">@messages("site.returnToRegistrationProgress")</a></p>
+        <p><a href="@appConfig.registrationProgressUrl(draftId)">@messages("site.returnToRegistrationProgress")</a></p>
 }
