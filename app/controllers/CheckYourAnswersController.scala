@@ -66,7 +66,7 @@ class CheckYourAnswersController @Inject()(
         updatedAnswers <- Future.fromTry(request.userAnswers.set(TaxLiabilityTaskStatus, Completed))
         _ <- estatesService.submitTaxLiability(updatedAnswers)
       } yield {
-        Redirect(appConfig.registerEstateHubOverview)
+        Redirect(appConfig.registerTrustHubOverview(draftId))
       }
   }
 }

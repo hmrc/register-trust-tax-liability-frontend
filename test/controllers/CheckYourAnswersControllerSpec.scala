@@ -84,7 +84,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual "http://localhost:8822/register-an-estate/registration-progress"
+      redirectLocation(result).value mustEqual "http://localhost:9781/trusts-registration/draftId/registration-progress"
 
       application.stop()
     }

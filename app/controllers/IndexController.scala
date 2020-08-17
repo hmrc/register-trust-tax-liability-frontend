@@ -79,7 +79,7 @@ class IndexController @Inject()(
             }
           case None =>
             Logger.info(s"[IndexController] no start date available, returning to /registration-progress")
-            Future.successful(Redirect(config.registerEstateHubOverview))
+            Future.successful(Redirect(config.registerTrustHubOverview(draftId)))
         }
   }
 

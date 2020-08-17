@@ -52,7 +52,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val createAgentServicesAccountUrl : String = configuration.get[String]("urls.createAgentServicesAccount")
   lazy val maintainATrustFrontendUrl : String = configuration.get[String]("urls.maintainATrust")
 
-  lazy val registerEstateHubOverview: String = configuration.get[String]("urls.registerEstateHubOverview")
+  def registerTrustHubOverview(draftId: String): String =
+    configuration.get[String]("urls.registerTrustHubOverview").replace(":draftId", draftId)
 
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")

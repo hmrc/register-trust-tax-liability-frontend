@@ -1,6 +1,6 @@
 # microservice specific routes
 
-GET        /:draftId/                                               controllers.IndexController.onPageLoad(draftId: String)
+GET        /start/:draftId                                          controllers.IndexController.onPageLoad(draftId: String)
 
 GET        /:draftId/need-to-pay-more-than-4-tax-years              controllers.CYMinusFourEarlierYearsLiabilityController.onPageLoad(mode: Mode = NormalMode, draftId: String)
 POST       /:draftId/need-to-pay-more-than-4-tax-years              controllers.CYMinusFourEarlierYearsLiabilityController.onSubmit(mode: Mode = NormalMode, draftId: String)
