@@ -53,7 +53,8 @@ class SubmissionSetFactory @Inject()(checkYourAnswersHelper: CheckYourAnswersHel
       taxLiabilityService.evaluateTaxYears(userAnswers) match {
         case Nil => List.empty
         case yearsReturns =>
-          List(RegistrationSubmission.MappedPiece("yearsReturns", Json.toJson(yearsReturns)))
+          val payload = Json.obj("returns" -> Json.toJson(yearsReturns))
+          List(RegistrationSubmission.MappedPiece("yearsReturns", payload))
       }
     } else {
       List.empty
