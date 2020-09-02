@@ -42,7 +42,7 @@
 @(form: Form[_], draftId: String, taxYear: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = s"${errorPrefix(form)} ${messages("cyMinusOne.liability.title", taxYear)}"
+    title = s"${errorPrefix(form)}${messages("cyMinusOne.liability.title", taxYear)}"
 ) {
 
     @formHelper(action = CYMinusOneLiabilityController.onSubmit(mode, draftId), 'autoComplete -> "off") {
