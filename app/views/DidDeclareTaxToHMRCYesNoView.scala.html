@@ -27,7 +27,7 @@
 @(form: Form[_], draftId: String, taxYear: TaxYear, toRange: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = s"${errorPrefix(form)} ${messages("didDeclareToHMRC.title", toRange)}"
+    title = s"${errorPrefix(form)}${messages("didDeclareToHMRC.title", toRange)}"
 ) {
 
     @formHelper(action = DidDeclareTaxToHMRCController.onSubmit(mode, draftId, taxYear), 'autoComplete -> "off") {

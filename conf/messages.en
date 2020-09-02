@@ -33,6 +33,7 @@ site.no = No
 site.yes = Yes
 site.continue = Continue
 site.service_name = Register and Maintain a Trust
+site.service_section = Years of tax liability
 site.returnToRegistrationProgress = Return to registration progress
 site.textarea.char_limit = (Limit is {0} characters)
 site.sign_out = Sign out
