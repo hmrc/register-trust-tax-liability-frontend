@@ -61,7 +61,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs, draftId, CYMinus1TaxYear, TaxYearRange(CYMinus1TaxYear).toRange, NormalMode)(fakeRequest, messages).toString
+          view(formWithArgs, draftId, CYMinus1TaxYear, TaxYearRange(CYMinus1TaxYear).toRange, NormalMode)(request, messages).toString
 
         application.stop()
       }
@@ -83,7 +83,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs.fill(true), draftId, CYMinus1TaxYear, TaxYearRange(CYMinus1TaxYear).toRange, NormalMode)(fakeRequest, messages).toString
+          view(formWithArgs.fill(true), draftId, CYMinus1TaxYear, TaxYearRange(CYMinus1TaxYear).toRange, NormalMode)(request, messages).toString
 
         application.stop()
       }
@@ -131,7 +131,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, draftId, CYMinus1TaxYear, TaxYearRange(CYMinus1TaxYear).toRange, NormalMode)(fakeRequest, messages).toString
+          view(boundForm, draftId, CYMinus1TaxYear, TaxYearRange(CYMinus1TaxYear).toRange, NormalMode)(request, messages).toString
 
         application.stop()
       }
@@ -187,7 +187,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs, draftId, CYMinus2TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
+          view(formWithArgs, draftId, CYMinus2TaxYear, range.toRange, NormalMode)(request, messages).toString
 
         application.stop()
       }
@@ -211,7 +211,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         val formWithArgs = form(Seq("6 April 2018", "5 April 2019"))
 
         contentAsString(result) mustEqual
-          view(formWithArgs.fill(true), draftId, CYMinus2TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
+          view(formWithArgs.fill(true), draftId, CYMinus2TaxYear, range.toRange, NormalMode)(request, messages).toString
 
         application.stop()
       }
@@ -261,7 +261,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, draftId, CYMinus2TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
+          view(boundForm, draftId, CYMinus2TaxYear, range.toRange, NormalMode)(request, messages).toString
 
         application.stop()
       }
@@ -317,7 +317,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs, draftId, CYMinus3TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
+          view(formWithArgs, draftId, CYMinus3TaxYear, range.toRange, NormalMode)(request, messages).toString
 
         application.stop()
       }
@@ -341,7 +341,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs.fill(true), draftId, CYMinus3TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
+          view(formWithArgs.fill(true), draftId, CYMinus3TaxYear, range.toRange, NormalMode)(request, messages).toString
 
         application.stop()
       }
@@ -391,7 +391,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, draftId, CYMinus3TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
+          view(boundForm, draftId, CYMinus3TaxYear, range.toRange, NormalMode)(request, messages).toString
 
         application.stop()
       }
@@ -447,7 +447,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs, draftId, CYMinus4TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
+          view(formWithArgs, draftId, CYMinus4TaxYear, range.toRange, NormalMode)(request, messages).toString
 
         application.stop()
       }
@@ -471,7 +471,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs.fill(true), draftId, CYMinus4TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
+          view(formWithArgs.fill(true), draftId, CYMinus4TaxYear, range.toRange, NormalMode)(request, messages).toString
 
         application.stop()
       }
@@ -521,7 +521,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, draftId, CYMinus4TaxYear, range.toRange, NormalMode)(fakeRequest, messages).toString
+          view(boundForm, draftId, CYMinus4TaxYear, range.toRange, NormalMode)(request, messages).toString
 
         application.stop()
       }
