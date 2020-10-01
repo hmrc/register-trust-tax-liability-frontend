@@ -25,8 +25,7 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import pages.DidDeclareTaxToHMRCYesNoPage
 import play.api.inject.bind
-import play.api.test.Helpers._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.time.TaxYear
 
 import scala.concurrent.Future

@@ -25,7 +25,6 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import pages.TrustStartDatePage
 import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.LocalDateService

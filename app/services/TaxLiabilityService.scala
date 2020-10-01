@@ -20,9 +20,9 @@ import java.time.LocalDate
 
 import connectors.SubmissionDraftConnector
 import javax.inject.Inject
-import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, StartDate, TaxLiabilityYear, TaxYearsDue, UserAnswers, YearReturnType, YearsReturns}
+import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, StartDate, TaxLiabilityYear, TaxYearsDue, UserAnswers, YearReturnType}
 import pages.DidDeclareTaxToHMRCYesNoPage
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.time.TaxYear
 
 import scala.concurrent.{ExecutionContext, Future}
