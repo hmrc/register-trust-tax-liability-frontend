@@ -21,7 +21,7 @@ import java.time.{LocalDate, LocalDateTime}
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.Status.InProgress
-import models.{RegistrationSubmission, SubmissionDraftData, SubmissionDraftResponse}
+import models.{RegistrationSubmission, SubmissionDraftResponse}
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.Application
 import play.api.http.Status
@@ -34,7 +34,6 @@ import utils.WireMockHelper
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class SubmissionDraftConnectorSpec extends SpecBase with MustMatchers with OptionValues with WireMockHelper {
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()
@@ -52,7 +51,6 @@ class SubmissionDraftConnectorSpec extends SpecBase with MustMatchers with Optio
   private val submissionsUrl = s"/trusts/register/submission-drafts"
   private val submissionUrl = s"$submissionsUrl/$testDraftId/$testSection"
   private val setSubmissionUrl = s"$submissionsUrl/$testDraftId/set/$testSection"
-  private val mainUrl = s"$submissionsUrl/$testDraftId/main"
 
   "SubmissionDraftConnector" when {
 
@@ -144,7 +142,7 @@ class SubmissionDraftConnectorSpec extends SpecBase with MustMatchers with Optio
             |""".stripMargin)
 
         server.stubFor(
-          get(urlEqualTo(s"/trusts/register/submission-drafts/$draftId/when-trust-setup"))
+          get(urlEqualTo(s"/trusts/register/submission-drafts/$testDraftId/when-trust-setup"))
             .willReturn(okJson(json.toString))
         )
 
@@ -171,7 +169,7 @@ class SubmissionDraftConnectorSpec extends SpecBase with MustMatchers with Optio
         val connector = application.injector.instanceOf[SubmissionDraftConnector]
 
         server.stubFor(
-          get(urlEqualTo("/trusts/register/submission-drafts/draft-id/when-trust-setup"))
+          get(urlEqualTo(s"/trusts/register/submission-drafts/$testDraftId/when-trust-setup"))
             .willReturn(status(Helpers.NOT_FOUND))
         )
 

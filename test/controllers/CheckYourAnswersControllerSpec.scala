@@ -19,12 +19,8 @@ package controllers
 import base.SpecBase
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
-import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.RegistrationsRepository
-import services.TaxLiabilityService
-import uk.gov.hmrc.http.HttpResponse
 import views.html.CheckYourAnswersView
 
 import scala.concurrent.Future

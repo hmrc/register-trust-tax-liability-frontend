@@ -27,14 +27,14 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import views.html.EarlierYearsToPayThanAskedYesNoView
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class CYMinusThreeEarlierYearsLiabilityController @Inject()(
                                                              val controllerComponents: MessagesControllerComponents,
                                                              @TaxLiability navigator: Navigator,
                                                              actions: Actions,
                                                              view: EarlierYearsToPayThanAskedYesNoView
-                               )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                               ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode, draftId: String): Action[AnyContent] = actions.authWithData(draftId) {
     implicit request =>

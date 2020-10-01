@@ -31,7 +31,7 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{Await, Future}
 
 class RegistrationRepositorySpec extends SpecBase with MustMatchers with MockitoSugar {
 
