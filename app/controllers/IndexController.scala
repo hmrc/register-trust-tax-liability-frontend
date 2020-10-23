@@ -32,6 +32,7 @@ import repositories.RegistrationsRepository
 import services.TaxLiabilityService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.time.TaxYear
+import utils.Session
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,6 +44,8 @@ class IndexController @Inject()(
                                  errorHandler: ErrorHandler,
                                  config: FrontendAppConfig
                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+
+  private val logger: Logger = Logger(getClass)
 
   private def startNewSession(draftId: String, startDate: LocalDate)(implicit request: OptionalDataRequest[AnyContent]) = {
     val answers = UserAnswers.startNewSession(draftId, request.internalId)
@@ -67,18 +70,18 @@ class IndexController @Inject()(
             userAnswers.get(TrustStartDatePage) match {
               case Some(cachedDate) =>
                 if (cachedDate.isEqual(date.startDate)) {
-                  Logger.info(s"[IndexController] trust start date has not changed, continuing session")
+                  logger.info(s"[Session ID: ${Session.id(hc)}] trust start date has not changed, continuing session")
                   redirect(draftId)
                 } else {
-                  Logger.info(s"[IndexController] trust start date has changed, starting new session")
+                  logger.info(s"[Session ID: ${Session.id(hc)}] trust start date has changed, starting new session")
                   startNewSession(draftId, date.startDate)
                 }
               case None =>
-                Logger.info(s"[IndexController] no existing trust start date saved, starting new session")
+                logger.info(s"[Session ID: ${Session.id(hc)}] no existing trust start date saved, starting new session")
                 startNewSession(draftId, date.startDate)
             }
           case None =>
-            Logger.info(s"[IndexController] no start date available, returning to /registration-progress")
+            logger.info(s"[Session ID: ${Session.id(hc)}] no start date available, returning to /registration-progress")
             Future.successful(Redirect(config.registrationProgressUrl(draftId)))
         }
   }
