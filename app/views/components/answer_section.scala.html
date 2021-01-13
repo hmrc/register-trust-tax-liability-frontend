@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,10 @@
     <h2 class="heading-large">@messages(answerSection.sectionKey.get)</h2>
 }
 
-@if(answerSection.headingKey.isDefined){
+@if(answerSection.headingKey.isDefined && answerSection.sectionKey.isDefined){
     <h3 class="heading-medium">@messages(answerSection.headingKey.get)</h3>
+} else {
+    <h2 class="heading-medium">@messages(answerSection.headingKey.get)</h2>
 }
 
 @if(answerSection.rows) {
