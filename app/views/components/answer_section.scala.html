@@ -23,8 +23,10 @@
     <h2 class="heading-large">@messages(answerSection.sectionKey.get)</h2>
 }
 
-@if(answerSection.headingKey.isDefined){
+@if(answerSection.headingKey.isDefined && answerSection.sectionKey.isDefined){
     <h3 class="heading-medium">@messages(answerSection.headingKey.get)</h3>
+} else {
+    <h2 class="heading-medium">@messages(answerSection.headingKey.get)</h2>
 }
 
 @if(answerSection.rows) {
