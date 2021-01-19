@@ -19,7 +19,7 @@ package controllers.actions
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import models.requests.IdentifierRequest
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.Results._
 import play.api.mvc.{Request, Result, _}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Organisation}
@@ -35,9 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AffinityGroupIdentifierAction[A] @Inject()(action: Action[A],
                                                  trustsAuthFunctions: TrustsAuthorisedFunctions,
                                                  config: FrontendAppConfig
-                                                ) extends Action[A]  {
-
-  private val logger: Logger = Logger(getClass)
+                                                ) extends Action[A] with Logging {
 
   private def authoriseAgent(request : Request[A],
                              enrolments : Enrolments,
@@ -48,7 +46,7 @@ class AffinityGroupIdentifierAction[A] @Inject()(action: Action[A],
     val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     def redirectToCreateAgentServicesAccount(reason: String): Future[Result] = {
-      Logger.info(s"[authoriseAgent][Session ID: ${Session.id(hc)}]: Agent services account required - $reason")
+      logger.info(s"[authoriseAgent][Session ID: ${Session.id(hc)}]: Agent services account required - $reason")
       Future.successful(Redirect(config.createAgentServicesAccountUrl))
     }
 
