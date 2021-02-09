@@ -31,7 +31,7 @@ class FrontendAppConfig @Inject() (val configuration: Configuration) {
 
   val repositoryKey: String = "taxLiability"
 
-  val analyticsHost: String = configuration.get[String](s"google-analytics.host")
+  val analyticsToken: String = configuration.get[String](s"google-analytics.token")
   val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   val betaFeedbackUrl = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
