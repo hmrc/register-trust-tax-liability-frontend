@@ -15,13 +15,11 @@
  *@
 
 @import controllers.routes._
-@import config.FrontendAppConfig
 @import models.TaxYear
 
 @this(
-        main_template: MainTemplate,
-        formHelper: FormWithCSRF,
-        appConfig: FrontendAppConfig
+    main_template: MainTemplate,
+    formHelper: FormWithCSRF
 )
 
 @(form: Form[_], draftId: String, taxYear: TaxYear, toRange: String, mode: Mode)(implicit request: Request[_], messages: Messages)

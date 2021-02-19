@@ -16,19 +16,17 @@
 
 @import controllers.routes._
 @import viewmodels.{AnswerSection, RepeaterAnswerSection, Section}
-@import config.FrontendAppConfig
 
 @this(
     main_template: MainTemplate,
-    formHelper: FormWithCSRF,
-    appConfig: FrontendAppConfig
+    formHelper: FormWithCSRF
 )
 
 @(answerSections: Seq[Section], draftId: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("checkYourAnswers.title")
-    ) {
+) {
 
     @formHelper(action = CheckYourAnswersController.onSubmit(draftId), 'autoComplete -> "off") {
 
