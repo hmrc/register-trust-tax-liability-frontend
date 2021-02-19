@@ -16,15 +16,14 @@
 
 package controllers
 
-import java.time.LocalDate
-
 import config.FrontendAppConfig
 import controllers.actions.Actions
+import controllers.routes._
 import handlers.ErrorHandler
-import javax.inject.Inject
+import models.Status.Completed
 import models.requests.OptionalDataRequest
 import models.{NormalMode, UserAnswers}
-import pages.TrustStartDatePage
+import pages.{TaxLiabilityTaskStatus, TrustStartDatePage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -34,6 +33,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.time.TaxYear
 import utils.Session
 
+import java.time.LocalDate
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IndexController @Inject()(
@@ -45,7 +46,7 @@ class IndexController @Inject()(
                                  config: FrontendAppConfig
                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
-  private def startNewSession(draftId: String, startDate: LocalDate)(implicit request: OptionalDataRequest[AnyContent]) = {
+  private def startNewSession(draftId: String, startDate: LocalDate)(implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
     val answers = UserAnswers.startNewSession(draftId, request.internalId)
       .set(TrustStartDatePage, startDate)
 
@@ -61,30 +62,31 @@ class IndexController @Inject()(
     implicit request =>
 
       taxLiabilityService.startDate(draftId) flatMap {
-          case Some(date) =>
-            val userAnswers: UserAnswers = request.userAnswers
-              .getOrElse(UserAnswers.startNewSession(draftId, request.internalId))
+        case Some(date) =>
+          val userAnswers: UserAnswers = request.userAnswers
+            .getOrElse(UserAnswers.startNewSession(draftId, request.internalId))
 
-            userAnswers.get(TrustStartDatePage) match {
-              case Some(cachedDate) =>
-                if (cachedDate.isEqual(date.startDate)) {
-                  logger.info(s"[Session ID: ${Session.id(hc)}] trust start date has not changed, continuing session")
-                  redirect(draftId)
-                } else {
-                  logger.info(s"[Session ID: ${Session.id(hc)}] trust start date has changed, starting new session")
-                  startNewSession(draftId, date.startDate)
-                }
-              case None =>
-                logger.info(s"[Session ID: ${Session.id(hc)}] no existing trust start date saved, starting new session")
-                startNewSession(draftId, date.startDate)
-            }
-          case None =>
-            logger.info(s"[Session ID: ${Session.id(hc)}] no start date available, returning to /registration-progress")
-            Future.successful(Redirect(config.registrationProgressUrl(draftId)))
-        }
+          (userAnswers.get(TrustStartDatePage), userAnswers.get(TaxLiabilityTaskStatus)) match {
+            case (Some(cachedDate), Some(Completed)) if cachedDate.isEqual(date.startDate) =>
+              logger.info(s"[Session ID: ${Session.id(hc)}] trust start date has not changed and answers previously completed, redirecting to answers")
+              Future.successful(Redirect(CheckYourAnswersController.onPageLoad(draftId)))
+            case (Some(cachedDate), _) if cachedDate.isEqual(date.startDate) =>
+              logger.info(s"[Session ID: ${Session.id(hc)}] trust start date has not changed but answers not previously completed, continuing session")
+              redirect(draftId)
+            case (Some(_), _) =>
+              logger.info(s"[Session ID: ${Session.id(hc)}] trust start date has changed, starting new session")
+              startNewSession(draftId, date.startDate)
+            case (None, _) =>
+              logger.info(s"[Session ID: ${Session.id(hc)}] no existing trust start date saved, starting new session")
+              startNewSession(draftId, date.startDate)
+          }
+        case None =>
+          logger.info(s"[Session ID: ${Session.id(hc)}] no start date available, returning to /registration-progress")
+          Future.successful(Redirect(config.registrationProgressUrl(draftId)))
+      }
   }
 
-  private def redirect(draftId: String)(implicit request: OptionalDataRequest[AnyContent]) : Future[Result] = {
+  private def redirect(draftId: String)(implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
     taxLiabilityService.getFirstYearOfTaxLiability(draftId).map { taxLiabilityYear =>
 
       val currentYear = TaxYear.current.startYear
@@ -93,12 +95,12 @@ class IndexController @Inject()(
       val numberOfYearsToAsk = currentYear - startYear
 
       numberOfYearsToAsk match {
-        case 4 if taxLiabilityYear.hasEarlierYearsToDeclare => Redirect(controllers.routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId))
-        case 4 => Redirect(controllers.routes.CYMinusFourLiabilityController.onPageLoad(NormalMode, draftId))
-        case 3 if taxLiabilityYear.hasEarlierYearsToDeclare => Redirect(controllers.routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId))
-        case 3 => Redirect(controllers.routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode, draftId))
-        case 2 => Redirect(controllers.routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode, draftId))
-        case 1 => Redirect(controllers.routes.CYMinusOneLiabilityController.onPageLoad(NormalMode, draftId))
+        case 4 if taxLiabilityYear.hasEarlierYearsToDeclare => Redirect(CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId))
+        case 4 => Redirect(CYMinusFourLiabilityController.onPageLoad(NormalMode, draftId))
+        case 3 if taxLiabilityYear.hasEarlierYearsToDeclare => Redirect(CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId))
+        case 3 => Redirect(CYMinusThreeLiabilityController.onPageLoad(NormalMode, draftId))
+        case 2 => Redirect(CYMinusTwoLiabilityController.onPageLoad(NormalMode, draftId))
+        case 1 => Redirect(CYMinusOneLiabilityController.onPageLoad(NormalMode, draftId))
         case _ => InternalServerError(errorHandler.internalServerErrorTemplate)
       }
     }

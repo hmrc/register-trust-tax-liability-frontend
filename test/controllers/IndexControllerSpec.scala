@@ -17,13 +17,13 @@
 package controllers
 
 import java.time.LocalDate
-
 import base.SpecBase
 import connectors.SubmissionDraftConnector
+import models.Status.Completed
 import models.{NormalMode, StartDate}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
-import pages.TrustStartDatePage
+import pages.{TaxLiabilityTaskStatus, TrustStartDatePage}
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -67,6 +67,38 @@ class IndexControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId).url)
+
+        verify(registrationsRepository, times(0)).resetCache(any())(any(), any())
+
+        application.stop()
+      }
+
+      "redirect to user answers if trust start date is not changed and answers previously completed" in {
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
+
+        val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
+
+        val initialStartDate = LocalDate.of(2015, 5, 1)
+
+        val existingUserAnswers = emptyUserAnswers
+          .set(TrustStartDatePage, initialStartDate).success.value
+          .set(TaxLiabilityTaskStatus, Completed).success.value
+
+        val application = applicationBuilder(userAnswers = Some(existingUserAnswers))
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
+          .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
+          .build()
+
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(initialStartDate))))
+
+        when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
+
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.CheckYourAnswersController.onPageLoad(draftId).url)
 
         verify(registrationsRepository, times(0)).resetCache(any())(any(), any())
 
