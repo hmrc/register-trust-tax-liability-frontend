@@ -21,6 +21,7 @@ import base.SpecBase
 import connectors.SubmissionDraftConnector
 import models.Status.Completed
 import models.{NormalMode, StartDate}
+import org.joda.time.{DateTime, DateTimeUtils}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import pages.{TaxLiabilityTaskStatus, TrustStartDatePage}
@@ -39,6 +40,10 @@ class IndexControllerSpec extends SpecBase {
       override def now: LocalDate = date
     }
 
+    def setCurrentDateTime(date: LocalDate) = {
+      DateTimeUtils.setCurrentMillisFixed(new DateTime(date.toString).getMillis)
+    }
+
     val draftId = "draftId"
     
     "for an existing session" when {
@@ -47,6 +52,8 @@ class IndexControllerSpec extends SpecBase {
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
+
+        setCurrentDateTime(dateBeforeDec23rd)
 
         val initialStartDate = LocalDate.of(2015, 5, 1)
 
@@ -77,6 +84,8 @@ class IndexControllerSpec extends SpecBase {
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
+
+        setCurrentDateTime(dateBeforeDec23rd)
 
         val initialStartDate = LocalDate.of(2015, 5, 1)
 
@@ -109,6 +118,8 @@ class IndexControllerSpec extends SpecBase {
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
+
+        setCurrentDateTime(dateBeforeDec23rd)
 
         val initialStartDate = LocalDate.of(2015, 5, 1)
 
@@ -144,6 +155,8 @@ class IndexControllerSpec extends SpecBase {
 
       val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
+      setCurrentDateTime(dateBeforeDec23rd)
+
       val application = applicationBuilder(userAnswers = None)
         .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
         .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
@@ -170,6 +183,8 @@ class IndexControllerSpec extends SpecBase {
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
+
+        setCurrentDateTime(dateBeforeDec23rd)
 
         val application = applicationBuilder(userAnswers = None)
           .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
@@ -201,6 +216,8 @@ class IndexControllerSpec extends SpecBase {
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
+        setCurrentDateTime(dateBeforeDec23rd)
+
         val application = applicationBuilder(userAnswers = None)
           .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
@@ -230,6 +247,8 @@ class IndexControllerSpec extends SpecBase {
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateAfterDec23rd = LocalDate.of(2020, 12, 25)
+
+        setCurrentDateTime(dateAfterDec23rd)
 
         val application = applicationBuilder(userAnswers = None)
           .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
@@ -263,6 +282,8 @@ class IndexControllerSpec extends SpecBase {
 
           val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
+          setCurrentDateTime(dateBeforeDec23rd)
+
           val application = applicationBuilder(userAnswers = None)
             .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
             .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
@@ -289,6 +310,8 @@ class IndexControllerSpec extends SpecBase {
           val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
           val dateAfterDec23rd = LocalDate.of(2020, 12, 25)
+
+          setCurrentDateTime(dateAfterDec23rd)
 
           val application = applicationBuilder(userAnswers = None)
             .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
@@ -323,6 +346,8 @@ class IndexControllerSpec extends SpecBase {
 
           val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
+          setCurrentDateTime(dateBeforeDec23rd)
+
           val application = applicationBuilder(userAnswers = None)
             .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
             .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
@@ -349,6 +374,8 @@ class IndexControllerSpec extends SpecBase {
           val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
           val dateAfterDec23rd = LocalDate.of(2020, 12, 25)
+
+          setCurrentDateTime(dateAfterDec23rd)
 
           val application = applicationBuilder(userAnswers = None)
             .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
@@ -383,6 +410,8 @@ class IndexControllerSpec extends SpecBase {
 
           val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
+          setCurrentDateTime(dateBeforeDec23rd)
+
           val application = applicationBuilder(userAnswers = None)
             .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
             .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
@@ -409,6 +438,8 @@ class IndexControllerSpec extends SpecBase {
           val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
           val dateAfterDec23rd = LocalDate.of(2020, 12, 25)
+
+          setCurrentDateTime(dateAfterDec23rd)
 
           val application = applicationBuilder(userAnswers = None)
             .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))

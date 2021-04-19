@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import config.annotations.TaxLiability
 import forms.YesNoFormProviderWithArguments
-import models.NormalMode
+import models.{CYMinus4TaxYear, NormalMode, TaxYearRange}
 import navigation.Navigator
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
@@ -43,8 +43,8 @@ class CYMinusFourLiabilityControllerSpec extends SpecBase with MockitoSugar {
   def form(arguments: Seq[Any]) = formProvider.withPrefix("cyMinusFour.liability", arguments)
 
   val fullDatePattern: String = "d MMMM yyyy"
-  val taxYearStart: String = "6 April 2016"
-  val taxYearEnd: String = "5 April 2017"
+  val taxYearStart: String = TaxYearRange(CYMinus4TaxYear).startYear
+  val taxYearEnd: String = TaxYearRange(CYMinus4TaxYear).endYear
 
   val taxYear: String = s"$taxYearStart to $taxYearEnd"
 
@@ -56,7 +56,7 @@ class CYMinusFourLiabilityControllerSpec extends SpecBase with MockitoSugar {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-      val formWithArgs = form(Seq("6 April 2016", "5 April 2017"))
+      val formWithArgs = form(Seq(taxYearStart, taxYearEnd))
 
       val request = FakeRequest(GET, cyMinusFourLiabilityControllerRoute)
 
@@ -78,7 +78,7 @@ class CYMinusFourLiabilityControllerSpec extends SpecBase with MockitoSugar {
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-      val formWithArgs = form(Seq("6 April 2016", "5 April 2017"))
+      val formWithArgs = form(Seq(taxYearStart, taxYearEnd))
 
       val request = FakeRequest(GET, cyMinusFourLiabilityControllerRoute)
 
@@ -122,7 +122,7 @@ class CYMinusFourLiabilityControllerSpec extends SpecBase with MockitoSugar {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-      val formWithArgs = form(Seq("6 April 2016", "5 April 2017"))
+      val formWithArgs = form(Seq(taxYearStart, taxYearEnd))
 
       val request =
         FakeRequest(POST, cyMinusFourLiabilityControllerRoute)
