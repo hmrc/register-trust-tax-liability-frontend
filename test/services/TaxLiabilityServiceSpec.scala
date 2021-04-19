@@ -17,10 +17,10 @@
 package services
 
 import java.time.LocalDate
-
 import base.SpecBase
 import connectors.SubmissionDraftConnector
 import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, StartDate, TaxLiabilityYear, YearReturnType}
+import org.joda.time.{DateTime, DateTimeUtils}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import pages.DidDeclareTaxToHMRCYesNoPage
@@ -38,6 +38,10 @@ class TaxLiabilityServiceSpec extends SpecBase {
     override def now: LocalDate = date
   }
 
+  def setCurrentDateTime(date: LocalDate) = {
+    DateTimeUtils.setCurrentMillisFixed(new DateTime(date.toString).getMillis)
+  }
+
   "getFirstYearOfTaxLiability" must {
 
     "return the cy minus four tax liability and and true to earlier years" when {
@@ -46,6 +50,8 @@ class TaxLiabilityServiceSpec extends SpecBase {
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
+
+        setCurrentDateTime(dateBeforeDec23rd)
 
         val application = applicationBuilder(userAnswers = None)
           .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
@@ -68,6 +74,8 @@ class TaxLiabilityServiceSpec extends SpecBase {
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 12, 22)
+
+        setCurrentDateTime(dateBeforeDec23rd)
 
         val application = applicationBuilder(userAnswers = None)
           .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
@@ -94,6 +102,8 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val dateAfterDec23rd = LocalDate.of(2020, 12, 23)
 
+        setCurrentDateTime(dateAfterDec23rd)
+
         val application = applicationBuilder(userAnswers = None)
           .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateAfterDec23rd)))
@@ -117,6 +127,8 @@ class TaxLiabilityServiceSpec extends SpecBase {
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
+
+        setCurrentDateTime(dateBeforeDec23rd)
 
         val application = applicationBuilder(userAnswers = None)
           .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
@@ -142,6 +154,8 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
+        setCurrentDateTime(dateBeforeDec23rd)
+
         val application = applicationBuilder(userAnswers = None)
           .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
@@ -163,6 +177,8 @@ class TaxLiabilityServiceSpec extends SpecBase {
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 12, 23)
+
+        setCurrentDateTime(dateBeforeDec23rd)
 
         val application = applicationBuilder(userAnswers = None)
           .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
@@ -188,6 +204,8 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
+        setCurrentDateTime(dateBeforeDec23rd)
+
         val application = applicationBuilder(userAnswers = None)
           .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
@@ -209,6 +227,8 @@ class TaxLiabilityServiceSpec extends SpecBase {
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 12, 23)
+
+        setCurrentDateTime(dateBeforeDec23rd)
 
         val application = applicationBuilder(userAnswers = None)
           .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
@@ -234,6 +254,8 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
 
+        setCurrentDateTime(dateBeforeDec23rd)
+
         val application = applicationBuilder(userAnswers = None)
           .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
@@ -255,6 +277,8 @@ class TaxLiabilityServiceSpec extends SpecBase {
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
         val dateBeforeDec23rd = LocalDate.of(2020, 12, 23)
+
+        setCurrentDateTime(dateBeforeDec23rd)
 
         val application = applicationBuilder(userAnswers = None)
           .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
@@ -332,6 +356,8 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val today = LocalDate.of(2020, 5, 5)
 
+        setCurrentDateTime(today)
+
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(today)))
           .build()
@@ -356,6 +382,8 @@ class TaxLiabilityServiceSpec extends SpecBase {
           .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
 
         val today = LocalDate.of(2020, 10, 6)
+
+        setCurrentDateTime(today)
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(today)))
@@ -384,6 +412,8 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val today = LocalDate.of(2020, 5, 5)
 
+        setCurrentDateTime(today)
+
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(today)))
           .build()
@@ -408,6 +438,8 @@ class TaxLiabilityServiceSpec extends SpecBase {
           .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYear), false).success.value
 
         val today = LocalDate.of(2020, 5, 5)
+
+        setCurrentDateTime(today)
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(today)))
@@ -437,6 +469,8 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
         val today = LocalDate.of(2020, 10, 6)
 
+        setCurrentDateTime(today)
+
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(today)))
           .build()
@@ -459,6 +493,8 @@ class TaxLiabilityServiceSpec extends SpecBase {
           .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
 
         val today = LocalDate.of(2020, 10, 5)
+
+        setCurrentDateTime(today)
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[LocalDateService].toInstance(setCurrentDate(today)))

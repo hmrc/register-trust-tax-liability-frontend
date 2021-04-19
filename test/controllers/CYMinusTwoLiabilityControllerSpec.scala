@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import config.annotations.TaxLiability
 import forms.YesNoFormProviderWithArguments
-import models.NormalMode
+import models.{CYMinus2TaxYear, NormalMode, TaxYearRange}
 import navigation.Navigator
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
@@ -44,8 +44,8 @@ class CYMinusTwoLiabilityControllerSpec extends SpecBase with MockitoSugar {
 
   val fullDatePattern: String = "d MMMM yyyy"
 
-  val taxYearStart: String = "6 April 2018"
-  val taxYearEnd: String = "5 April 2019"
+  val taxYearStart: String = TaxYearRange(CYMinus2TaxYear).startYear
+  val taxYearEnd: String = TaxYearRange(CYMinus2TaxYear).endYear
 
   val taxYear: String = s"$taxYearStart to $taxYearEnd"
 
@@ -59,7 +59,7 @@ class CYMinusTwoLiabilityControllerSpec extends SpecBase with MockitoSugar {
 
       val request = FakeRequest(GET, cyMinusTwoLiabilityControllerRoute)
 
-      val formWithArgs = form(Seq("6 April 2018", "5 April 2019"))
+      val formWithArgs = form(Seq(taxYearStart, taxYearEnd))
 
       val result = route(application, request).value
 
@@ -81,7 +81,7 @@ class CYMinusTwoLiabilityControllerSpec extends SpecBase with MockitoSugar {
 
       val request = FakeRequest(GET, cyMinusTwoLiabilityControllerRoute)
 
-      val formWithArgs = form(Seq("6 April 2018", "5 April 2019"))
+      val formWithArgs = form(Seq(taxYearStart, taxYearEnd))
 
       val view = application.injector.instanceOf[CYMinusTwoYesNoView]
 
@@ -127,7 +127,7 @@ class CYMinusTwoLiabilityControllerSpec extends SpecBase with MockitoSugar {
         FakeRequest(POST, cyMinusTwoLiabilityControllerRoute)
           .withFormUrlEncodedBody(("value", ""))
 
-      val formWithArgs = form(Seq("6 April 2018", "5 April 2019"))
+      val formWithArgs = form(Seq(taxYearStart, taxYearEnd))
 
       val boundForm = formWithArgs.bind(Map("value" -> ""))
 

@@ -18,7 +18,7 @@ package utils
 
 import base.SpecBase
 import controllers.routes
-import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, NormalMode}
+import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, NormalMode, TaxYearRange}
 import pages._
 import play.twirl.api.Html
 import viewmodels.{AnswerRow, AnswerSection}
@@ -29,18 +29,20 @@ class CheckYourAnswersHelperSpec extends SpecBase {
 
     "earlier years" must {
 
-      "render answers for tax before 4 years" ignore {
+      "render answers for tax before 4 years" in {
         val cyaHelper = injector.instanceOf[CheckYourAnswersHelper]
 
         val userAnswers = emptyUserAnswers
           .set(CYMinusFourEarlierYearsYesNoPage, true).success.value
 
+        val taxYear = TaxYearRange(CYMinus4TaxYear).yearAtStart
+
         val result = cyaHelper.earlierThan4YearsAnswers(userAnswers)
 
         result.value mustBe AnswerSection(
-          headingKey = Some("Tax liability before 2016"),
+          headingKey = Some(messages("earlierYearsLiability.checkYourAnswerSectionHeading", taxYear)),
           rows = Seq(
-            AnswerRow(label = "Did the trust need to pay tax before 2016?", answer = Html("Yes"),
+            AnswerRow(label = messages("earlierYearsLiability.checkYourAnswersLabel", taxYear), answer = Html("Yes"),
               changeUrl = Some(routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode ,draftId).url),
               canEdit = true
             )
@@ -49,18 +51,20 @@ class CheckYourAnswersHelperSpec extends SpecBase {
 
       }
 
-      "render answers for tax before 3 years" ignore {
+      "render answers for tax before 3 years" in {
         val cyaHelper = injector.instanceOf[CheckYourAnswersHelper]
 
         val userAnswers = emptyUserAnswers
           .set(CYMinusThreeEarlierYearsYesNoPage, true).success.value
 
+        val taxYear = TaxYearRange(CYMinus3TaxYear).yearAtStart
+
         val result = cyaHelper.earlierThan3YearsAnswers(userAnswers)
 
         result.value mustBe AnswerSection(
-          headingKey = Some("Tax liability before 2017"),
+          headingKey = Some(messages("earlierYearsLiability.checkYourAnswerSectionHeading", taxYear)),
           rows = Seq(
-            AnswerRow(label = "Did the trust need to pay tax before 2017?", answer = Html("Yes"),
+            AnswerRow(label = messages("earlierYearsLiability.checkYourAnswersLabel", taxYear), answer = Html("Yes"),
               changeUrl = Some(routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode ,draftId).url),
               canEdit = true
             )
@@ -76,24 +80,26 @@ class CheckYourAnswersHelperSpec extends SpecBase {
         val cyaHelper = injector.instanceOf[CheckYourAnswersHelper]
 
         val taxYear = CYMinus4TaxYear
+        val taxYearRange = TaxYearRange(taxYear).toRange
 
         val userAnswers = emptyUserAnswers
           .set(CYMinusFourYesNoPage, true).success.value
           .set(DidDeclareTaxToHMRCYesNoPage(taxYear), true).success.value
 
+
         val result = cyaHelper.cyMinusTaxYearAnswers(userAnswers, taxYear)
 
         result.value mustBe AnswerSection(
-          headingKey = Some("Tax liability 6 April 2016 to 5 April 2017"),
+          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRange)),
           rows = Seq(
             AnswerRow(
-              label = "Did the trust need to pay any tax from 6 April 2016 to 5 April 2017?",
+              label = messages("cyMinusFour.liability.checkYourAnswersLabel", taxYearRange),
               answer = Html("Yes"),
               changeUrl = Some(routes.CYMinusFourLiabilityController.onPageLoad(NormalMode ,draftId).url),
               canEdit = true
             ),
             AnswerRow(
-              label = "Was the tax from 6 April 2016 to 5 April 2017 declared?",
+              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRange),
               answer = Html("Yes"),
               changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode ,draftId, taxYear).url),
               canEdit = true
@@ -109,24 +115,26 @@ class CheckYourAnswersHelperSpec extends SpecBase {
         val cyaHelper = injector.instanceOf[CheckYourAnswersHelper]
 
         val taxYear = CYMinus3TaxYear
+        val taxYearRange = TaxYearRange(taxYear).toRange
 
         val userAnswers = emptyUserAnswers
           .set(CYMinusThreeYesNoPage, true).success.value
           .set(DidDeclareTaxToHMRCYesNoPage(taxYear), true).success.value
 
+
         val result = cyaHelper.cyMinusTaxYearAnswers(userAnswers, taxYear)
 
         result.value mustBe AnswerSection(
-          headingKey = Some("Tax liability 6 April 2017 to 5 April 2018"),
+          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRange)),
           rows = Seq(
             AnswerRow(
-              label = "Did the trust need to pay any tax from 6 April 2017 to 5 April 2018?",
+              label = messages("cyMinusThree.liability.checkYourAnswersLabel", taxYearRange),
               answer = Html("Yes"),
               changeUrl = Some(routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode ,draftId).url),
               canEdit = true
             ),
             AnswerRow(
-              label = "Was the tax from 6 April 2017 to 5 April 2018 declared?",
+              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRange),
               answer = Html("Yes"),
               changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode ,draftId, taxYear).url),
               canEdit = true
@@ -143,6 +151,8 @@ class CheckYourAnswersHelperSpec extends SpecBase {
 
         val taxYear = CYMinus2TaxYear
 
+        val taxYearRange = TaxYearRange(taxYear).toRange
+
         val userAnswers = emptyUserAnswers
           .set(CYMinusTwoYesNoPage, true).success.value
           .set(DidDeclareTaxToHMRCYesNoPage(taxYear), true).success.value
@@ -150,16 +160,16 @@ class CheckYourAnswersHelperSpec extends SpecBase {
         val result = cyaHelper.cyMinusTaxYearAnswers(userAnswers, taxYear)
 
         result.value mustBe AnswerSection(
-          headingKey = Some("Tax liability 6 April 2018 to 5 April 2019"),
+          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRange)),
           rows = Seq(
             AnswerRow(
-              label = "Did the trust need to pay any tax from 6 April 2018 to 5 April 2019?",
+              label = messages("cyMinusTwo.liability.checkYourAnswersLabel", taxYearRange),
               answer = Html("Yes"),
               changeUrl = Some(routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode ,draftId).url),
               canEdit = true
             ),
             AnswerRow(
-              label = "Was the tax from 6 April 2018 to 5 April 2019 declared?",
+              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRange),
               answer = Html("Yes"),
               changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode ,draftId, taxYear).url),
               canEdit = true
@@ -175,6 +185,7 @@ class CheckYourAnswersHelperSpec extends SpecBase {
         val cyaHelper = injector.instanceOf[CheckYourAnswersHelper]
 
         val taxYear = CYMinus1TaxYear
+        val taxYearRange = TaxYearRange(taxYear).toRange
 
         val userAnswers = emptyUserAnswers
           .set(CYMinusOneYesNoPage, true).success.value
@@ -183,16 +194,16 @@ class CheckYourAnswersHelperSpec extends SpecBase {
         val result = cyaHelper.cyMinusTaxYearAnswers(userAnswers, taxYear)
 
         result.value mustBe AnswerSection(
-          headingKey = Some("Tax liability 6 April 2019 to 5 April 2020"),
+          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRange)),
           rows = Seq(
             AnswerRow(
-              label = "Did the trust need to pay any tax from 6 April 2019 to 5 April 2020?",
+              label = messages("cyMinusOne.liability.checkYourAnswersLabel", taxYearRange),
               answer = Html("Yes"),
               changeUrl = Some(routes.CYMinusOneLiabilityController.onPageLoad(NormalMode ,draftId).url),
               canEdit = true
             ),
             AnswerRow(
-              label = "Was the tax from 6 April 2019 to 5 April 2020 declared?",
+              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRange),
               answer = Html("Yes"),
               changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode ,draftId, taxYear).url),
               canEdit = true
