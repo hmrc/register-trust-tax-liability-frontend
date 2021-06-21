@@ -22,12 +22,12 @@ import pages._
 import play.api.i18n.Messages
 import viewmodels.{AnswerRow, AnswerSection}
 
-class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter) {
+class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter, taxYearRange: TaxYearRange) {
 
   def earlierThan4YearsAnswers(userAnswers: UserAnswers)(implicit messages: Messages) : Option[AnswerSection] = {
     val bound = answerRowConverter.bind(userAnswers)
 
-    val date = TaxYearRange(CYMinus4TaxYear).yearAtStart
+    val date = taxYearRange.yearAtStart(CYMinus4TaxYear)
 
     val answerRows : Seq[AnswerRow] = Seq(
       bound.yesNoQuestion(
@@ -53,7 +53,7 @@ class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter) {
   def earlierThan3YearsAnswers(userAnswers: UserAnswers)(implicit messages: Messages) : Option[AnswerSection] = {
     val bound = answerRowConverter.bind(userAnswers)
 
-    val date = TaxYearRange(CYMinus3TaxYear).yearAtStart
+    val date = taxYearRange.yearAtStart(CYMinus3TaxYear)
 
     val answerRows : Seq[AnswerRow] = Seq(
       bound.yesNoQuestion(
@@ -80,7 +80,7 @@ class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter) {
                            (implicit messages: Messages): Option[AnswerSection] = {
     val bound = answerRowConverter.bind(userAnswers)
 
-    val toRange = TaxYearRange(taxYear).toRange
+    val toRange = taxYearRange.toRange(taxYear)
     val page = yesNoPageForTaxYear(taxYear)
     val changeRoute = changeRouteForTaxYear(taxYear, userAnswers.draftId)
 

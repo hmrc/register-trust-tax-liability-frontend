@@ -30,6 +30,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.RegistrationsRepository
+import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.CYMinusOneYesNoView
 
 import scala.concurrent.Future
@@ -42,9 +43,9 @@ class CYMinusOneLiabilityControllerSpec extends SpecBase with MockitoSugar {
 
   def form(arguments: Seq[Any]) = formProvider.withPrefix("cyMinusOne.liability", arguments)
 
-  val fullDatePattern: String = "d MMMM yyyy"
-  val taxYearStart: String = TaxYearRange(CYMinus1TaxYear).startYear
-  val taxYearEnd: String = TaxYearRange(CYMinus1TaxYear).endYear
+  val languageUtils: LanguageUtils = injector.instanceOf[LanguageUtils]
+  val taxYearStart: String = new TaxYearRange(languageUtils).startYear(CYMinus1TaxYear)
+  val taxYearEnd: String = new TaxYearRange(languageUtils).endYear(CYMinus1TaxYear)
 
   val taxYear: String = s"$taxYearStart to $taxYearEnd"
 
