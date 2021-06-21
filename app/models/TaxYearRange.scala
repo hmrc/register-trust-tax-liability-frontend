@@ -16,29 +16,30 @@
 
 package models
 
+import org.joda.time.{LocalDate => JodaDate}
 import play.api.i18n.Messages
+import uk.gov.hmrc.play.language.LanguageUtils
 
-case class TaxYearRange(taxYear: TaxYear)(implicit messages: Messages) {
+import java.time.{LocalDate => JavaDate}
+import javax.inject.Inject
 
-  private val fullDatePattern: String = "d MMMM yyyy"
+class TaxYearRange @Inject()(languageUtils: LanguageUtils) {
 
-  private val start = uk.gov.hmrc.time.TaxYear.current.back(taxYear.year).starts.toString(fullDatePattern)
-  private val end = uk.gov.hmrc.time.TaxYear.current.back(taxYear.year).finishes.toString(fullDatePattern)
+  private def taxYearYear(taxYear: TaxYear) = uk.gov.hmrc.time.TaxYear.current.back(taxYear.year)
 
-  private val startingYearForTaxYear: String = uk.gov.hmrc.time.TaxYear.current.back(taxYear.year).startYear.toString
-
-  def yearAtStart: String = startingYearForTaxYear
-
-  def startYear: String = start
-
-  def endYear: String = end
-
-  def toRange : String = {
-    messages("taxYearToRange", start, end)
+  implicit class JodaToJava(date: JodaDate) {
+    def toJavaDate: JavaDate = JavaDate.of(date.getYear, date.getMonthOfYear, date.getDayOfMonth)
   }
 
-  def andRange : String = {
-    messages("taxYearAndRange", start, end)
-  }
+  def startYear(taxYear: TaxYear)(implicit messages: Messages): String =
+    languageUtils.Dates.formatDate(taxYearYear(taxYear).starts.toJavaDate)
 
+  def endYear(taxYear: TaxYear)(implicit messages: Messages): String =
+    languageUtils.Dates.formatDate(taxYearYear(taxYear).finishes.toJavaDate)
+
+  def yearAtStart(taxYear: TaxYear): String = taxYearYear(taxYear).startYear.toString
+
+  def toRange(taxYear: TaxYear)(implicit messages: Messages): String = {
+    messages("taxYearToRange", startYear(taxYear), endYear(taxYear))
+  }
 }

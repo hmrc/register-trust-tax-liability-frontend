@@ -19,16 +19,17 @@ package controllers
 import config.annotations.TaxLiability
 import controllers.actions.Actions
 import forms.YesNoFormProviderWithArguments
-import javax.inject.Inject
 import models.{CYMinus1TaxYear, Mode, TaxYearRange}
 import navigation.Navigator
 import pages.CYMinusOneYesNoPage
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.RegistrationsRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.CYMinusOneYesNoView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CYMinusOneLiabilityController @Inject()(
@@ -37,36 +38,35 @@ class CYMinusOneLiabilityController @Inject()(
                                                actions: Actions,
                                                formProvider: YesNoFormProviderWithArguments,
                                                sessionRepository: RegistrationsRepository,
-                                               view: CYMinusOneYesNoView
-                               )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                               view: CYMinusOneYesNoView,
+                                               taxYearRange: TaxYearRange
+                                             )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def form(ranges: Seq[String]) = formProvider.withPrefix("cyMinusOne.liability", ranges)
+  def form(ranges: Seq[String]): Form[Boolean] = formProvider.withPrefix("cyMinusOne.liability", ranges)
+
+  private val workingTaxYear = CYMinus1TaxYear
 
   def onPageLoad(mode: Mode, draftId: String): Action[AnyContent] = actions.authWithData(draftId) {
     implicit request =>
 
-      val range = TaxYearRange(CYMinus1TaxYear)
-
-      val f = form(Seq(range.startYear, range.endYear))
+      val f = form(Seq(taxYearRange.startYear(workingTaxYear), taxYearRange.endYear(workingTaxYear)))
 
       val preparedForm = request.userAnswers.get(CYMinusOneYesNoPage) match {
         case None => f
         case Some(value) => f.fill(value)
       }
 
-      Ok(view(preparedForm, draftId, range.toRange, mode))
+      Ok(view(preparedForm, draftId, taxYearRange.toRange(workingTaxYear), mode))
   }
 
   def onSubmit(mode: Mode, draftId: String): Action[AnyContent] = actions.authWithData(draftId).async {
     implicit request =>
 
-      val range = TaxYearRange(CYMinus1TaxYear)
-
-      val f = form(Seq(range.startYear, range.endYear))
+      val f = form(Seq(taxYearRange.startYear(workingTaxYear), taxYearRange.endYear(workingTaxYear)))
 
       f.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, draftId, range.toRange, mode))),
+          Future.successful(BadRequest(view(formWithErrors, draftId, taxYearRange.toRange(workingTaxYear), mode))),
 
         value =>
           for {

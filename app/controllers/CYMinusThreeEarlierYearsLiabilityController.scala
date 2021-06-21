@@ -18,7 +18,6 @@ package controllers
 
 import config.annotations.TaxLiability
 import controllers.actions.Actions
-import javax.inject.Inject
 import models.{CYMinus3TaxYear, Mode, TaxYearRange}
 import navigation.Navigator
 import pages.CYMinusThreeEarlierYearsYesNoPage
@@ -27,19 +26,21 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.EarlierYearsToPayThanAskedYesNoView
 
+import javax.inject.Inject
 import scala.concurrent.Future
 
 class CYMinusThreeEarlierYearsLiabilityController @Inject()(
                                                              val controllerComponents: MessagesControllerComponents,
                                                              @TaxLiability navigator: Navigator,
                                                              actions: Actions,
-                                                             view: EarlierYearsToPayThanAskedYesNoView
-                               ) extends FrontendBaseController with I18nSupport {
+                                                             view: EarlierYearsToPayThanAskedYesNoView,
+                                                             taxYearRange: TaxYearRange
+                                                           ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode, draftId: String): Action[AnyContent] = actions.authWithData(draftId) {
     implicit request =>
 
-      val start = TaxYearRange(CYMinus3TaxYear).yearAtStart
+      val start = taxYearRange.yearAtStart(CYMinus3TaxYear)
 
       val continueUrl = routes.CYMinusThreeEarlierYearsLiabilityController.onSubmit(mode, draftId)
 
