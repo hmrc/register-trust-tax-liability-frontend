@@ -1,3 +1,6 @@
+service.name = Register and Maintain a Trust
+service.section = Years of tax liability
+
 checkYourAnswers.title = Check years of tax liability
 checkYourAnswers.heading = Check years of tax liability
 
@@ -32,9 +35,7 @@ site.hidden-delete = Delete {0}
 site.hidden-edit = Change {0}
 site.no = No
 site.yes = Yes
-site.continue = Continue
-site.service_name = Register and Maintain a Trust
-site.service_section = Years of tax liability
+site.save.continue = Save and continue
 site.returnToRegistrationProgress = Return to registration progress
 site.textarea.char_limit = (Limit is {0} characters)
 site.sign_out = Sign out
@@ -94,4 +95,3 @@ didDeclareToHMRC.p1 = You must have sent a full voluntary disclosure for {0}.
 didDeclareToHMRC.error.required = Select yes if the tax from {0} to {1} was declared
 
 taxLiabilityBetweenYears.checkYourAnswerSectionHeading = Tax liability {0}
-

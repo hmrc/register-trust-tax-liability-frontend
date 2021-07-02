@@ -14,28 +14,31 @@
  * limitations under the License.
  *@
 
-@import controllers.routes._
+@import views.html.components.{ErrorSummary, Heading, InputYesNo, SubmitButton}
 
 @this(
-    main_template: MainTemplate,
-    formHelper: FormWithCSRF
+    mainTemplate: MainTemplate,
+    formHelper: FormWithCSRF,
+    errorSummary: ErrorSummary,
+    heading: Heading,
+    inputYesNo: InputYesNo,
+    submitButton: SubmitButton
 )
 
 @(date: String, draftId: String, mode: Mode, continueUrl: Call)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = s"${messages("earlierYearsLiability.title", date)}"
+@mainTemplate(
+    title = s"${messages("earlierYearsLiability.title", date)}",
+    showBackLink = true
 ) {
 
-    @components.back_link()
-
-    <h1 class="heading-large">@messages("earlierYearsLiability.heading", date)</h1>
+    @heading("earlierYearsLiability.heading", Some(date))
 
     <p>@messages("earlierYearsLiability.p1")</p>
 
     @formHelper(action = continueUrl, 'autoComplete -> "off") {
 
-        @components.submit_button()
+        @submitButton()
 
     }
 }

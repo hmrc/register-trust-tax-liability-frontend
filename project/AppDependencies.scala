@@ -3,19 +3,18 @@ import sbt._
 object AppDependencies {
   import play.core.PlayVersion
 
-  val compile = Seq(
+  val compile: Seq[ModuleID] = Seq(
     play.sbt.PlayImport.ws,
     "org.reactivemongo" %% "play2-reactivemongo"            % "0.20.13-play27",
-    "uk.gov.hmrc"       %% "govuk-template"                 % "5.63.0-play-27",
+    "uk.gov.hmrc"       %% "play-frontend-hmrc"             % "0.79.0-play-27",
     "uk.gov.hmrc"       %% "play-health"                    % "3.16.0-play-27",
-    "uk.gov.hmrc"       %% "play-ui"                        % "9.0.0-play-27",
     "uk.gov.hmrc"       %% "play-conditional-form-mapping"  % "1.6.0-play-27",
     "uk.gov.hmrc"       %% "bootstrap-frontend-play-27"     % "5.3.0",
     "uk.gov.hmrc"       %% "tax-year"                       % "1.1.0",
     "uk.gov.hmrc"       %% "play-language"                  % "5.1.0-play-27"
   )
 
-  val test = Seq(
+  val test: Seq[ModuleID] = Seq(
     "org.scalatest"               %% "scalatest"          % "3.0.8",
     "org.scalatestplus.play"      %% "scalatestplus-play" % "4.0.3",
     "org.pegdown"                 %  "pegdown"            % "1.6.0",
@@ -39,4 +38,5 @@ object AppDependencies {
     "com.typesafe.akka" %% "akka-http-core_2.12" % akkaHttpVersion,
     "commons-codec"     % "commons-codec" % "1.12"
   )
+
 }
