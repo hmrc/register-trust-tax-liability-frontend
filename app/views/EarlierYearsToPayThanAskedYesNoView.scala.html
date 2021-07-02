@@ -14,13 +14,14 @@
  * limitations under the License.
  *@
 
-@import views.html.components.{ErrorSummary, InputYesNo, SubmitButton}
+@import views.html.components.{ErrorSummary, Heading, InputYesNo, SubmitButton}
 
 @this(
     mainTemplate: MainTemplate,
     formHelper: FormWithCSRF,
-    inputYesNo: InputYesNo,
     errorSummary: ErrorSummary,
+    heading: Heading,
+    inputYesNo: InputYesNo,
     submitButton: SubmitButton
 )
 
@@ -31,7 +32,7 @@
     showBackLink = true
 ) {
 
-    <h1 class="heading-large">@messages("earlierYearsLiability.heading", date)</h1>
+    @heading("earlierYearsLiability.heading", Some(date))
 
     <p>@messages("earlierYearsLiability.p1")</p>
 

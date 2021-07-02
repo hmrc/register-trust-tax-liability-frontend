@@ -14,13 +14,14 @@
  * limitations under the License.
  *@
 
-@import views.html.components.{ErrorSummary, InputYesNo, SubmitButton}
+@import views.html.components.{ErrorSummary, Heading, InputYesNo, SubmitButton}
 
 @this(
     mainTemplate: MainTemplate,
     formHelper: FormWithCSRF,
-    inputYesNo: InputYesNo,
     errorSummary: ErrorSummary,
+    heading: Heading,
+    inputYesNo: InputYesNo,
     submitButton: SubmitButton
 )
 
@@ -35,7 +36,7 @@
 
         @errorSummary(form.errors)
 
-        <h1 class="heading-large">@messages("cyMinusFour.liability.heading", taxYear)</h1>
+        @heading("cyMinusFour.liability.heading", Some(taxYear))
 
         <p>@messages("cyMinusFour.liability.p1")</p>
 
@@ -43,7 +44,7 @@
             field = form("value"),
             legend = messages("cyMinusFour.liability.heading", taxYear),
             legendAsHeading = false,
-            legendClass = Some("visually-hidden"),
+            legendClass = Some("govuk-visually-hidden"),
             hint = None
         )
 

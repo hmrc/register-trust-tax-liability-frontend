@@ -15,8 +15,8 @@
  *@
 
 @import controllers.routes._
-@import utils.SectionFormatter.formatSections
-@import viewmodels.Section
+@import utils.SectionFormatter.formatAnswerSection
+@import viewmodels.AnswerSection
 @import views.html.components.{Heading, SubmitButton}
 
 @this(
@@ -27,7 +27,7 @@
     heading: Heading
 )
 
-@(answerSections: Seq[Section], draftId: String)(implicit request: Request[_], messages: Messages)
+@(answerSections: Seq[AnswerSection], draftId: String)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = messages("checkYourAnswers.title"),
@@ -38,7 +38,10 @@
 
         @heading("checkYourAnswers.heading")
 
-        @govukSummaryList(SummaryList(rows = formatSections(answerSections)))
+        @for(answerSection <- answerSections) {
+            <h2 class="govuk-heading-m">@answerSection.headingKey</h2>
+            @govukSummaryList(SummaryList(rows = formatAnswerSection(answerSection)))
+        }
 
         @submitButton()
 
