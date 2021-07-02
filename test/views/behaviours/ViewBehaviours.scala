@@ -33,9 +33,8 @@ trait ViewBehaviours extends ViewSpecBase {
         "have the correct banner title" in {
 
           val doc = asDocument(view)
-          val nav = doc.getElementById("proposition-menu")
-          val span = nav.children.first
-          span.text mustBe messages("service.name")
+          val bannerTitle = doc.getElementsByClass("govuk-header__link govuk-header__link--service-name")
+          bannerTitle.html() mustBe messages("service.name")
         }
 
         "display the correct browser title" in {
@@ -59,7 +58,7 @@ trait ViewBehaviours extends ViewSpecBase {
         "display language toggles" in {
 
           val doc = asDocument(view)
-          assertRenderedById(doc, "cymraeg-switch")
+          assertRenderedByCssSelector(doc, "a[lang=cy]")
         }
       }
     }
@@ -77,9 +76,8 @@ trait ViewBehaviours extends ViewSpecBase {
         "have the correct banner title" in {
 
           val doc = asDocument(view)
-          val nav = doc.getElementById("proposition-menu")
-          val span = nav.children.first
-          span.text mustBe messages("service.name")
+          val bannerTitle = doc.getElementsByClass("govuk-header__link govuk-header__link--service-name")
+          bannerTitle.html() mustBe messages("service.name")
         }
 
         "display the correct browser title" in {
@@ -103,7 +101,7 @@ trait ViewBehaviours extends ViewSpecBase {
         "display language toggles" in {
 
           val doc = asDocument(view)
-          assertRenderedById(doc, "cymraeg-switch")
+          assertRenderedByCssSelector(doc, "a[lang=cy]")
         }
       }
     }
@@ -117,29 +115,25 @@ trait ViewBehaviours extends ViewSpecBase {
     "behave like a page with hint text" in {
 
       val doc = asDocument(createView(form))
-      assertContainsHint(doc, "value", Some(messages(expectedHintKey, messageArgs:_*)))
+      assertContainsHint(doc, "value", Some(messages(expectedHintKey, messageArgs: _*)))
     }
   }
 
   def pageWithBackLink(view: HtmlFormat.Appendable): Unit = {
 
-    "behave like a page with a back link" must {
+    "behave like a page with a back link" in {
 
-      "have a back link" in {
-
-        val doc = asDocument(view)
-        assertRenderedById(doc, "back-link")
-      }
+      val doc = asDocument(view)
+      assertRenderedById(doc, "back-link")
     }
   }
 
-  def pageWithASubmitButton(view: HtmlFormat.Appendable) = {
+  def pageWithASubmitButton(view: HtmlFormat.Appendable): Unit = {
 
-    "behave like a page with a submit button" must {
-      "have a submit button" in {
-        val doc = asDocument(view)
-        assertRenderedById(doc, "submit")
-      }
+    "behave like a page with a submit button" in {
+
+      val doc = asDocument(view)
+      assertRenderedById(doc, "submit")
     }
   }
 }

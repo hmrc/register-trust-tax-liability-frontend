@@ -28,7 +28,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.inject.{Injector, bind}
 import play.api.libs.json.Json
-import play.api.mvc.{BodyParsers, Call}
+import play.api.mvc.{AnyContentAsEmpty, BodyParsers, Call}
 import play.api.test.FakeRequest
 import repositories.RegistrationsRepository
 import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, Enrolments}
@@ -42,9 +42,9 @@ trait SpecBase extends PlaySpec with GuiceOneAppPerSuite with Mocked with TryVal
 
   val fakeNavigator = new FakeNavigator()
 
-  def emptyUserAnswers = UserAnswers(draftId, Json.obj(), userInternalId)
+  def emptyUserAnswers: UserAnswers = UserAnswers(draftId, Json.obj(), userInternalId)
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   def injector: Injector = app.injector
 
@@ -52,13 +52,13 @@ trait SpecBase extends PlaySpec with GuiceOneAppPerSuite with Mocked with TryVal
 
   def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
 
-  def fakeRequest = FakeRequest("", "")
+  def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
 
-  def trustsAuth = injector.instanceOf[TrustsAuthorisedFunctions]
+  def trustsAuth: TrustsAuthorisedFunctions = injector.instanceOf[TrustsAuthorisedFunctions]
 
-  def injectedParsers = injector.instanceOf[BodyParsers.Default]
+  def injectedParsers: BodyParsers.Default = injector.instanceOf[BodyParsers.Default]
 
-  implicit def executionContext = injector.instanceOf[ExecutionContext]
+  implicit def executionContext: ExecutionContext = injector.instanceOf[ExecutionContext]
 
   implicit def messages: Messages = messagesApi.preferred(fakeRequest)
 
@@ -82,4 +82,5 @@ trait SpecBase extends PlaySpec with GuiceOneAppPerSuite with Mocked with TryVal
         bind[DraftIdRetrievalActionProvider].toInstance(fakeDraftIdAction(userAnswers)),
         bind[RegistrationsRepository].toInstance(registrationsRepository)
       )
+
 }

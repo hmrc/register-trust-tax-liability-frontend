@@ -30,9 +30,6 @@ object ViewUtils {
   }
 
   def errorHref(error: FormError): String = {
-    error.args match {
-      case _ if error.message.toLowerCase.contains("yesno") => s"${error.key}-yes"
-      case _ => s"${error.key}"
-    }
+    s"${error.key}-yes"
   }
 }

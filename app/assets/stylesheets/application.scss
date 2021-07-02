@@ -5,9 +5,6 @@ $govuk-global-styles: true;
 
 // ----------------
 // Hide the back link when body does not have .js-enabled
-//
-// ----------------
-
 body:not(.js-enabled) {
     .govuk-back-link {
         display: none;
@@ -16,18 +13,7 @@ body:not(.js-enabled) {
         height: 0;
     }
 }
-
 // ----------------
-// Trusts Add-to-list pattern as a 4th column
-// this ensures the second column moves down correctly underneath on mobile devices
-// ----------------
-@include govuk-media-query($until: desktop) {
-  .hmrc-add-to-a-list__identifier__second {
-    position: absolute;
-    top: inherit;
-    left: 0;
-  }
-}
 
 p {
   @extend .govuk-body;

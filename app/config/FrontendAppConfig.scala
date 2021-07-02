@@ -21,19 +21,15 @@ import controllers.routes
 import play.api.Configuration
 import play.api.i18n.Lang
 import play.api.mvc.Call
+import uk.gov.hmrc.hmrcfrontend.config.ContactFrontendConfig
 
 @Singleton
-class FrontendAppConfig @Inject() (val configuration: Configuration) {
-
-  private val contactHost = configuration.get[String]("contact-frontend.host")
-  private val contactFormServiceIdentifier = "trusts"
+class FrontendAppConfig @Inject()(val configuration: Configuration,
+                                  contactFrontendConfig: ContactFrontendConfig) {
 
   val repositoryKey: String = "taxLiability"
 
-  val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
-  val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
-  val betaFeedbackUrl = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
-  val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
+  val betaFeedbackUrl = s"${contactFrontendConfig.baseUrl.get}/contact/beta-feedback?service=${contactFrontendConfig.serviceId.get}"
 
   lazy val authUrl: String = configuration.get[Service]("auth").baseUrl
   lazy val loginUrl: String = configuration.get[String]("urls.login")
@@ -47,9 +43,6 @@ class FrontendAppConfig @Inject() (val configuration: Configuration) {
   lazy val timeoutLength: Int = configuration.get[Int]("timeout.length")
 
   lazy val registrationStartUrl: String = configuration.get[String]("urls.registrationStart")
-
-  lazy val locationCanonicalList: String = configuration.get[String]("location.canonical.list.all")
-  lazy val locationCanonicalListNonUK: String = configuration.get[String]("location.canonical.list.nonUK")
 
   lazy val trustsUrl: String = configuration.get[Service]("microservice.services.trusts").baseUrl
   lazy val createAgentServicesAccountUrl : String = configuration.get[String]("urls.createAgentServicesAccount")
@@ -70,4 +63,5 @@ class FrontendAppConfig @Inject() (val configuration: Configuration) {
     (lang: String) => routes.LanguageSwitchController.switchToLanguage(lang)
 
   def registerTrustAsTrusteeUrl: String = configuration.get[String]("urls.registerTrustAsTrustee")
+
 }

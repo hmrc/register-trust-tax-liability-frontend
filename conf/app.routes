@@ -1,5 +1,8 @@
 # microservice specific routes
 
+->         /govuk-frontend                                          govuk.Routes
+->         /hmrc-frontend                                           hmrcfrontend.Routes
+
 GET        /:draftId/start                                          controllers.IndexController.onPageLoad(draftId: String)
 
 GET        /:draftId/need-to-pay-more-than-4-tax-years              controllers.CYMinusFourEarlierYearsLiabilityController.onPageLoad(mode: Mode = NormalMode, draftId: String)
