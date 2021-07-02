@@ -16,36 +16,39 @@
 
 @import controllers.routes._
 @import models.TaxYear
+@import views.html.components.{ErrorSummary, InputYesNo, SubmitButton}
 
 @this(
-    main_template: MainTemplate,
-    formHelper: FormWithCSRF
+    mainTemplate: MainTemplate,
+    formHelper: FormWithCSRF,
+    inputYesNo: InputYesNo,
+    errorSummary: ErrorSummary,
+    submitButton: SubmitButton
 )
 
 @(form: Form[_], draftId: String, taxYear: TaxYear, toRange: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = s"${errorPrefix(form)}${messages("didDeclareToHMRC.title", toRange)}"
+@mainTemplate(
+    title = s"${errorPrefix(form)}${messages("didDeclareToHMRC.title", toRange)}",
+    showBackLink = true
 ) {
 
     @formHelper(action = DidDeclareTaxToHMRCController.onSubmit(mode, draftId, taxYear), 'autoComplete -> "off") {
 
-        @components.back_link()
-
-        @components.error_summary(form.errors)
+        @errorSummary(form.errors)
 
         <h1 class="heading-large">@messages("didDeclareToHMRC.heading", toRange)</h1>
 
         <p>@messages("didDeclareToHMRC.p1", toRange)</p>
 
-        @components.input_yes_no(
+        @inputYesNo(
             field = form("value"),
             legend = messages("didDeclareToHMRC.heading", toRange),
-            headingIsLegend = false,
+            legendAsHeading = false,
             legendClass = Some("visually-hidden"),
             hint = None
         )
 
-        @components.submit_button()
+        @submitButton()
     }
 }

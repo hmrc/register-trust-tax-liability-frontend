@@ -16,7 +16,7 @@
 
 package views
 
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import play.api.i18n.Messages
 
 object ViewUtils {
@@ -26,6 +26,13 @@ object ViewUtils {
   }
 
   def breadcrumbTitle(title: String)(implicit messages: Messages): String = {
-    s"$title - ${messages("site.service_section")} - ${messages("site.service_name")} - GOV.UK"
+    s"$title - ${messages("service.section")} - ${messages("service.name")} - GOV.UK"
+  }
+
+  def errorHref(error: FormError): String = {
+    error.args match {
+      case _ if error.message.toLowerCase.contains("yesno") => s"${error.key}-yes"
+      case _ => s"${error.key}"
+    }
   }
 }

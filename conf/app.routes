@@ -57,6 +57,7 @@ GET        /assets/*file                                            controllers.
 GET        /language/:lang                                          controllers.LanguageSwitchController.switchToLanguage(lang: String)
 
 GET        /this-service-has-been-reset                             controllers.SessionExpiredController.onPageLoad
+POST       /this-service-has-been-reset                             controllers.SessionExpiredController.onSubmit
 
 GET        /:draftId/check-your-answers                             controllers.CheckYourAnswersController.onPageLoad(draftId: String)
 POST       /:draftId/check-your-answers                             controllers.CheckYourAnswersController.onSubmit(draftId: String)

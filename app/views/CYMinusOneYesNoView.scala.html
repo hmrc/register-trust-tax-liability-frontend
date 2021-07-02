@@ -31,36 +31,39 @@
  *@
 
 @import controllers.routes._
+@import views.html.components.{ErrorSummary, InputYesNo, SubmitButton}
 
 @this(
-    main_template: MainTemplate,
-    formHelper: FormWithCSRF
+    mainTemplate: MainTemplate,
+    formHelper: FormWithCSRF,
+    inputYesNo: InputYesNo,
+    errorSummary: ErrorSummary,
+    submitButton: SubmitButton
 )
 
 @(form: Form[_], draftId: String, taxYear: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = s"${errorPrefix(form)}${messages("cyMinusOne.liability.title", taxYear)}"
+@mainTemplate(
+    title = s"${errorPrefix(form)}${messages("cyMinusOne.liability.title", taxYear)}",
+    showBackLink = true
 ) {
 
     @formHelper(action = CYMinusOneLiabilityController.onSubmit(mode, draftId), 'autoComplete -> "off") {
 
-        @components.back_link()
-
-        @components.error_summary(form.errors)
+        @errorSummary(form.errors)
 
         <h1 class="heading-large">@messages("cyMinusOne.liability.heading", taxYear)</h1>
 
         <p>@messages("cyMinusOne.liability.p1")</p>
 
-        @components.input_yes_no(
+        @inputYesNo(
             field = form("value"),
             legend = messages("cyMinusOne.liability.heading", taxYear),
-            headingIsLegend = false,
+            legendAsHeading = false,
             legendClass = Some("visually-hidden"),
             hint = None
         )
 
-        @components.submit_button()
+        @submitButton()
     }
 }

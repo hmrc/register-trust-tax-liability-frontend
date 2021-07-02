@@ -15,35 +15,32 @@
  *@
 
 @import controllers.routes._
-@import viewmodels.{AnswerSection, RepeaterAnswerSection, Section}
+@import utils.SectionFormatter.formatSections
+@import viewmodels.Section
+@import views.html.components.{Heading, SubmitButton}
 
 @this(
-    main_template: MainTemplate,
-    formHelper: FormWithCSRF
+    mainTemplate: MainTemplate,
+    formHelper: FormWithCSRF,
+    govukSummaryList: GovukSummaryList,
+    submitButton: SubmitButton,
+    heading: Heading
 )
 
 @(answerSections: Seq[Section], draftId: String)(implicit request: Request[_], messages: Messages)
 
-@main_template(
-    title = messages("checkYourAnswers.title")
+@mainTemplate(
+    title = messages("checkYourAnswers.title"),
+    showBackLink = true
 ) {
 
     @formHelper(action = CheckYourAnswersController.onSubmit(draftId), 'autoComplete -> "off") {
 
-    @components.back_link()
+        @heading("checkYourAnswers.heading")
 
-    @components.heading("checkYourAnswers.heading")
+        @govukSummaryList(SummaryList(rows = formatSections(answerSections)))
 
-    @for(section <- answerSections){
-        @{
-            section match {
-                case a: AnswerSection => components.answer_section(a)
-                case r: RepeaterAnswerSection => components.repeater_answer_section(r)
-            }
-        }
-    }
-
-    @components.submit_button()
+        @submitButton()
 
     }
 }
