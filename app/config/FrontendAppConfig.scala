@@ -22,16 +22,18 @@ import play.api.Configuration
 import play.api.i18n.Lang
 import play.api.mvc.Call
 import uk.gov.hmrc.hmrcfrontend.config.ContactFrontendConfig
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
 class FrontendAppConfig @Inject()(val configuration: Configuration,
+                                  servicesConfig: ServicesConfig,
                                   contactFrontendConfig: ContactFrontendConfig) {
 
   val repositoryKey: String = "taxLiability"
 
   val betaFeedbackUrl = s"${contactFrontendConfig.baseUrl.get}/contact/beta-feedback?service=${contactFrontendConfig.serviceId.get}"
 
-  lazy val authUrl: String = configuration.get[Service]("auth").baseUrl
+  lazy val authUrl: String = servicesConfig.baseUrl("auth")
   lazy val loginUrl: String = configuration.get[String]("urls.login")
   lazy val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
   lazy val logoutUrl: String = configuration.get[String]("urls.logout")
@@ -44,9 +46,9 @@ class FrontendAppConfig @Inject()(val configuration: Configuration,
 
   lazy val registrationStartUrl: String = configuration.get[String]("urls.registrationStart")
 
-  lazy val trustsUrl: String = configuration.get[Service]("microservice.services.trusts").baseUrl
-  lazy val createAgentServicesAccountUrl : String = configuration.get[String]("urls.createAgentServicesAccount")
-  lazy val maintainATrustFrontendUrl : String = configuration.get[String]("urls.maintainATrust")
+  lazy val trustsUrl: String = servicesConfig.baseUrl("trusts")
+  lazy val createAgentServicesAccountUrl: String = configuration.get[String]("urls.createAgentServicesAccount")
+  lazy val maintainATrustFrontendUrl: String = configuration.get[String]("urls.maintainATrust")
 
   def registrationProgressUrl(draftId: String): String =
     configuration.get[String]("urls.registrationProgress").replace(":draftId", draftId)

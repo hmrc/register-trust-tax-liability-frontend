@@ -14,24 +14,33 @@
  * limitations under the License.
  */
 
-package forms.behaviours
+package forms
 
+import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.{Form, FormError}
 
-trait StringFieldBehaviours extends FieldBehaviours {
+class YesNoFormProviderWithArgumentsSpec extends BooleanFieldBehaviours {
 
-    def fieldWithMaxLength(form: Form[_],
-                           fieldName: String,
-                           maxLength: Int,
-                           lengthError: FormError): Unit = {
+  val prefix = "didDeclareToHMRC"
+  val requiredKey = s"$prefix.error.required"
+  val invalidKey = "error.boolean"
 
-    s"not bind strings longer than $maxLength characters" in {
+  val form: Form[Boolean] = new YesNoFormProviderWithArguments().withPrefix(prefix, Nil)
 
-      forAll(stringsLongerThan(maxLength) -> "longString") {
-        string =>
-          val result = form.bind(Map(fieldName -> string)).apply(fieldName)
-          result.errors shouldEqual Seq(lengthError)
-      }
-    }
+  ".value" must {
+
+    val fieldName = "value"
+
+    behave like booleanField(
+      form,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
   }
 }
