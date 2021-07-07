@@ -18,7 +18,7 @@ package utils
 
 import base.SpecBase
 import controllers.routes
-import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, NormalMode, TaxYearRange}
+import models.{CYMinus1TaxYear, CYMinus2TaxYears, CYMinus3TaxYears, CYMinus4TaxYears, NormalMode, TaxYearRange}
 import pages._
 import play.twirl.api.Html
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -31,61 +31,12 @@ class CheckYourAnswersHelperSpec extends SpecBase {
 
   "Check your answers helper" when {
 
-    "earlier years" must {
-
-      "render answers for tax before 4 years" in {
-
-        val taxYear = taxYearRange.yearAtStart(CYMinus4TaxYear)
-
-        val cyaHelper = injector.instanceOf[CheckYourAnswersHelper]
-
-        val userAnswers = emptyUserAnswers
-          .set(CYMinusFourEarlierYearsYesNoPage, true).success.value
-
-        val result = cyaHelper.earlierThan4YearsAnswers(userAnswers)
-
-        result.value mustBe AnswerSection(
-          headingKey = Some(messages("earlierYearsLiability.checkYourAnswerSectionHeading", taxYear)),
-          rows = Seq(
-            AnswerRow(label = messages("earlierYearsLiability.checkYourAnswersLabel", taxYear), answer = Html("Yes"),
-              changeUrl = Some(routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode ,draftId).url),
-              canEdit = true
-            )
-          )
-        )
-
-      }
-
-      "render answers for tax before 3 years" in {
-
-        val taxYear = taxYearRange.yearAtStart(CYMinus3TaxYear)
-
-        val cyaHelper = injector.instanceOf[CheckYourAnswersHelper]
-
-        val userAnswers = emptyUserAnswers
-          .set(CYMinusThreeEarlierYearsYesNoPage, true).success.value
-
-        val result = cyaHelper.earlierThan3YearsAnswers(userAnswers)
-
-        result.value mustBe AnswerSection(
-          headingKey = Some(messages("earlierYearsLiability.checkYourAnswerSectionHeading", taxYear)),
-          rows = Seq(
-            AnswerRow(label = messages("earlierYearsLiability.checkYourAnswersLabel", taxYear), answer = Html("Yes"),
-              changeUrl = Some(routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode ,draftId).url),
-              canEdit = true
-            )
-          )
-        )
-      }
-
-    }
-
     "CY-4" must {
 
       "render answers for CY-4 liability and declared" in {
         val cyaHelper = injector.instanceOf[CheckYourAnswersHelper]
 
-        val taxYear = CYMinus4TaxYear
+        val taxYear = CYMinus4TaxYears
         val taxYearRangeDisplay = taxYearRange.toRange(taxYear)
 
         val userAnswers = emptyUserAnswers
@@ -120,7 +71,7 @@ class CheckYourAnswersHelperSpec extends SpecBase {
       "render answers for CY-3 liability and declared" in {
         val cyaHelper = injector.instanceOf[CheckYourAnswersHelper]
 
-        val taxYear = CYMinus3TaxYear
+        val taxYear = CYMinus3TaxYears
         val taxYearRangeDisplay = taxYearRange.toRange(taxYear)
 
         val userAnswers = emptyUserAnswers
@@ -155,7 +106,7 @@ class CheckYourAnswersHelperSpec extends SpecBase {
       "render answers for CY-2 liability and declared" in {
         val cyaHelper = injector.instanceOf[CheckYourAnswersHelper]
 
-        val taxYear = CYMinus2TaxYear
+        val taxYear = CYMinus2TaxYears
 
         val taxYearRangeDisplay = taxYearRange.toRange(taxYear)
 

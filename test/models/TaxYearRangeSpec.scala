@@ -41,7 +41,7 @@ class TaxYearRangeSpec extends SpecBase with BeforeAndAfterEach {
         "CYMinus1TaxYear" when {
 
           val taxYear = CYMinus1TaxYear
-          val yearStart: Int = uk.gov.hmrc.time.TaxYear.current.back(taxYear.year).currentYear
+          val yearStart: Int = uk.gov.hmrc.time.TaxYear.current.back(taxYear.n).currentYear
           val yearEnd = yearStart + 1
 
           "English" in {
@@ -57,8 +57,8 @@ class TaxYearRangeSpec extends SpecBase with BeforeAndAfterEach {
 
         "CYMinus2TaxYear" when {
 
-          val taxYear = CYMinus2TaxYear
-          val yearStart: Int = uk.gov.hmrc.time.TaxYear.current.back(taxYear.year).currentYear
+          val taxYear = CYMinus2TaxYears
+          val yearStart: Int = uk.gov.hmrc.time.TaxYear.current.back(taxYear.n).currentYear
           val yearEnd = yearStart + 1
 
           "English" in {
@@ -74,8 +74,8 @@ class TaxYearRangeSpec extends SpecBase with BeforeAndAfterEach {
 
         "CYMinus3TaxYear" when {
 
-          val taxYear = CYMinus3TaxYear
-          val yearStart: Int = uk.gov.hmrc.time.TaxYear.current.back(taxYear.year).currentYear
+          val taxYear = CYMinus3TaxYears
+          val yearStart: Int = uk.gov.hmrc.time.TaxYear.current.back(taxYear.n).currentYear
           val yearEnd = yearStart + 1
 
           "English" in {
@@ -91,8 +91,8 @@ class TaxYearRangeSpec extends SpecBase with BeforeAndAfterEach {
 
         "CYMinus4TaxYear" when {
 
-          val taxYear = CYMinus4TaxYear
-          val yearStart: Int = uk.gov.hmrc.time.TaxYear.current.back(taxYear.year).currentYear
+          val taxYear = CYMinus4TaxYears
+          val yearStart: Int = uk.gov.hmrc.time.TaxYear.current.back(taxYear.n).currentYear
           val yearEnd = yearStart + 1
 
           "English" in {

@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import models.TaxYear
+@import models.CYMinusNTaxYears
 @import views.html.components.{ErrorSummary, Heading, InputYesNo, SubmitButton}
 
 @this(
@@ -26,7 +26,7 @@
     submitButton: SubmitButton
 )
 
-@(form: Form[_], draftId: String, taxYear: TaxYear, toRange: String, mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], draftId: String, taxYear: CYMinusNTaxYears, toRange: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = s"${errorPrefix(form)}${messages("didDeclareToHMRC.title", toRange)}",

@@ -66,9 +66,9 @@ class SubmissionSetFactory @Inject()(checkYourAnswersHelper: CheckYourAnswersHel
 
     if (status.contains(Status.Completed)) {
 
-      val taxFor4Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(userAnswers, CYMinus4TaxYear)
-      val taxFor3Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(userAnswers, CYMinus3TaxYear)
-      val taxFor2Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(userAnswers, CYMinus2TaxYear)
+      val taxFor4Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(userAnswers, CYMinus4TaxYears)
+      val taxFor3Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(userAnswers, CYMinus3TaxYears)
+      val taxFor2Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(userAnswers, CYMinus2TaxYears)
       val taxFor1Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(userAnswers, CYMinus1TaxYear)
 
       val sections = List(

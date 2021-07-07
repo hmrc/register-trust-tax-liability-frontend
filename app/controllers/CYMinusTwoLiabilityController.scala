@@ -21,7 +21,7 @@ import controllers.actions.Actions
 import forms.YesNoFormProviderWithArguments
 
 import javax.inject.Inject
-import models.{CYMinus2TaxYear, Mode, TaxYearRange}
+import models.{CYMinus2TaxYears, Mode, TaxYearRange}
 import navigation.Navigator
 import pages.CYMinusTwoYesNoPage
 import play.api.data.Form
@@ -45,7 +45,7 @@ class CYMinusTwoLiabilityController @Inject()(
 
   def form(ranges: Seq[String]): Form[Boolean] = formProvider.withPrefix("cyMinusTwo.liability", ranges)
 
-  private val workingTaxYear = CYMinus2TaxYear
+  private val workingTaxYear = CYMinus2TaxYears
 
   def onPageLoad(mode: Mode, draftId: String): Action[AnyContent] = actions.authWithData(draftId) {
     implicit request =>

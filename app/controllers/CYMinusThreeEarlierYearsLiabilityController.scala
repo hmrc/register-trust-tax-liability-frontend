@@ -18,7 +18,7 @@ package controllers
 
 import config.annotations.TaxLiability
 import controllers.actions.Actions
-import models.{CYMinus3TaxYear, Mode, TaxYearRange}
+import models.{CYMinus3TaxYears, Mode, TaxYearRange}
 import navigation.Navigator
 import pages.CYMinusThreeEarlierYearsYesNoPage
 import play.api.i18n.I18nSupport
@@ -40,7 +40,7 @@ class CYMinusThreeEarlierYearsLiabilityController @Inject()(
   def onPageLoad(mode: Mode, draftId: String): Action[AnyContent] = actions.authWithData(draftId) {
     implicit request =>
 
-      val start = taxYearRange.yearAtStart(CYMinus3TaxYear)
+      val start = taxYearRange.yearAtStart(CYMinus3TaxYears)
 
       val continueUrl = routes.CYMinusThreeEarlierYearsLiabilityController.onSubmit(mode, draftId)
 

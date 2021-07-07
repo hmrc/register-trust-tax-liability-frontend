@@ -19,7 +19,7 @@ package services
 import java.time.LocalDate
 import base.SpecBase
 import connectors.SubmissionDraftConnector
-import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, StartDate, TaxLiabilityYear, YearReturnType}
+import models.{CYMinus1TaxYear, CYMinus2TaxYears, CYMinus3TaxYears, CYMinus4TaxYears, StartDate, TaxLiabilityYear, YearReturnType}
 import org.joda.time.{DateTime, DateTimeUtils}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
@@ -349,9 +349,9 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
       "generate a list with 4 tax consequences" in {
         val userAnswers = emptyUserAnswers
-          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYear), false).success.value
-          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYear), false).success.value
-          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYear), false).success.value
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYears), false).success.value
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYears), false).success.value
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYears), false).success.value
           .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
 
         val today = LocalDate.of(2020, 5, 5)
@@ -376,9 +376,9 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
       "when CY-1 is late (after 5 October)" in {
         val userAnswers = emptyUserAnswers
-          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYear), false).success.value
-          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYear), false).success.value
-          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYear), false).success.value
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYears), false).success.value
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYears), false).success.value
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYears), false).success.value
           .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
 
         val today = LocalDate.of(2020, 10, 6)
@@ -407,7 +407,7 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
       "generate a list with 2 tax consequences" in {
         val userAnswers = emptyUserAnswers
-          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYear), false).success.value
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYears), false).success.value
           .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
 
         val today = LocalDate.of(2020, 5, 5)
@@ -434,8 +434,8 @@ class TaxLiabilityServiceSpec extends SpecBase {
 
       "generate a list with 2 tax consequences" in {
         val userAnswers = emptyUserAnswers
-          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYear), false).success.value
-          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYear), false).success.value
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYears), false).success.value
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYears), false).success.value
 
         val today = LocalDate.of(2020, 5, 5)
 

@@ -25,21 +25,21 @@ import javax.inject.Inject
 
 class TaxYearRange @Inject()(languageUtils: LanguageUtils) {
 
-  private def taxYearYear(taxYear: TaxYear) = uk.gov.hmrc.time.TaxYear.current.back(taxYear.year)
+  private def taxYearYear(taxYear: CYMinusNTaxYears) = uk.gov.hmrc.time.TaxYear.current.back(taxYear.n)
 
   implicit class JodaToJava(date: JodaDate) {
     def toJavaDate: JavaDate = JavaDate.of(date.getYear, date.getMonthOfYear, date.getDayOfMonth)
   }
 
-  def startYear(taxYear: TaxYear)(implicit messages: Messages): String =
+  def startYear(taxYear: CYMinusNTaxYears)(implicit messages: Messages): String =
     languageUtils.Dates.formatDate(taxYearYear(taxYear).starts.toJavaDate)
 
-  def endYear(taxYear: TaxYear)(implicit messages: Messages): String =
+  def endYear(taxYear: CYMinusNTaxYears)(implicit messages: Messages): String =
     languageUtils.Dates.formatDate(taxYearYear(taxYear).finishes.toJavaDate)
 
-  def yearAtStart(taxYear: TaxYear): String = taxYearYear(taxYear).startYear.toString
+  def yearAtStart(taxYear: CYMinusNTaxYears): String = taxYearYear(taxYear).startYear.toString
 
-  def toRange(taxYear: TaxYear)(implicit messages: Messages): String = {
+  def toRange(taxYear: CYMinusNTaxYears)(implicit messages: Messages): String = {
     messages("taxYearToRange", startYear(taxYear), endYear(taxYear))
   }
 }

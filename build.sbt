@@ -19,7 +19,7 @@ lazy val root = (project in file("."))
     majorVersion := 0,
     name := appName,
     RoutesKeys.routesImport += "models._",
-    RoutesKeys.routesImport += "models.requests.TaxYearBindable._",
+    RoutesKeys.routesImport += "models.CYMinusNTaxYears._",
     TwirlKeys.templateImports ++= Seq(
       "play.twirl.api.HtmlFormat",
       "play.twirl.api.HtmlFormat._",

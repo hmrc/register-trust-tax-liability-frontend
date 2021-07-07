@@ -17,7 +17,7 @@
 package navigation
 
 import base.SpecBase
-import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, NormalMode}
+import models.{CYMinus1TaxYear, CYMinus2TaxYears, CYMinus3TaxYears, CYMinus4TaxYears, NormalMode}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 
@@ -72,14 +72,14 @@ class TaxLiabilityNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks  
           .set(CYMinusFourYesNoPage, true).success.value
 
         navigator.nextPage(CYMinusFourYesNoPage, draftId, mode, answers)
-          .mustBe(controllers.routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, draftId, CYMinus4TaxYear))
+          .mustBe(controllers.routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, draftId, CYMinus4TaxYears))
       }
 
       "CY-4 Did you declare -> Any -> CY-3 Liability Yes/No page" in {
         val answers = emptyUserAnswers
-          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYear), true).success.value
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYears), true).success.value
 
-        navigator.nextPage(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYear), draftId, mode, answers)
+        navigator.nextPage(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYears), draftId, mode, answers)
           .mustBe(controllers.routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode, draftId))
       }
 
@@ -99,14 +99,14 @@ class TaxLiabilityNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks  
           .set(CYMinusThreeYesNoPage, true).success.value
 
         navigator.nextPage(CYMinusThreeYesNoPage, draftId, mode, answers)
-          .mustBe(controllers.routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, draftId, CYMinus3TaxYear))
+          .mustBe(controllers.routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, draftId, CYMinus3TaxYears))
       }
 
       "CY-3 Did you declare -> Any -> CY-2 Liability Yes/No page" in {
         val answers = emptyUserAnswers
-          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYear), true).success.value
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYears), true).success.value
 
-        navigator.nextPage(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYear), draftId, mode, answers)
+        navigator.nextPage(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYears), draftId, mode, answers)
           .mustBe(controllers.routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode, draftId))
       }
 
@@ -126,14 +126,14 @@ class TaxLiabilityNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks  
           .set(CYMinusTwoYesNoPage, true).success.value
 
         navigator.nextPage(CYMinusTwoYesNoPage, draftId, mode, answers)
-          .mustBe(controllers.routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, draftId, CYMinus2TaxYear))
+          .mustBe(controllers.routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, draftId, CYMinus2TaxYears))
       }
 
       "CY-2 Did you declare -> Any -> CY-1 Liability Yes/No page" in {
         val answers = emptyUserAnswers
-          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYear), true).success.value
+          .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYears), true).success.value
 
-        navigator.nextPage(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYear), draftId, mode, answers)
+        navigator.nextPage(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYears), draftId, mode, answers)
           .mustBe(controllers.routes.CYMinusOneLiabilityController.onPageLoad(NormalMode, draftId))
       }
 

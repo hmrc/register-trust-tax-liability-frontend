@@ -16,7 +16,7 @@
 
 package pages
 
-import models.{CYMinus3TaxYear, UserAnswers}
+import models.{CYMinus3TaxYears, UserAnswers}
 import play.api.libs.json.JsPath
 
 import scala.util.Try
@@ -30,7 +30,7 @@ case object CYMinusThreeYesNoPage extends QuestionPage[Boolean] {
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
     value match {
       case Some(false) =>
-        userAnswers.remove(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYear))
+        userAnswers.remove(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYears))
       case _ =>  super.cleanup(value, userAnswers)
     }
   }

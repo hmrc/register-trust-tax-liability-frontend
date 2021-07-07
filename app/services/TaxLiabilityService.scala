@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 import connectors.SubmissionDraftConnector
 import javax.inject.Inject
-import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, StartDate, TaxLiabilityYear, TaxYearsDue, UserAnswers, YearReturnType}
+import models.{CYMinus1TaxYear, CYMinus2TaxYears, CYMinus3TaxYears, CYMinus4TaxYears, StartDate, TaxLiabilityYear, TaxYearsDue, UserAnswers, YearReturnType}
 import pages.DidDeclareTaxToHMRCYesNoPage
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.time.TaxYear
@@ -96,9 +96,9 @@ class TaxLiabilityService @Inject()(trustsConnector: SubmissionDraftConnector,
   def evaluateTaxYears(userAnswers: UserAnswers): List[YearReturnType] = {
 
     val yearsDeclared = TaxYearsDue(
-      cyMinus4Due = userAnswers.get(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYear)).contains(false),
-      cyMinus3Due = userAnswers.get(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYear)).contains(false),
-      cyMinus2Due = userAnswers.get(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYear)).contains(false),
+      cyMinus4Due = userAnswers.get(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYears)).contains(false),
+      cyMinus3Due = userAnswers.get(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYears)).contains(false),
+      cyMinus2Due = userAnswers.get(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYears)).contains(false),
       cyMinus1Due = userAnswers.get(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear)).contains(false)
     )(localDateService.now)
 

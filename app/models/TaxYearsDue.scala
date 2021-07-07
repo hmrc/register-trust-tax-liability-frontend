@@ -29,9 +29,9 @@ case class TaxYearsDue(cyMinus4Due: Boolean, cyMinus3Due: Boolean, cyMinus2Due: 
 
   def toList : List[YearReturnType] = {
     val yearsBeforeCYMinus1 = List(
-      YearReturnType(taxReturnYear = CYMinus4TaxYear.asShortFinishYear(), taxConsequence = cyMinus4Due),
-      YearReturnType(taxReturnYear = CYMinus3TaxYear.asShortFinishYear(), taxConsequence = cyMinus3Due),
-      YearReturnType(taxReturnYear = CYMinus2TaxYear.asShortFinishYear(), taxConsequence = cyMinus2Due)
+      YearReturnType(taxReturnYear = CYMinus4TaxYears.asShortFinishYear(), taxConsequence = cyMinus4Due),
+      YearReturnType(taxReturnYear = CYMinus3TaxYears.asShortFinishYear(), taxConsequence = cyMinus3Due),
+      YearReturnType(taxReturnYear = CYMinus2TaxYears.asShortFinishYear(), taxConsequence = cyMinus2Due)
     ).filter(_.taxConsequence)
 
     if (cyMinus1Due) {

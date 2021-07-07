@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import config.annotations.TaxLiability
 import forms.YesNoFormProviderWithArguments
-import models.{CYMinus4TaxYear, NormalMode, TaxYearRange}
+import models.{CYMinus4TaxYears, NormalMode, TaxYearRange}
 import navigation.Navigator
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
@@ -44,8 +44,8 @@ class CYMinusFourLiabilityControllerSpec extends SpecBase with MockitoSugar {
   def form(arguments: Seq[Any]) = formProvider.withPrefix("cyMinusFour.liability", arguments)
 
   val languageUtils: LanguageUtils = injector.instanceOf[LanguageUtils]
-  val taxYearStart: String = new TaxYearRange(languageUtils).startYear(CYMinus4TaxYear)
-  val taxYearEnd: String = new TaxYearRange(languageUtils).endYear(CYMinus4TaxYear)
+  val taxYearStart: String = new TaxYearRange(languageUtils).startYear(CYMinus4TaxYears)
+  val taxYearEnd: String = new TaxYearRange(languageUtils).endYear(CYMinus4TaxYears)
 
   val taxYear: String = s"$taxYearStart to $taxYearEnd"
 
