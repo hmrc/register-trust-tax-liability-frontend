@@ -18,20 +18,21 @@ package models
 
 import play.api.i18n.Messages
 import uk.gov.hmrc.play.language.LanguageUtils
+import uk.gov.hmrc.time.TaxYear
 
 import javax.inject.Inject
 
 class TaxYearRange @Inject()(languageUtils: LanguageUtils) {
 
-  private def taxYearYear(taxYear: CYMinusNTaxYears) = uk.gov.hmrc.time.TaxYear.current.back(taxYear.n)
+  private def taxYearOf(cYMinusNTaxYears: CYMinusNTaxYears): TaxYear = uk.gov.hmrc.time.TaxYear.current.back(cYMinusNTaxYears.n)
 
-  def startYear(taxYear: CYMinusNTaxYears)(implicit messages: Messages): String =
-    languageUtils.Dates.formatDate(taxYearYear(taxYear).starts)
+  def startYear(cYMinusNTaxYears: CYMinusNTaxYears)(implicit messages: Messages): String =
+    languageUtils.Dates.formatDate(taxYearOf(cYMinusNTaxYears).starts)
 
-  def endYear(taxYear: CYMinusNTaxYears)(implicit messages: Messages): String =
-    languageUtils.Dates.formatDate(taxYearYear(taxYear).finishes)
+  def endYear(cYMinusNTaxYears: CYMinusNTaxYears)(implicit messages: Messages): String =
+    languageUtils.Dates.formatDate(taxYearOf(cYMinusNTaxYears).finishes)
 
-  def yearAtStart(taxYear: CYMinusNTaxYears): String = taxYearYear(taxYear).startYear.toString
+  def yearAtStart(cYMinusNTaxYears: CYMinusNTaxYears): String = taxYearOf(cYMinusNTaxYears).startYear.toString
 
   def toRange(taxYear: CYMinusNTaxYears)(implicit messages: Messages): String = {
     messages("taxYearToRange", startYear(taxYear), endYear(taxYear))
