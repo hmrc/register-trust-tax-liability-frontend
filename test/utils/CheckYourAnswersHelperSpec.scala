@@ -21,155 +21,103 @@ import controllers.routes
 import models.{CYMinus1TaxYear, CYMinus2TaxYears, CYMinus3TaxYears, CYMinus4TaxYears, NormalMode, TaxYearRange}
 import pages._
 import play.twirl.api.Html
-import uk.gov.hmrc.play.language.LanguageUtils
 import viewmodels.{AnswerRow, AnswerSection}
 
 class CheckYourAnswersHelperSpec extends SpecBase {
 
-  val languageUtils: LanguageUtils = injector.instanceOf[LanguageUtils]
-  val taxYearRange: TaxYearRange = new TaxYearRange(languageUtils)
+  val checkYourAnswersHelper: CheckYourAnswersHelper = injector.instanceOf[CheckYourAnswersHelper]
+  val taxYearRange: TaxYearRange = injector.instanceOf[TaxYearRange]
 
-  "Check your answers helper" when {
+  "CheckYourAnswersHelper" must {
 
-    "CY-4" must {
+    "render answer rows" in {
 
-      "render answers for CY-4 liability and declared" in {
-        val cyaHelper = injector.instanceOf[CheckYourAnswersHelper]
+      val userAnswers = emptyUserAnswers
+        .set(CYMinusFourYesNoPage, true).success.value
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYears), true).success.value
 
-        val taxYear = CYMinus4TaxYears
-        val taxYearRangeDisplay = taxYearRange.toRange(taxYear)
+        .set(CYMinusThreeYesNoPage, true).success.value
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYears), true).success.value
 
-        val userAnswers = emptyUserAnswers
-          .set(CYMinusFourYesNoPage, true).success.value
-          .set(DidDeclareTaxToHMRCYesNoPage(taxYear), true).success.value
+        .set(CYMinusTwoYesNoPage, true).success.value
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYears), false).success.value
 
+        .set(CYMinusOneYesNoPage, true).success.value
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
 
-        val result = cyaHelper.cyMinusTaxYearAnswers(userAnswers, taxYear)
+      val result = checkYourAnswersHelper.apply(userAnswers)
 
-        result.value mustBe AnswerSection(
-          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRangeDisplay)),
+      result mustBe Seq(
+        AnswerSection(
+          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRange.toRange(CYMinus4TaxYears))),
           rows = Seq(
             AnswerRow(
-              label = messages("cyMinusFour.liability.checkYourAnswersLabel", taxYearRangeDisplay),
+              label = messages("cyMinusFour.liability.checkYourAnswersLabel", taxYearRange.toRange(CYMinus4TaxYears)),
               answer = Html("Yes"),
-              changeUrl = Some(routes.CYMinusFourLiabilityController.onPageLoad(NormalMode ,draftId).url),
+              changeUrl = Some(routes.CYMinusFourLiabilityController.onPageLoad(NormalMode, draftId).url),
               canEdit = true
             ),
             AnswerRow(
-              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRangeDisplay),
+              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRange.toRange(CYMinus4TaxYears)),
               answer = Html("Yes"),
-              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode ,draftId, taxYear).url),
+              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, draftId, CYMinus4TaxYears).url),
+              canEdit = true
+            )
+          )
+        ),
+        AnswerSection(
+          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRange.toRange(CYMinus3TaxYears))),
+          rows = Seq(
+            AnswerRow(
+              label = messages("cyMinusThree.liability.checkYourAnswersLabel", taxYearRange.toRange(CYMinus3TaxYears)),
+              answer = Html("Yes"),
+              changeUrl = Some(routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode, draftId).url),
+              canEdit = true
+            ),
+            AnswerRow(
+              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRange.toRange(CYMinus3TaxYears)),
+              answer = Html("Yes"),
+              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, draftId, CYMinus3TaxYears).url),
+              canEdit = true
+            )
+          )
+        ),
+        AnswerSection(
+          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRange.toRange(CYMinus2TaxYears))),
+          rows = Seq(
+            AnswerRow(
+              label = messages("cyMinusTwo.liability.checkYourAnswersLabel", taxYearRange.toRange(CYMinus2TaxYears)),
+              answer = Html("Yes"),
+              changeUrl = Some(routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode, draftId).url),
+              canEdit = true
+            ),
+            AnswerRow(
+              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRange.toRange(CYMinus2TaxYears)),
+              answer = Html("No"),
+              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, draftId, CYMinus2TaxYears).url),
+              canEdit = true
+            )
+          )
+        ),
+        AnswerSection(
+          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRange.toRange(CYMinus1TaxYear))),
+          rows = Seq(
+            AnswerRow(
+              label = messages("cyMinusOne.liability.checkYourAnswersLabel", taxYearRange.toRange(CYMinus1TaxYear)),
+              answer = Html("Yes"),
+              changeUrl = Some(routes.CYMinusOneLiabilityController.onPageLoad(NormalMode, draftId).url),
+              canEdit = true
+            ),
+            AnswerRow(
+              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRange.toRange(CYMinus1TaxYear)),
+              answer = Html("No"),
+              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, draftId, CYMinus1TaxYear).url),
               canEdit = true
             )
           )
         )
-      }
+      )
     }
-
-    "CY-3" must {
-
-      "render answers for CY-3 liability and declared" in {
-        val cyaHelper = injector.instanceOf[CheckYourAnswersHelper]
-
-        val taxYear = CYMinus3TaxYears
-        val taxYearRangeDisplay = taxYearRange.toRange(taxYear)
-
-        val userAnswers = emptyUserAnswers
-          .set(CYMinusThreeYesNoPage, true).success.value
-          .set(DidDeclareTaxToHMRCYesNoPage(taxYear), true).success.value
-
-
-        val result = cyaHelper.cyMinusTaxYearAnswers(userAnswers, taxYear)
-
-        result.value mustBe AnswerSection(
-          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRangeDisplay)),
-          rows = Seq(
-            AnswerRow(
-              label = messages("cyMinusThree.liability.checkYourAnswersLabel", taxYearRangeDisplay),
-              answer = Html("Yes"),
-              changeUrl = Some(routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode ,draftId).url),
-              canEdit = true
-            ),
-            AnswerRow(
-              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRangeDisplay),
-              answer = Html("Yes"),
-              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode ,draftId, taxYear).url),
-              canEdit = true
-            )
-          )
-        )
-      }
-    }
-
-    "CY-2" must {
-
-      "render answers for CY-2 liability and declared" in {
-        val cyaHelper = injector.instanceOf[CheckYourAnswersHelper]
-
-        val taxYear = CYMinus2TaxYears
-
-        val taxYearRangeDisplay = taxYearRange.toRange(taxYear)
-
-        val userAnswers = emptyUserAnswers
-          .set(CYMinusTwoYesNoPage, true).success.value
-          .set(DidDeclareTaxToHMRCYesNoPage(taxYear), true).success.value
-
-        val result = cyaHelper.cyMinusTaxYearAnswers(userAnswers, taxYear)
-
-        result.value mustBe AnswerSection(
-          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRangeDisplay)),
-          rows = Seq(
-            AnswerRow(
-              label = messages("cyMinusTwo.liability.checkYourAnswersLabel", taxYearRangeDisplay),
-              answer = Html("Yes"),
-              changeUrl = Some(routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode ,draftId).url),
-              canEdit = true
-            ),
-            AnswerRow(
-              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRangeDisplay),
-              answer = Html("Yes"),
-              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode ,draftId, taxYear).url),
-              canEdit = true
-            )
-          )
-        )
-      }
-    }
-
-    "CY-1" must {
-
-      "render answers for CY-1 liability and declared" in {
-        val cyaHelper = injector.instanceOf[CheckYourAnswersHelper]
-
-        val taxYear = CYMinus1TaxYear
-        val taxYearRangeDisplay = taxYearRange.toRange(taxYear)
-
-        val userAnswers = emptyUserAnswers
-          .set(CYMinusOneYesNoPage, true).success.value
-          .set(DidDeclareTaxToHMRCYesNoPage(taxYear), true).success.value
-
-        val result = cyaHelper.cyMinusTaxYearAnswers(userAnswers, taxYear)
-
-        result.value mustBe AnswerSection(
-          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRangeDisplay)),
-          rows = Seq(
-            AnswerRow(
-              label = messages("cyMinusOne.liability.checkYourAnswersLabel", taxYearRangeDisplay),
-              answer = Html("Yes"),
-              changeUrl = Some(routes.CYMinusOneLiabilityController.onPageLoad(NormalMode ,draftId).url),
-              canEdit = true
-            ),
-            AnswerRow(
-              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRangeDisplay),
-              answer = Html("Yes"),
-              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode ,draftId, taxYear).url),
-              canEdit = true
-            )
-          )
-        )
-      }
-    }
-
   }
 
 }

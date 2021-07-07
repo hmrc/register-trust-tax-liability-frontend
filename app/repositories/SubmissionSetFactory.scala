@@ -16,7 +16,6 @@
 
 package repositories
 
-import javax.inject.Inject
 import models._
 import pages.TaxLiabilityTaskStatus
 import play.api.i18n.Messages
@@ -25,8 +24,10 @@ import services.TaxLiabilityService
 import utils.CheckYourAnswersHelper
 import viewmodels.{AnswerRow, AnswerSection}
 
+import javax.inject.Inject
+
 class SubmissionSetFactory @Inject()(checkYourAnswersHelper: CheckYourAnswersHelper,
-                                    taxLiabilityService: TaxLiabilityService) {
+                                     taxLiabilityService: TaxLiabilityService) {
 
   def reset(userAnswers: UserAnswers): RegistrationSubmission.DataSet = {
     RegistrationSubmission.DataSet(
@@ -48,7 +49,7 @@ class SubmissionSetFactory @Inject()(checkYourAnswersHelper: CheckYourAnswersHel
     )
   }
 
-  private def mappedDataIfCompleted(userAnswers: UserAnswers, status: Option[Status]) = {
+  private def mappedDataIfCompleted(userAnswers: UserAnswers, status: Option[Status]): List[RegistrationSubmission.MappedPiece] = {
     if (status.contains(Status.Completed)) {
       taxLiabilityService.evaluateTaxYears(userAnswers) match {
         case Nil => List.empty
@@ -65,21 +66,7 @@ class SubmissionSetFactory @Inject()(checkYourAnswersHelper: CheckYourAnswersHel
                                (implicit messages: Messages): List[RegistrationSubmission.AnswerSection] = {
 
     if (status.contains(Status.Completed)) {
-
-      val taxFor4Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(userAnswers, CYMinus4TaxYears)
-      val taxFor3Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(userAnswers, CYMinus3TaxYears)
-      val taxFor2Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(userAnswers, CYMinus2TaxYears)
-      val taxFor1Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(userAnswers, CYMinus1TaxYear)
-
-      val sections = List(
-        taxFor4Years,
-        taxFor3Years,
-        taxFor2Years,
-        taxFor1Years
-      ).flatten
-
-      sections.map(convertForSubmission)
-
+      checkYourAnswersHelper(userAnswers).map(convertForSubmission).toList
     } else {
       List.empty
     }
