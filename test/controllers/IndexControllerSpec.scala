@@ -16,55 +16,44 @@
 
 package controllers
 
-import java.time.LocalDate
 import base.SpecBase
 import connectors.SubmissionDraftConnector
 import models.Status.Completed
-import models.{NormalMode, StartDate}
-import org.joda.time.{DateTime, DateTimeUtils}
+import models.{FirstTaxYearAvailable, NormalMode, StartDate}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import pages.{TaxLiabilityTaskStatus, TrustStartDatePage}
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.LocalDateService
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class IndexControllerSpec extends SpecBase {
 
   "Index Controller" must {
 
-    def setCurrentDate(date: LocalDate): LocalDateService = new LocalDateService {
-      override def now: LocalDate = date
-    }
-
-    def setCurrentDateTime(date: LocalDate) = {
-      DateTimeUtils.setCurrentMillisFixed(new DateTime(date.toString).getMillis)
-    }
-
     val draftId = "draftId"
-    
+    val startDate = LocalDate.of(2015, 5, 1)
+
     "for an existing session" when {
 
       "continue session if trust start date is not changed" in {
+
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
-        val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
-
-        setCurrentDateTime(dateBeforeDec23rd)
-
-        val initialStartDate = LocalDate.of(2015, 5, 1)
-
-        val existingUserAnswers = emptyUserAnswers.set(TrustStartDatePage, initialStartDate).success.value
+        val existingUserAnswers = emptyUserAnswers.set(TrustStartDatePage, startDate).success.value
 
         val application = applicationBuilder(userAnswers = Some(existingUserAnswers))
           .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
-          .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
-        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(initialStartDate))))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
+          .thenReturn(Future.successful(Some(StartDate(startDate))))
+
+        when(mockSubmissionDraftConnector.getFirstTaxYearAvailable(any())(any(), any()))
+          .thenReturn(Future.successful(FirstTaxYearAvailable(4, earlierYearsToDeclare = true)))
 
         when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -81,24 +70,19 @@ class IndexControllerSpec extends SpecBase {
       }
 
       "redirect to user answers if trust start date is not changed and answers previously completed" in {
+
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
-        val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
-
-        setCurrentDateTime(dateBeforeDec23rd)
-
-        val initialStartDate = LocalDate.of(2015, 5, 1)
-
         val existingUserAnswers = emptyUserAnswers
-          .set(TrustStartDatePage, initialStartDate).success.value
+          .set(TrustStartDatePage, startDate).success.value
           .set(TaxLiabilityTaskStatus, Completed).success.value
 
         val application = applicationBuilder(userAnswers = Some(existingUserAnswers))
           .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
-          .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
-        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(initialStartDate))))
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
+          .thenReturn(Future.successful(Some(StartDate(startDate))))
 
         when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -115,24 +99,20 @@ class IndexControllerSpec extends SpecBase {
       }
 
       "clear user answers if the user returns and the trust start date has changed" in {
+
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
-        val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
-
-        setCurrentDateTime(dateBeforeDec23rd)
-
-        val initialStartDate = LocalDate.of(2015, 5, 1)
-
-        val existingUserAnswers = emptyUserAnswers.set(TrustStartDatePage, initialStartDate).success.value
+        val existingUserAnswers = emptyUserAnswers.set(TrustStartDatePage, startDate).success.value
 
         val application = applicationBuilder(userAnswers = Some(existingUserAnswers))
           .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
-          .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
-        val newStartDate = LocalDate.of(2018, 5, 1)
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
+          .thenReturn(Future.successful(Some(StartDate(startDate.plusDays(1)))))
 
-        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(newStartDate))))
+        when(mockSubmissionDraftConnector.getFirstTaxYearAvailable(any())(any(), any()))
+          .thenReturn(Future.successful(FirstTaxYearAvailable(2, earlierYearsToDeclare = false)))
 
         when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -153,13 +133,8 @@ class IndexControllerSpec extends SpecBase {
 
       val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
-      val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
-
-      setCurrentDateTime(dateBeforeDec23rd)
-
       val application = applicationBuilder(userAnswers = None)
         .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
-        .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
         .build()
 
       when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(None))
@@ -177,23 +152,19 @@ class IndexControllerSpec extends SpecBase {
     }
 
     "redirect to CY-4 Earlier years liability controller" when {
-
       "trust start date is more than four years ago and current date is before 23rd Dec" in {
 
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
-        val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
-
-        setCurrentDateTime(dateBeforeDec23rd)
-
         val application = applicationBuilder(userAnswers = None)
           .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
-          .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
-        val startDate = LocalDate.of(2015, 5, 1)
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
+          .thenReturn(Future.successful(Some(StartDate(startDate))))
 
-        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
+        when(mockSubmissionDraftConnector.getFirstTaxYearAvailable(any())(any(), any()))
+          .thenReturn(Future.successful(FirstTaxYearAvailable(4, earlierYearsToDeclare = true)))
 
         when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -209,23 +180,19 @@ class IndexControllerSpec extends SpecBase {
     }
 
     "redirect to CY-4 liability controller" when {
-
       "trust start date is four years ago and current date is before 23rd Dec" in {
 
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
-        val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
-
-        setCurrentDateTime(dateBeforeDec23rd)
-
         val application = applicationBuilder(userAnswers = None)
           .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
-          .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
           .build()
 
-        val startDate = LocalDate.of(2016, 5, 1)
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
+          .thenReturn(Future.successful(Some(StartDate(startDate))))
 
-        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
+        when(mockSubmissionDraftConnector.getFirstTaxYearAvailable(any())(any(), any()))
+          .thenReturn(Future.successful(FirstTaxYearAvailable(4, earlierYearsToDeclare = false)))
 
         when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -241,23 +208,19 @@ class IndexControllerSpec extends SpecBase {
     }
 
     "redirect to CY-3 Earlier years liability controller" when {
-
       "trust start date is more than three years ago and current date is after 23rd Dec" in {
 
         val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
-        val dateAfterDec23rd = LocalDate.of(2020, 12, 25)
-
-        setCurrentDateTime(dateAfterDec23rd)
-
         val application = applicationBuilder(userAnswers = None)
           .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
-          .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateAfterDec23rd)))
           .build()
 
-        val startDate = LocalDate.of(2015, 5, 1)
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
+          .thenReturn(Future.successful(Some(StartDate(startDate))))
 
-        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
+        when(mockSubmissionDraftConnector.getFirstTaxYearAvailable(any())(any(), any()))
+          .thenReturn(Future.successful(FirstTaxYearAvailable(3, earlierYearsToDeclare = true)))
 
         when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
@@ -273,194 +236,86 @@ class IndexControllerSpec extends SpecBase {
     }
 
     "redirect to CY-3 liability controller" when {
+      "trust start date is three years ago" in {
 
-      "trust start date is three years ago" when {
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
-        "current date is before 23rd Dec" in {
+        val application = applicationBuilder(userAnswers = None)
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
+          .build()
 
-          val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
+          .thenReturn(Future.successful(Some(StartDate(startDate))))
 
-          val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
+        when(mockSubmissionDraftConnector.getFirstTaxYearAvailable(any())(any(), any()))
+          .thenReturn(Future.successful(FirstTaxYearAvailable(3, earlierYearsToDeclare = false)))
 
-          setCurrentDateTime(dateBeforeDec23rd)
+        when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
-          val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
-            .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
-            .build()
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
-          val trustStartDate = LocalDate.of(2017, 5, 1)
+        val result = route(application, request).value
 
-          when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(trustStartDate))))
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode, draftId).url)
 
-          when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
-
-          val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
-
-          val result = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode, draftId).url)
-
-          application.stop()
-        }
-
-        "current date is after 23rd Dec" in {
-
-          val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
-
-          val dateAfterDec23rd = LocalDate.of(2020, 12, 25)
-
-          setCurrentDateTime(dateAfterDec23rd)
-
-          val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
-            .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateAfterDec23rd)))
-            .build()
-
-          val startDate = LocalDate.of(2017, 5, 1)
-
-          when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
-
-          when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
-
-          val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
-
-          val result = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode, draftId).url)
-
-          application.stop()
-        }
+        application.stop()
       }
     }
 
     "redirect to CY-2 liability controller" when {
+      "trust start date is two years ago" in {
 
-      "trust start date is two years ago" when {
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
-        "current date is before 23rd Dec" in {
+        val application = applicationBuilder(userAnswers = None)
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
+          .build()
 
-          val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
+          .thenReturn(Future.successful(Some(StartDate(startDate))))
 
-          val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
+        when(mockSubmissionDraftConnector.getFirstTaxYearAvailable(any())(any(), any()))
+          .thenReturn(Future.successful(FirstTaxYearAvailable(2, earlierYearsToDeclare = false)))
 
-          setCurrentDateTime(dateBeforeDec23rd)
+        when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
-          val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
-            .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
-            .build()
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
-          val startDate = LocalDate.of(2018, 5, 1)
+        val result = route(application, request).value
 
-          when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode, draftId).url)
 
-          when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
-
-          val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
-
-          val result = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode, draftId).url)
-
-          application.stop()
-        }
-
-        "current date is after 23rd Dec" in {
-
-          val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
-
-          val dateAfterDec23rd = LocalDate.of(2020, 12, 25)
-
-          setCurrentDateTime(dateAfterDec23rd)
-
-          val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
-            .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateAfterDec23rd)))
-            .build()
-
-          val startDate = LocalDate.of(2018, 5, 1)
-
-          when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
-
-          when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
-
-          val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
-
-          val result = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode, draftId).url)
-
-          application.stop()
-        }
+        application.stop()
       }
     }
 
     "redirect to CY-1 liability controller" when {
+      "trust start date is one year ago" in {
 
-      "trust start date is one years ago" when {
+        val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
 
-        "current date is before 23rd Dec" in {
+        val application = applicationBuilder(userAnswers = None)
+          .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
+          .build()
 
-          val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
+        when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any()))
+          .thenReturn(Future.successful(Some(StartDate(startDate))))
 
-          val dateBeforeDec23rd = LocalDate.of(2020, 5, 1)
+        when(mockSubmissionDraftConnector.getFirstTaxYearAvailable(any())(any(), any()))
+          .thenReturn(Future.successful(FirstTaxYearAvailable(1, earlierYearsToDeclare = false)))
 
-          setCurrentDateTime(dateBeforeDec23rd)
+        when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
 
-          val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
-            .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateBeforeDec23rd)))
-            .build()
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
 
-          val startDate = LocalDate.of(2019, 5, 1)
+        val result = route(application, request).value
 
-          when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.CYMinusOneLiabilityController.onPageLoad(NormalMode, draftId).url)
 
-          when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
-
-          val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
-
-          val result = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.CYMinusOneLiabilityController.onPageLoad(NormalMode, draftId).url)
-
-          application.stop()
-        }
-
-        "current date is after 23rd Dec" in {
-
-          val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
-
-          val dateAfterDec23rd = LocalDate.of(2020, 12, 25)
-
-          setCurrentDateTime(dateAfterDec23rd)
-
-          val application = applicationBuilder(userAnswers = None)
-            .overrides(bind[SubmissionDraftConnector].toInstance(mockSubmissionDraftConnector))
-            .overrides(bind[LocalDateService].toInstance(setCurrentDate(dateAfterDec23rd)))
-            .build()
-
-          val startDate = LocalDate.of(2019, 5, 1)
-
-          when(mockSubmissionDraftConnector.getTrustStartDate(any())(any(), any())).thenReturn(Future.successful(Some(StartDate(startDate))))
-
-          when(registrationsRepository.resetCache(any())(any(), any())).thenReturn(Future.successful(true))
-
-          val request = FakeRequest(GET, routes.IndexController.onPageLoad(draftId).url)
-
-          val result = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.CYMinusOneLiabilityController.onPageLoad(NormalMode, draftId).url)
-
-          application.stop()
-        }
+        application.stop()
       }
     }
   }

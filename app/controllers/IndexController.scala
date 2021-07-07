@@ -17,6 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
+import connectors.SubmissionDraftConnector
 import controllers.actions.Actions
 import controllers.routes._
 import handlers.ErrorHandler
@@ -28,9 +29,7 @@ import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.RegistrationsRepository
-import services.TaxLiabilityService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.time.TaxYear
 import utils.Session
 
 import java.time.LocalDate
@@ -39,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class IndexController @Inject()(
                                  val controllerComponents: MessagesControllerComponents,
-                                 taxLiabilityService: TaxLiabilityService,
+                                 submissionDraftConnector: SubmissionDraftConnector,
                                  actions: Actions,
                                  repository: RegistrationsRepository,
                                  errorHandler: ErrorHandler,
@@ -61,7 +60,7 @@ class IndexController @Inject()(
   def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithSession(draftId).async {
     implicit request =>
 
-      taxLiabilityService.startDate(draftId) flatMap {
+      submissionDraftConnector.getTrustStartDate(draftId) flatMap {
         case Some(date) =>
           val userAnswers: UserAnswers = request.userAnswers
             .getOrElse(UserAnswers.startNewSession(draftId, request.internalId))
@@ -87,22 +86,25 @@ class IndexController @Inject()(
   }
 
   private def redirect(draftId: String)(implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
-    taxLiabilityService.getFirstYearOfTaxLiability(draftId).map { taxLiabilityYear =>
+    submissionDraftConnector.getFirstTaxYearAvailable(draftId).map {
+      firstTaxYearAvailable =>
 
-      val currentYear = TaxYear.current.startYear
-      val startYear = taxLiabilityYear.firstYearAvailable.startYear
-
-      val numberOfYearsToAsk = currentYear - startYear
-
-      numberOfYearsToAsk match {
-        case 4 if taxLiabilityYear.hasEarlierYearsToDeclare => Redirect(CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId))
-        case 4 => Redirect(CYMinusFourLiabilityController.onPageLoad(NormalMode, draftId))
-        case 3 if taxLiabilityYear.hasEarlierYearsToDeclare => Redirect(CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId))
-        case 3 => Redirect(CYMinusThreeLiabilityController.onPageLoad(NormalMode, draftId))
-        case 2 => Redirect(CYMinusTwoLiabilityController.onPageLoad(NormalMode, draftId))
-        case 1 => Redirect(CYMinusOneLiabilityController.onPageLoad(NormalMode, draftId))
-        case _ => InternalServerError(errorHandler.internalServerErrorTemplate)
-      }
+        firstTaxYearAvailable.yearsAgo match {
+          case 4 if firstTaxYearAvailable.earlierYearsToDeclare =>
+            Redirect(CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId))
+          case 4 =>
+            Redirect(CYMinusFourLiabilityController.onPageLoad(NormalMode, draftId))
+          case 3 if firstTaxYearAvailable.earlierYearsToDeclare =>
+            Redirect(CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId))
+          case 3 =>
+            Redirect(CYMinusThreeLiabilityController.onPageLoad(NormalMode, draftId))
+          case 2 =>
+            Redirect(CYMinusTwoLiabilityController.onPageLoad(NormalMode, draftId))
+          case 1 =>
+            Redirect(CYMinusOneLiabilityController.onPageLoad(NormalMode, draftId))
+          case _ =>
+            InternalServerError(errorHandler.internalServerErrorTemplate)
+        }
     }
   }
 }

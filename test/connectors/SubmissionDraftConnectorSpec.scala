@@ -16,12 +16,10 @@
 
 package connectors
 
-import java.time.{LocalDate, LocalDateTime}
-
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.Status.InProgress
-import models.{RegistrationSubmission, SubmissionDraftResponse}
+import models.{FirstTaxYearAvailable, RegistrationSubmission, SubmissionDraftResponse}
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.Application
 import play.api.http.Status
@@ -32,6 +30,7 @@ import play.api.test.Helpers.CONTENT_TYPE
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.WireMockHelper
 
+import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
@@ -46,11 +45,10 @@ class SubmissionDraftConnectorSpec extends SpecBase with MustMatchers with Optio
 
   private lazy val connector = injector.instanceOf[SubmissionDraftConnector]
 
-  private val testDraftId = "draftId"
   private val testSection = "section"
   private val submissionsUrl = s"/trusts/register/submission-drafts"
-  private val submissionUrl = s"$submissionsUrl/$testDraftId/$testSection"
-  private val setSubmissionUrl = s"$submissionsUrl/$testDraftId/set/$testSection"
+  private val submissionUrl = s"$submissionsUrl/$draftId/$testSection"
+  private val setSubmissionUrl = s"$submissionsUrl/$draftId/set/$testSection"
 
   "SubmissionDraftConnector" when {
 
@@ -82,7 +80,7 @@ class SubmissionDraftConnectorSpec extends SpecBase with MustMatchers with Optio
             )
         )
 
-        val result = Await.result(connector.setDraftSectionSet(testDraftId, testSection, submissionDraftSetData), Duration.Inf)
+        val result = Await.result(connector.setDraftSectionSet(draftId, testSection, submissionDraftSetData), Duration.Inf)
         result.status mustBe Status.OK
       }
 
@@ -116,7 +114,7 @@ class SubmissionDraftConnectorSpec extends SpecBase with MustMatchers with Optio
             )
         )
 
-        val result: SubmissionDraftResponse = Await.result(connector.getDraftSection(testDraftId, testSection), Duration.Inf)
+        val result: SubmissionDraftResponse = Await.result(connector.getDraftSection(draftId, testSection), Duration.Inf)
         result.createdAt mustBe LocalDateTime.of(2012, 2, 3, 9, 30)
         result.data mustBe draftData
       }
@@ -142,7 +140,7 @@ class SubmissionDraftConnectorSpec extends SpecBase with MustMatchers with Optio
             |""".stripMargin)
 
         server.stubFor(
-          get(urlEqualTo(s"/trusts/register/submission-drafts/$testDraftId/when-trust-setup"))
+          get(urlEqualTo(s"/trusts/register/submission-drafts/$draftId/when-trust-setup"))
             .willReturn(okJson(json.toString))
         )
 
@@ -169,7 +167,7 @@ class SubmissionDraftConnectorSpec extends SpecBase with MustMatchers with Optio
         val connector = application.injector.instanceOf[SubmissionDraftConnector]
 
         server.stubFor(
-          get(urlEqualTo(s"/trusts/register/submission-drafts/$testDraftId/when-trust-setup"))
+          get(urlEqualTo(s"/trusts/register/submission-drafts/$draftId/when-trust-setup"))
             .willReturn(status(Helpers.NOT_FOUND))
         )
 
@@ -178,6 +176,38 @@ class SubmissionDraftConnectorSpec extends SpecBase with MustMatchers with Optio
         whenReady(futureResult) {
           r =>
             r mustNot be(defined)
+        }
+
+        application.stop()
+      }
+
+    }
+
+    ".getFirstTaxYearAvailable" must {
+
+      "return first tax year available when successful" in {
+        val application = applicationBuilder()
+          .configure(
+            Seq(
+              "microservice.services.trusts.port" -> server.port(),
+              "auditing.enabled" -> false
+            ): _*
+          ).build()
+
+
+        val connector = application.injector.instanceOf[SubmissionDraftConnector]
+
+        val firstTaxYearAvailable = FirstTaxYearAvailable(4, earlierYearsToDeclare = true)
+
+        server.stubFor(
+          get(urlEqualTo(s"/trusts/register/submission-drafts/$draftId/first-tax-year-available"))
+            .willReturn(okJson(Json.toJson(firstTaxYearAvailable).toString))
+        )
+
+        val futureResult = connector.getFirstTaxYearAvailable(draftId)
+
+        whenReady(futureResult) {
+          _ mustBe firstTaxYearAvailable
         }
 
         application.stop()

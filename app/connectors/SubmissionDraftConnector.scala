@@ -17,31 +17,33 @@
 package connectors
 
 import config.FrontendAppConfig
-import javax.inject.Inject
-import models.{RegistrationSubmission, StartDate, SubmissionDraftResponse}
+import models.{FirstTaxYearAvailable, RegistrationSubmission, StartDate, SubmissionDraftResponse}
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SubmissionDraftConnector @Inject()(http: HttpClient, config : FrontendAppConfig) {
+class SubmissionDraftConnector @Inject()(http: HttpClient, config: FrontendAppConfig) {
 
-  val submissionsBaseUrl = s"${config.trustsUrl}/trusts/register/submission-drafts"
+  private val submissionsBaseUrl = s"${config.trustsUrl}/trusts/register/submission-drafts"
 
   def setDraftSectionSet(draftId: String, section: String, data: RegistrationSubmission.DataSet)
-                        (implicit hc: HeaderCarrier, ec : ExecutionContext): Future[HttpResponse] = {
+                        (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
     http.POST[JsValue, HttpResponse](s"$submissionsBaseUrl/$draftId/set/$section", Json.toJson(data))
   }
 
-  def getDraftSection(draftId: String, section: String)(implicit hc: HeaderCarrier, ec : ExecutionContext): Future[SubmissionDraftResponse] = {
+  def getDraftSection(draftId: String, section: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SubmissionDraftResponse] = {
     http.GET[SubmissionDraftResponse](s"$submissionsBaseUrl/$draftId/$section")
   }
 
-  private def getTrustStartDateUrl(draftId: String) = s"${config.trustsUrl}/trusts/register/submission-drafts/$draftId/when-trust-setup"
-
-  def getTrustStartDate(draftId: String)(implicit hc: HeaderCarrier, ec : ExecutionContext): Future[Option[StartDate]] = {
-    http.GET[Option[StartDate]](getTrustStartDateUrl(draftId))
+  def getTrustStartDate(draftId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[StartDate]] = {
+    http.GET[Option[StartDate]](s"$submissionsBaseUrl/$draftId/when-trust-setup")
   }
+
+  def getFirstTaxYearAvailable(draftId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[FirstTaxYearAvailable] = {
+    http.GET[FirstTaxYearAvailable](s"$submissionsBaseUrl/$draftId/first-tax-year-available")
+  }
+
 }
