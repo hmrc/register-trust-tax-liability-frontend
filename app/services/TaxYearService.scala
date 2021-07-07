@@ -16,8 +16,15 @@
 
 package services
 
+import uk.gov.hmrc.time.TaxYear
+
 import java.time.LocalDate
 
-class LocalDateService {
-  def now: LocalDate = LocalDate.now
+class TaxYearService {
+
+  def currentDate: LocalDate = LocalDate.now
+
+  def currentTaxYear: TaxYear = TaxYear.taxYearFor(currentDate)
+
+  def nTaxYearsAgoFinishYear(n: Int): String = currentTaxYear.back(n).finishYear.toString.takeRight(2)
 }

@@ -16,26 +16,20 @@
 
 package models
 
-import org.joda.time.{LocalDate => JodaDate}
 import play.api.i18n.Messages
 import uk.gov.hmrc.play.language.LanguageUtils
 
-import java.time.{LocalDate => JavaDate}
 import javax.inject.Inject
 
 class TaxYearRange @Inject()(languageUtils: LanguageUtils) {
 
   private def taxYearYear(taxYear: CYMinusNTaxYears) = uk.gov.hmrc.time.TaxYear.current.back(taxYear.n)
 
-  implicit class JodaToJava(date: JodaDate) {
-    def toJavaDate: JavaDate = JavaDate.of(date.getYear, date.getMonthOfYear, date.getDayOfMonth)
-  }
-
   def startYear(taxYear: CYMinusNTaxYears)(implicit messages: Messages): String =
-    languageUtils.Dates.formatDate(taxYearYear(taxYear).starts.toJavaDate)
+    languageUtils.Dates.formatDate(taxYearYear(taxYear).starts)
 
   def endYear(taxYear: CYMinusNTaxYears)(implicit messages: Messages): String =
-    languageUtils.Dates.formatDate(taxYearYear(taxYear).finishes.toJavaDate)
+    languageUtils.Dates.formatDate(taxYearYear(taxYear).finishes)
 
   def yearAtStart(taxYear: CYMinusNTaxYears): String = taxYearYear(taxYear).startYear.toString
 

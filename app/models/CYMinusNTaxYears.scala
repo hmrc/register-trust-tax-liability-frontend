@@ -26,9 +26,6 @@ sealed trait CYMinusNTaxYears {
   override def toString: String = n.toString
   val page: QuestionPage[Boolean]
   def changeUrl(draftId: String): String
-
-  def asShortFinishYear(): String =
-    uk.gov.hmrc.time.TaxYear.current.back(n).finishYear.toString.takeRight(2)
 }
 
 case object CYMinus4TaxYears extends CYMinusNTaxYears {

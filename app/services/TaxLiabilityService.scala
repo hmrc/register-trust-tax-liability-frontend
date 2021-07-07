@@ -16,23 +16,35 @@
 
 package services
 
-import models.{CYMinus1TaxYear, CYMinus2TaxYears, CYMinus3TaxYears, CYMinus4TaxYears, TaxYearsDue, UserAnswers, YearReturnType}
+import models.{CYMinus1TaxYear, CYMinusNTaxYears, UserAnswers, YearReturnType}
 import pages.DidDeclareTaxToHMRCYesNoPage
 
 import javax.inject.Inject
 
-class TaxLiabilityService @Inject()(localDateService: LocalDateService) {
+class TaxLiabilityService @Inject()(taxYearService: TaxYearService) {
 
   def evaluateTaxYears(userAnswers: UserAnswers): List[YearReturnType] = {
 
-    val yearsDeclared = TaxYearsDue(
-      cyMinus4Due = userAnswers.get(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYears)).contains(false),
-      cyMinus3Due = userAnswers.get(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYears)).contains(false),
-      cyMinus2Due = userAnswers.get(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYears)).contains(false),
-      cyMinus1Due = userAnswers.get(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear)).contains(false)
-    )(localDateService.now)
+    val halfwayThroughTaxYear = taxYearService.currentTaxYear.finishes.minusMonths(6) // October 5th
 
-    yearsDeclared.toList
+    CYMinusNTaxYears.taxYears.foldLeft[List[YearReturnType]](Nil)((acc, taxYear) => {
+      if (userAnswers.get(DidDeclareTaxToHMRCYesNoPage(taxYear)).contains(false)) {
+        taxYear match {
+          case CYMinus1TaxYear =>
+            acc :+ YearReturnType(
+              taxReturnYear = taxYearService.nTaxYearsAgoFinishYear(taxYear.n),
+              taxConsequence = taxYearService.currentDate.isAfter(halfwayThroughTaxYear)
+            )
+          case _ =>
+            acc :+ YearReturnType(
+              taxReturnYear = taxYearService.nTaxYearsAgoFinishYear(taxYear.n),
+              taxConsequence = true
+            )
+        }
+      } else {
+        acc
+      }
+    })
   }
 
 }
