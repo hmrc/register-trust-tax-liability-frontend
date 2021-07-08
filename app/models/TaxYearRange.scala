@@ -26,15 +26,18 @@ class TaxYearRange @Inject()(languageUtils: LanguageUtils) {
 
   private def taxYearOf(cYMinusNTaxYears: CYMinusNTaxYears): TaxYear = uk.gov.hmrc.time.TaxYear.current.back(cYMinusNTaxYears.n)
 
-  def startYear(cYMinusNTaxYears: CYMinusNTaxYears)(implicit messages: Messages): String =
+  def startDate(cYMinusNTaxYears: CYMinusNTaxYears)(implicit messages: Messages): String =
     languageUtils.Dates.formatDate(taxYearOf(cYMinusNTaxYears).starts)
 
-  def endYear(cYMinusNTaxYears: CYMinusNTaxYears)(implicit messages: Messages): String =
+  def endDate(cYMinusNTaxYears: CYMinusNTaxYears)(implicit messages: Messages): String =
     languageUtils.Dates.formatDate(taxYearOf(cYMinusNTaxYears).finishes)
 
   def yearAtStart(cYMinusNTaxYears: CYMinusNTaxYears): String = taxYearOf(cYMinusNTaxYears).startYear.toString
 
-  def toRange(taxYear: CYMinusNTaxYears)(implicit messages: Messages): String = {
-    messages("taxYearToRange", startYear(taxYear), endYear(taxYear))
+  def toRange(cYMinusNTaxYears: CYMinusNTaxYears)(implicit messages: Messages): String = {
+    messages("taxYearToRange", startDate(cYMinusNTaxYears), endDate(cYMinusNTaxYears))
   }
+
+  def toLabelArgs(cYMinusNTaxYears: CYMinusNTaxYears)(implicit messages: Messages): Seq[String] =
+    Seq(startDate(cYMinusNTaxYears), endDate(cYMinusNTaxYears))
 }

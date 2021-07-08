@@ -39,7 +39,7 @@
         @heading("checkYourAnswers.heading")
 
         @for(answerSection <- answerSections) {
-            <h2 class="govuk-heading-m">@answerSection.headingKey</h2>
+            <h2 class="govuk-heading-m">@messages(answerSection.headingKey, answerSection.headingArgs: _*)</h2>
             @govukSummaryList(SummaryList(rows = formatAnswerSection(answerSection)))
         }
 

@@ -58,9 +58,10 @@ class SubmissionSetFactorySpec extends SpecBase {
     "return completed answer sections" when {
 
       val fakeAnswerSection: AnswerSection = AnswerSection(
-        headingKey = Some("Tax liability 6 April 2019 to 5 April 2020"),
-        rows = List(AnswerRow("Did the trust need to pay any tax from 6 April 2019 to 5 April 2020?", Html("Yes"), None, canEdit = true)),
-        sectionKey = None
+        headingKey = "taxLiabilityBetweenYears.checkYourAnswerSectionHeading",
+        rows = List(AnswerRow("cyMinusOne.liability", Html("Yes"), None, Seq("6 April 2019", "5 April 2020"), canEdit = true)),
+        sectionKey = None,
+        headingArgs = Seq("6 April 2019", "5 April 2020")
       )
 
       "task is completed" in {
@@ -70,9 +71,10 @@ class SubmissionSetFactorySpec extends SpecBase {
         factory.answerSectionsIfCompleted(emptyUserAnswers, Some(Completed)) mustBe
           List(
             RegistrationSubmission.AnswerSection(
-              Some("Tax liability 6 April 2019 to 5 April 2020"),
-              List(RegistrationSubmission.AnswerRow("Did the trust need to pay any tax from 6 April 2019 to 5 April 2020?", "Yes", "")),
-              None
+              headingKey = Some("taxLiabilityBetweenYears.checkYourAnswerSectionHeading"),
+              rows = List(RegistrationSubmission.AnswerRow("cyMinusOne.liability", "Yes", Seq("6 April 2019", "5 April 2020"))),
+              sectionKey = None,
+              headingArgs = Seq("6 April 2019", "5 April 2020")
             )
           )
       }

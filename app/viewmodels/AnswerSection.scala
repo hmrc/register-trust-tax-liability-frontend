@@ -16,6 +16,7 @@
 
 package viewmodels
 
-case class AnswerSection(headingKey: Option[String] = None,
+case class AnswerSection(headingKey: String,
                          rows: Seq[AnswerRow] = Nil,
-                         sectionKey: Option[String] = None)
+                         sectionKey: Option[String] = None,
+                         headingArgs: Seq[String] = Nil)

@@ -31,26 +31,30 @@ class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter,
 
     CYMinusNTaxYears.taxYears.foldLeft[Seq[AnswerSection]](Nil)((acc, taxYear) => {
 
-      val toRange = taxYearRange.toRange(taxYear)
+      val args = taxYearRange.toLabelArgs(taxYear)
 
       val answerRows: Seq[AnswerRow] = Seq(
         bound.yesNoQuestion(
           query = taxYear.page,
           labelKey = s"${taxYear.messagePrefix}.liability",
           changeUrl = Some(taxYear.changeUrl(userAnswers.draftId)),
-          arguments = toRange
+          arguments = args
         ),
         bound.yesNoQuestion(
           query = DidDeclareTaxToHMRCYesNoPage(taxYear),
           labelKey = "didDeclareToHMRC",
           changeUrl = Some(controllers.routes.DidDeclareTaxToHMRCController.onPageLoad(userAnswers.draftId, taxYear).url),
-          arguments = toRange
+          arguments = args
         )
       ).flatten
 
       answerRows match {
         case Nil => acc
-        case _ => acc :+ AnswerSection(Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", toRange)), answerRows)
+        case _ => acc :+ AnswerSection(
+          headingKey = "taxLiabilityBetweenYears.checkYourAnswerSectionHeading",
+          rows = answerRows,
+          headingArgs = args
+        )
       }
     })
   }

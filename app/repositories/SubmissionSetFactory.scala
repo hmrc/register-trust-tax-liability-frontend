@@ -42,10 +42,10 @@ class SubmissionSetFactory @Inject()(checkYourAnswersHelper: CheckYourAnswersHel
     val status = userAnswers.get(TaxLiabilityTaskStatus).orElse(Some(Status.InProgress))
 
     RegistrationSubmission.DataSet(
-      Json.toJson(userAnswers),
-      status,
-      mappedDataIfCompleted(userAnswers, status),
-      answerSectionsIfCompleted(userAnswers, status)
+      data = Json.toJson(userAnswers),
+      status = status,
+      registrationPieces = mappedDataIfCompleted(userAnswers, status),
+      answerSections = answerSectionsIfCompleted(userAnswers, status)
     )
   }
 
@@ -72,11 +72,21 @@ class SubmissionSetFactory @Inject()(checkYourAnswersHelper: CheckYourAnswersHel
     }
   }
 
-  private def convertForSubmission(row: AnswerRow): RegistrationSubmission.AnswerRow = {
-    RegistrationSubmission.AnswerRow(row.label, row.answer.toString, row.labelArg)
+  private def convertForSubmission(section: AnswerSection): RegistrationSubmission.AnswerSection = {
+    RegistrationSubmission.AnswerSection(
+      headingKey = Some(section.headingKey),
+      rows = section.rows.map(convertForSubmission),
+      sectionKey = section.sectionKey,
+      headingArgs = section.headingArgs
+    )
   }
 
-  private def convertForSubmission(section: AnswerSection): RegistrationSubmission.AnswerSection = {
-    RegistrationSubmission.AnswerSection(section.headingKey, section.rows.map(convertForSubmission), section.sectionKey)
+  private def convertForSubmission(row: AnswerRow): RegistrationSubmission.AnswerRow = {
+    RegistrationSubmission.AnswerRow(
+      label = row.label,
+      answer = row.answer.toString,
+      labelArgs = row.labelArgs
+    )
   }
+
 }
