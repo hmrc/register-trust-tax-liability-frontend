@@ -18,207 +18,106 @@ package utils
 
 import base.SpecBase
 import controllers.routes
-import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, NormalMode, TaxYearRange}
+import models.{CYMinus1TaxYear, CYMinus2TaxYears, CYMinus3TaxYears, CYMinus4TaxYears, TaxYearRange}
 import pages._
 import play.twirl.api.Html
-import uk.gov.hmrc.play.language.LanguageUtils
 import viewmodels.{AnswerRow, AnswerSection}
 
 class CheckYourAnswersHelperSpec extends SpecBase {
 
-  val languageUtils: LanguageUtils = injector.instanceOf[LanguageUtils]
-  val taxYearRange: TaxYearRange = new TaxYearRange(languageUtils)
+  val checkYourAnswersHelper: CheckYourAnswersHelper = injector.instanceOf[CheckYourAnswersHelper]
+  val taxYearRange: TaxYearRange = injector.instanceOf[TaxYearRange]
 
-  "Check your answers helper" when {
+  "CheckYourAnswersHelper" must {
 
-    "earlier years" must {
+    "render answer rows" in {
 
-      "render answers for tax before 4 years" in {
+      val userAnswers = emptyUserAnswers
+        .set(CYMinusFourYesNoPage, true).success.value
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYears), true).success.value
 
-        val taxYear = taxYearRange.yearAtStart(CYMinus4TaxYear)
+        .set(CYMinusThreeYesNoPage, true).success.value
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYears), true).success.value
 
-        val cyaHelper = injector.instanceOf[CheckYourAnswersHelper]
+        .set(CYMinusTwoYesNoPage, true).success.value
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYears), false).success.value
 
-        val userAnswers = emptyUserAnswers
-          .set(CYMinusFourEarlierYearsYesNoPage, true).success.value
+        .set(CYMinusOneYesNoPage, true).success.value
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
 
-        val result = cyaHelper.earlierThan4YearsAnswers(userAnswers)
+      val result = checkYourAnswersHelper.apply(userAnswers)
 
-        result.value mustBe AnswerSection(
-          headingKey = Some(messages("earlierYearsLiability.checkYourAnswerSectionHeading", taxYear)),
-          rows = Seq(
-            AnswerRow(label = messages("earlierYearsLiability.checkYourAnswersLabel", taxYear), answer = Html("Yes"),
-              changeUrl = Some(routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode ,draftId).url),
-              canEdit = true
-            )
-          )
-        )
-
-      }
-
-      "render answers for tax before 3 years" in {
-
-        val taxYear = taxYearRange.yearAtStart(CYMinus3TaxYear)
-
-        val cyaHelper = injector.instanceOf[CheckYourAnswersHelper]
-
-        val userAnswers = emptyUserAnswers
-          .set(CYMinusThreeEarlierYearsYesNoPage, true).success.value
-
-        val result = cyaHelper.earlierThan3YearsAnswers(userAnswers)
-
-        result.value mustBe AnswerSection(
-          headingKey = Some(messages("earlierYearsLiability.checkYourAnswerSectionHeading", taxYear)),
-          rows = Seq(
-            AnswerRow(label = messages("earlierYearsLiability.checkYourAnswersLabel", taxYear), answer = Html("Yes"),
-              changeUrl = Some(routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode ,draftId).url),
-              canEdit = true
-            )
-          )
-        )
-      }
-
-    }
-
-    "CY-4" must {
-
-      "render answers for CY-4 liability and declared" in {
-        val cyaHelper = injector.instanceOf[CheckYourAnswersHelper]
-
-        val taxYear = CYMinus4TaxYear
-        val taxYearRangeDisplay = taxYearRange.toRange(taxYear)
-
-        val userAnswers = emptyUserAnswers
-          .set(CYMinusFourYesNoPage, true).success.value
-          .set(DidDeclareTaxToHMRCYesNoPage(taxYear), true).success.value
-
-
-        val result = cyaHelper.cyMinusTaxYearAnswers(userAnswers, taxYear)
-
-        result.value mustBe AnswerSection(
-          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRangeDisplay)),
+      result mustBe Seq(
+        AnswerSection(
+          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRange.toRange(CYMinus4TaxYears))),
           rows = Seq(
             AnswerRow(
-              label = messages("cyMinusFour.liability.checkYourAnswersLabel", taxYearRangeDisplay),
+              label = messages("cyMinusFour.liability.checkYourAnswersLabel", taxYearRange.toRange(CYMinus4TaxYears)),
               answer = Html("Yes"),
-              changeUrl = Some(routes.CYMinusFourLiabilityController.onPageLoad(NormalMode ,draftId).url),
+              changeUrl = Some(routes.CYMinusFourLiabilityController.onPageLoad(draftId).url),
               canEdit = true
             ),
             AnswerRow(
-              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRangeDisplay),
+              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRange.toRange(CYMinus4TaxYears)),
               answer = Html("Yes"),
-              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode ,draftId, taxYear).url),
+              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(draftId, CYMinus4TaxYears).url),
               canEdit = true
             )
           )
-        )
-      }
-    }
-
-    "CY-3" must {
-
-      "render answers for CY-3 liability and declared" in {
-        val cyaHelper = injector.instanceOf[CheckYourAnswersHelper]
-
-        val taxYear = CYMinus3TaxYear
-        val taxYearRangeDisplay = taxYearRange.toRange(taxYear)
-
-        val userAnswers = emptyUserAnswers
-          .set(CYMinusThreeYesNoPage, true).success.value
-          .set(DidDeclareTaxToHMRCYesNoPage(taxYear), true).success.value
-
-
-        val result = cyaHelper.cyMinusTaxYearAnswers(userAnswers, taxYear)
-
-        result.value mustBe AnswerSection(
-          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRangeDisplay)),
+        ),
+        AnswerSection(
+          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRange.toRange(CYMinus3TaxYears))),
           rows = Seq(
             AnswerRow(
-              label = messages("cyMinusThree.liability.checkYourAnswersLabel", taxYearRangeDisplay),
+              label = messages("cyMinusThree.liability.checkYourAnswersLabel", taxYearRange.toRange(CYMinus3TaxYears)),
               answer = Html("Yes"),
-              changeUrl = Some(routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode ,draftId).url),
+              changeUrl = Some(routes.CYMinusThreeLiabilityController.onPageLoad(draftId).url),
               canEdit = true
             ),
             AnswerRow(
-              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRangeDisplay),
+              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRange.toRange(CYMinus3TaxYears)),
               answer = Html("Yes"),
-              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode ,draftId, taxYear).url),
+              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(draftId, CYMinus3TaxYears).url),
               canEdit = true
             )
           )
-        )
-      }
-    }
-
-    "CY-2" must {
-
-      "render answers for CY-2 liability and declared" in {
-        val cyaHelper = injector.instanceOf[CheckYourAnswersHelper]
-
-        val taxYear = CYMinus2TaxYear
-
-        val taxYearRangeDisplay = taxYearRange.toRange(taxYear)
-
-        val userAnswers = emptyUserAnswers
-          .set(CYMinusTwoYesNoPage, true).success.value
-          .set(DidDeclareTaxToHMRCYesNoPage(taxYear), true).success.value
-
-        val result = cyaHelper.cyMinusTaxYearAnswers(userAnswers, taxYear)
-
-        result.value mustBe AnswerSection(
-          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRangeDisplay)),
+        ),
+        AnswerSection(
+          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRange.toRange(CYMinus2TaxYears))),
           rows = Seq(
             AnswerRow(
-              label = messages("cyMinusTwo.liability.checkYourAnswersLabel", taxYearRangeDisplay),
+              label = messages("cyMinusTwo.liability.checkYourAnswersLabel", taxYearRange.toRange(CYMinus2TaxYears)),
               answer = Html("Yes"),
-              changeUrl = Some(routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode ,draftId).url),
+              changeUrl = Some(routes.CYMinusTwoLiabilityController.onPageLoad(draftId).url),
               canEdit = true
             ),
             AnswerRow(
-              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRangeDisplay),
-              answer = Html("Yes"),
-              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode ,draftId, taxYear).url),
+              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRange.toRange(CYMinus2TaxYears)),
+              answer = Html("No"),
+              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(draftId, CYMinus2TaxYears).url),
               canEdit = true
             )
           )
-        )
-      }
-    }
-
-    "CY-1" must {
-
-      "render answers for CY-1 liability and declared" in {
-        val cyaHelper = injector.instanceOf[CheckYourAnswersHelper]
-
-        val taxYear = CYMinus1TaxYear
-        val taxYearRangeDisplay = taxYearRange.toRange(taxYear)
-
-        val userAnswers = emptyUserAnswers
-          .set(CYMinusOneYesNoPage, true).success.value
-          .set(DidDeclareTaxToHMRCYesNoPage(taxYear), true).success.value
-
-        val result = cyaHelper.cyMinusTaxYearAnswers(userAnswers, taxYear)
-
-        result.value mustBe AnswerSection(
-          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRangeDisplay)),
+        ),
+        AnswerSection(
+          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRange.toRange(CYMinus1TaxYear))),
           rows = Seq(
             AnswerRow(
-              label = messages("cyMinusOne.liability.checkYourAnswersLabel", taxYearRangeDisplay),
+              label = messages("cyMinusOne.liability.checkYourAnswersLabel", taxYearRange.toRange(CYMinus1TaxYear)),
               answer = Html("Yes"),
-              changeUrl = Some(routes.CYMinusOneLiabilityController.onPageLoad(NormalMode ,draftId).url),
+              changeUrl = Some(routes.CYMinusOneLiabilityController.onPageLoad(draftId).url),
               canEdit = true
             ),
             AnswerRow(
-              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRangeDisplay),
-              answer = Html("Yes"),
-              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode ,draftId, taxYear).url),
+              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRange.toRange(CYMinus1TaxYear)),
+              answer = Html("No"),
+              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(draftId, CYMinus1TaxYear).url),
               canEdit = true
             )
           )
         )
-      }
+      )
     }
-
   }
 
 }

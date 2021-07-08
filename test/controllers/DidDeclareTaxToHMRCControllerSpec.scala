@@ -19,7 +19,7 @@ package controllers
  import base.SpecBase
  import config.annotations.TaxLiability
  import forms.YesNoFormProviderWithArguments
- import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear, NormalMode, TaxYear, TaxYearRange}
+ import models.{CYMinus1TaxYear, CYMinus2TaxYears, CYMinus3TaxYears, CYMinus4TaxYears, CYMinusNTaxYears, TaxYearRange}
  import navigation.Navigator
  import org.mockito.Matchers.any
  import org.mockito.Mockito.when
@@ -42,7 +42,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
   val formProvider = new YesNoFormProviderWithArguments()
   def form(arguments: Seq[Any]) = formProvider.withPrefix("didDeclareToHMRC", arguments)
 
-  def didDeclareRoute(year: TaxYear) = routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, draftId, year).url
+  def didDeclareRoute(year: CYMinusNTaxYears) = routes.DidDeclareTaxToHMRCController.onPageLoad(draftId, year).url
 
   val languageUtils: LanguageUtils = injector.instanceOf[LanguageUtils]
   val taxYearRange = new TaxYearRange(languageUtils)
@@ -51,7 +51,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
 
     "for previous tax year" must {
 
-      val taxYear: TaxYear = CYMinus1TaxYear
+      val taxYear: CYMinusNTaxYears = CYMinus1TaxYear
       val taxYearStart: String = taxYearRange.startYear(taxYear)
       val taxYearEnd: String = taxYearRange.endYear(taxYear)
       val range: String = taxYearRange.toRange(taxYear)
@@ -71,7 +71,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs, draftId, CYMinus1TaxYear, range, NormalMode)(request, messages).toString
+          view(formWithArgs, draftId, CYMinus1TaxYear, range)(request, messages).toString
 
         application.stop()
       }
@@ -93,7 +93,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs.fill(true), draftId, CYMinus1TaxYear, range, NormalMode)(request, messages).toString
+          view(formWithArgs.fill(true), draftId, CYMinus1TaxYear, range)(request, messages).toString
 
         application.stop()
       }
@@ -141,7 +141,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, draftId, CYMinus1TaxYear, range, NormalMode)(request, messages).toString
+          view(boundForm, draftId, CYMinus1TaxYear, range)(request, messages).toString
 
         application.stop()
       }
@@ -181,7 +181,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
 
     "for current tax year minus 2" must {
 
-      val taxYear: TaxYear = CYMinus2TaxYear
+      val taxYear: CYMinusNTaxYears = CYMinus2TaxYears
       val taxYearStart: String = taxYearRange.startYear(taxYear)
       val taxYearEnd: String = taxYearRange.endYear(taxYear)
       val range: String = taxYearRange.toRange(taxYear)
@@ -190,7 +190,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-        val request = FakeRequest(GET, didDeclareRoute(CYMinus2TaxYear))
+        val request = FakeRequest(GET, didDeclareRoute(CYMinus2TaxYears))
 
         val result = route(application, request).value
 
@@ -201,18 +201,18 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs, draftId, CYMinus2TaxYear, range, NormalMode)(request, messages).toString
+          view(formWithArgs, draftId, CYMinus2TaxYears, range)(request, messages).toString
 
         application.stop()
       }
 
       "populate the view correctly on a GET when the question has previously been answered" in {
 
-        val userAnswers = emptyUserAnswers.set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYear), true).success.value
+        val userAnswers = emptyUserAnswers.set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYears), true).success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-        val request = FakeRequest(GET, didDeclareRoute(CYMinus2TaxYear))
+        val request = FakeRequest(GET, didDeclareRoute(CYMinus2TaxYears))
 
         val view = application.injector.instanceOf[DidDeclareTaxToHMRCYesNoView]
 
@@ -223,7 +223,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         val formWithArgs = form(Seq(taxYearStart, taxYearEnd))
 
         contentAsString(result) mustEqual
-          view(formWithArgs.fill(true), draftId, CYMinus2TaxYear, range, NormalMode)(request, messages).toString
+          view(formWithArgs.fill(true), draftId, CYMinus2TaxYears, range)(request, messages).toString
 
         application.stop()
       }
@@ -240,7 +240,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
             .build()
 
         val request =
-          FakeRequest(POST, didDeclareRoute(CYMinus2TaxYear))
+          FakeRequest(POST, didDeclareRoute(CYMinus2TaxYears))
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -257,7 +257,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         val request =
-          FakeRequest(POST, didDeclareRoute(CYMinus2TaxYear))
+          FakeRequest(POST, didDeclareRoute(CYMinus2TaxYears))
             .withFormUrlEncodedBody(("value", ""))
 
         val formWithArgs = form(Seq(taxYearStart, taxYearEnd))
@@ -271,7 +271,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, draftId, CYMinus2TaxYear, range, NormalMode)(request, messages).toString
+          view(boundForm, draftId, CYMinus2TaxYears, range)(request, messages).toString
 
         application.stop()
       }
@@ -280,7 +280,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
 
         val application = applicationBuilder(userAnswers = None).build()
 
-        val request = FakeRequest(GET, didDeclareRoute(CYMinus2TaxYear))
+        val request = FakeRequest(GET, didDeclareRoute(CYMinus2TaxYears))
 
         val result = route(application, request).value
 
@@ -296,7 +296,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         val application = applicationBuilder(userAnswers = None).build()
 
         val request =
-          FakeRequest(POST, didDeclareRoute(CYMinus2TaxYear))
+          FakeRequest(POST, didDeclareRoute(CYMinus2TaxYears))
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -311,7 +311,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
 
     "for current tax year minus 3" must {
 
-      val taxYear: TaxYear = CYMinus3TaxYear
+      val taxYear: CYMinusNTaxYears = CYMinus3TaxYears
       val taxYearStart: String = taxYearRange.startYear(taxYear)
       val taxYearEnd: String = taxYearRange.endYear(taxYear)
       val range: String = taxYearRange.toRange(taxYear)
@@ -320,7 +320,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-        val request = FakeRequest(GET, didDeclareRoute(CYMinus3TaxYear))
+        val request = FakeRequest(GET, didDeclareRoute(CYMinus3TaxYears))
 
         val result = route(application, request).value
 
@@ -331,18 +331,18 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs, draftId, CYMinus3TaxYear, range, NormalMode)(request, messages).toString
+          view(formWithArgs, draftId, CYMinus3TaxYears, range)(request, messages).toString
 
         application.stop()
       }
 
       "populate the view correctly on a GET when the question has previously been answered" in {
 
-        val userAnswers = emptyUserAnswers.set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYear), true).success.value
+        val userAnswers = emptyUserAnswers.set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYears), true).success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-        val request = FakeRequest(GET, didDeclareRoute(CYMinus3TaxYear))
+        val request = FakeRequest(GET, didDeclareRoute(CYMinus3TaxYears))
 
         val view = application.injector.instanceOf[DidDeclareTaxToHMRCYesNoView]
 
@@ -353,7 +353,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs.fill(true), draftId, CYMinus3TaxYear, range, NormalMode)(request, messages).toString
+          view(formWithArgs.fill(true), draftId, CYMinus3TaxYears, range)(request, messages).toString
 
         application.stop()
       }
@@ -370,7 +370,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
             .build()
 
         val request =
-          FakeRequest(POST, didDeclareRoute(CYMinus3TaxYear))
+          FakeRequest(POST, didDeclareRoute(CYMinus3TaxYears))
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -387,7 +387,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         val request =
-          FakeRequest(POST, didDeclareRoute(CYMinus3TaxYear))
+          FakeRequest(POST, didDeclareRoute(CYMinus3TaxYears))
             .withFormUrlEncodedBody(("value", ""))
 
         val formWithArgs = form(Seq(taxYearStart, taxYearEnd))
@@ -401,7 +401,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, draftId, CYMinus3TaxYear, range, NormalMode)(request, messages).toString
+          view(boundForm, draftId, CYMinus3TaxYears, range)(request, messages).toString
 
         application.stop()
       }
@@ -410,7 +410,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
 
         val application = applicationBuilder(userAnswers = None).build()
 
-        val request = FakeRequest(GET, didDeclareRoute(CYMinus3TaxYear))
+        val request = FakeRequest(GET, didDeclareRoute(CYMinus3TaxYears))
 
         val result = route(application, request).value
 
@@ -426,7 +426,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         val application = applicationBuilder(userAnswers = None).build()
 
         val request =
-          FakeRequest(POST, didDeclareRoute(CYMinus3TaxYear))
+          FakeRequest(POST, didDeclareRoute(CYMinus3TaxYears))
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -441,7 +441,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
 
     "for current tax year minus 4" must {
 
-      val taxYear: TaxYear = CYMinus4TaxYear
+      val taxYear: CYMinusNTaxYears = CYMinus4TaxYears
       val taxYearStart: String = taxYearRange.startYear(taxYear)
       val taxYearEnd: String = taxYearRange.endYear(taxYear)
       val range: String = taxYearRange.toRange(taxYear)
@@ -450,7 +450,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-        val request = FakeRequest(GET, didDeclareRoute(CYMinus4TaxYear))
+        val request = FakeRequest(GET, didDeclareRoute(CYMinus4TaxYears))
 
         val result = route(application, request).value
 
@@ -461,18 +461,18 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs, draftId, CYMinus4TaxYear, range, NormalMode)(request, messages).toString
+          view(formWithArgs, draftId, CYMinus4TaxYears, range)(request, messages).toString
 
         application.stop()
       }
 
       "populate the view correctly on a GET when the question has previously been answered" in {
 
-        val userAnswers = emptyUserAnswers.set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYear), true).success.value
+        val userAnswers = emptyUserAnswers.set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYears), true).success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-        val request = FakeRequest(GET, didDeclareRoute(CYMinus4TaxYear))
+        val request = FakeRequest(GET, didDeclareRoute(CYMinus4TaxYears))
 
         val view = application.injector.instanceOf[DidDeclareTaxToHMRCYesNoView]
 
@@ -483,7 +483,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs.fill(true), draftId, CYMinus4TaxYear, range, NormalMode)(request, messages).toString
+          view(formWithArgs.fill(true), draftId, CYMinus4TaxYears, range)(request, messages).toString
 
         application.stop()
       }
@@ -500,7 +500,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
             .build()
 
         val request =
-          FakeRequest(POST, didDeclareRoute(CYMinus4TaxYear))
+          FakeRequest(POST, didDeclareRoute(CYMinus4TaxYears))
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -517,7 +517,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         val request =
-          FakeRequest(POST, didDeclareRoute(CYMinus4TaxYear))
+          FakeRequest(POST, didDeclareRoute(CYMinus4TaxYears))
             .withFormUrlEncodedBody(("value", ""))
 
         val formWithArgs = form(Seq(taxYearStart, taxYearEnd))
@@ -531,7 +531,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, draftId, CYMinus4TaxYear, range, NormalMode)(request, messages).toString
+          view(boundForm, draftId, CYMinus4TaxYears, range)(request, messages).toString
 
         application.stop()
       }
@@ -540,7 +540,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
 
         val application = applicationBuilder(userAnswers = None).build()
 
-        val request = FakeRequest(GET, didDeclareRoute(CYMinus4TaxYear))
+        val request = FakeRequest(GET, didDeclareRoute(CYMinus4TaxYears))
 
         val result = route(application, request).value
 
@@ -556,7 +556,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         val application = applicationBuilder(userAnswers = None).build()
 
         val request =
-          FakeRequest(POST, didDeclareRoute(CYMinus4TaxYear))
+          FakeRequest(POST, didDeclareRoute(CYMinus4TaxYears))
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value

@@ -17,7 +17,7 @@
 package views
 
 import forms.YesNoFormProviderWithArguments
-import models.{CYMinus1TaxYear, NormalMode}
+import models.CYMinus1TaxYear
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
@@ -35,7 +35,7 @@ class DidDeclareTaxToHMRCYesNoViewSpec extends YesNoViewBehaviours {
     val view = viewFor[DidDeclareTaxToHMRCYesNoView](Some(emptyUserAnswers))
 
     def applyView(form: Form[_]): HtmlFormat.Appendable =
-      view.apply(form, draftId, CYMinus1TaxYear, "6 April 2019 to 5 April 2020", NormalMode)(fakeRequest, messages)
+      view.apply(form, draftId, CYMinus1TaxYear, "6 April 2019 to 5 April 2020")(fakeRequest, messages)
 
     behave like dynamicTitlePage(applyView(form), messageKeyPrefix, "6 April 2019 to 5 April 2020")
 

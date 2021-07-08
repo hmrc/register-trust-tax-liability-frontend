@@ -19,7 +19,7 @@ package controllers
 import config.annotations.TaxLiability
 import controllers.actions.Actions
 import forms.YesNoFormProviderWithArguments
-import models.{CYMinus1TaxYear, Mode, TaxYearRange}
+import models.{CYMinus1TaxYear, TaxYearRange}
 import navigation.Navigator
 import pages.CYMinusOneYesNoPage
 import play.api.data.Form
@@ -46,7 +46,7 @@ class CYMinusOneLiabilityController @Inject()(
 
   private val workingTaxYear = CYMinus1TaxYear
 
-  def onPageLoad(mode: Mode, draftId: String): Action[AnyContent] = actions.authWithData(draftId) {
+  def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithData(draftId) {
     implicit request =>
 
       val f = form(Seq(taxYearRange.startYear(workingTaxYear), taxYearRange.endYear(workingTaxYear)))
@@ -56,23 +56,23 @@ class CYMinusOneLiabilityController @Inject()(
         case Some(value) => f.fill(value)
       }
 
-      Ok(view(preparedForm, draftId, taxYearRange.toRange(workingTaxYear), mode))
+      Ok(view(preparedForm, draftId, taxYearRange.toRange(workingTaxYear)))
   }
 
-  def onSubmit(mode: Mode, draftId: String): Action[AnyContent] = actions.authWithData(draftId).async {
+  def onSubmit(draftId: String): Action[AnyContent] = actions.authWithData(draftId).async {
     implicit request =>
 
       val f = form(Seq(taxYearRange.startYear(workingTaxYear), taxYearRange.endYear(workingTaxYear)))
 
       f.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, draftId, taxYearRange.toRange(workingTaxYear), mode))),
+          Future.successful(BadRequest(view(formWithErrors, draftId, taxYearRange.toRange(workingTaxYear)))),
 
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(CYMinusOneYesNoPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(CYMinusOneYesNoPage, draftId, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(CYMinusOneYesNoPage, draftId, updatedAnswers))
       )
   }
 }

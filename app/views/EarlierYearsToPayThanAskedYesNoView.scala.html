@@ -25,7 +25,7 @@
     submitButton: SubmitButton
 )
 
-@(date: String, draftId: String, mode: Mode, continueUrl: Call)(implicit request: Request[_], messages: Messages)
+@(date: String, draftId: String, continueUrl: Call)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = s"${messages("earlierYearsLiability.title", date)}",

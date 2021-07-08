@@ -19,9 +19,7 @@ package controllers
 import config.annotations.TaxLiability
 import controllers.actions.Actions
 import forms.YesNoFormProviderWithArguments
-
-import javax.inject.Inject
-import models.{CYMinus3TaxYear, Mode, TaxYearRange}
+import models.{CYMinus3TaxYears, TaxYearRange}
 import navigation.Navigator
 import pages.CYMinusThreeYesNoPage
 import play.api.data.Form
@@ -31,6 +29,7 @@ import repositories.RegistrationsRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.CYMinusThreeYesNoView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CYMinusThreeLiabilityController @Inject()(
@@ -45,9 +44,9 @@ class CYMinusThreeLiabilityController @Inject()(
 
   def form(ranges: Seq[String]): Form[Boolean] = formProvider.withPrefix("cyMinusThree.liability", ranges)
 
-  private val workingTaxYear = CYMinus3TaxYear
+  private val workingTaxYear = CYMinus3TaxYears
 
-  def onPageLoad(mode: Mode, draftId: String): Action[AnyContent] = actions.authWithData(draftId) {
+  def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithData(draftId) {
     implicit request =>
 
       val f = form(Seq(taxYearRange.startYear(workingTaxYear), taxYearRange.endYear(workingTaxYear)))
@@ -57,23 +56,23 @@ class CYMinusThreeLiabilityController @Inject()(
         case Some(value) => f.fill(value)
       }
 
-      Ok(view(preparedForm, draftId, taxYearRange.toRange(workingTaxYear), mode))
+      Ok(view(preparedForm, draftId, taxYearRange.toRange(workingTaxYear)))
   }
 
-  def onSubmit(mode: Mode, draftId: String): Action[AnyContent] = actions.authWithData(draftId).async {
+  def onSubmit(draftId: String): Action[AnyContent] = actions.authWithData(draftId).async {
     implicit request =>
 
       val f = form(Seq(taxYearRange.startYear(workingTaxYear), taxYearRange.endYear(workingTaxYear)))
 
       f.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, draftId, taxYearRange.toRange(workingTaxYear), mode))),
+          Future.successful(BadRequest(view(formWithErrors, draftId, taxYearRange.toRange(workingTaxYear)))),
 
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(CYMinusThreeYesNoPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(CYMinusThreeYesNoPage, draftId, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(CYMinusThreeYesNoPage, draftId, updatedAnswers))
       )
   }
 }

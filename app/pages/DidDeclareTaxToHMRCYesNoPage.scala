@@ -16,10 +16,10 @@
 
 package pages
 
-import models.TaxYear
+import models.CYMinusNTaxYears
 import play.api.libs.json.JsPath
 
-case class DidDeclareTaxToHMRCYesNoPage(taxYear: TaxYear) extends QuestionPage[Boolean] {
+case class DidDeclareTaxToHMRCYesNoPage(taxYear: CYMinusNTaxYears) extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 

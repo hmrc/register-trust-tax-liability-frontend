@@ -18,8 +18,7 @@ package controllers
 
 import config.annotations.TaxLiability
 import controllers.actions.Actions
-import javax.inject.Inject
-import models.{CYMinus4TaxYear, Mode, TaxYearRange}
+import models.{CYMinus4TaxYears, TaxYearRange}
 import navigation.Navigator
 import pages.CYMinusFourEarlierYearsYesNoPage
 import play.api.i18n.I18nSupport
@@ -27,6 +26,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.EarlierYearsToPayThanAskedYesNoView
 
+import javax.inject.Inject
 import scala.concurrent.Future
 
 class CYMinusFourEarlierYearsLiabilityController @Inject()(
@@ -37,18 +37,18 @@ class CYMinusFourEarlierYearsLiabilityController @Inject()(
                                                             taxYearRange: TaxYearRange
                                                           ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(mode: Mode, draftId: String): Action[AnyContent] = actions.authWithData(draftId) {
+  def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithData(draftId) {
     implicit request =>
 
-      val start = taxYearRange.yearAtStart(CYMinus4TaxYear)
+      val start = taxYearRange.yearAtStart(CYMinus4TaxYears)
 
-      val continueUrl = routes.CYMinusFourEarlierYearsLiabilityController.onSubmit(mode, draftId)
+      val continueUrl = routes.CYMinusFourEarlierYearsLiabilityController.onSubmit(draftId)
 
-      Ok(view(start, draftId, mode, continueUrl))
+      Ok(view(start, draftId, continueUrl))
   }
 
-  def onSubmit(mode: Mode, draftId: String): Action[AnyContent] = actions.authWithData(draftId).async {
+  def onSubmit(draftId: String): Action[AnyContent] = actions.authWithData(draftId).async {
     implicit request =>
-      Future.successful(Redirect(navigator.nextPage(CYMinusFourEarlierYearsYesNoPage, draftId, mode, request.userAnswers)))
+      Future.successful(Redirect(navigator.nextPage(CYMinusFourEarlierYearsYesNoPage, draftId, request.userAnswers)))
   }
 }

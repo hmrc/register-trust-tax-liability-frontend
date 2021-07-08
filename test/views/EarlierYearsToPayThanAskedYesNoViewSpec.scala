@@ -16,7 +16,6 @@
 
 package views
 
-import models.NormalMode
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.EarlierYearsToPayThanAskedYesNoView
@@ -26,14 +25,14 @@ class EarlierYearsToPayThanAskedYesNoViewSpec extends ViewBehaviours {
   val messageKeyPrefix = "earlierYearsLiability"
   val taxYear = "2000"
 
-  lazy val submitRoute = controllers.routes.CYMinusThreeEarlierYearsLiabilityController.onSubmit(NormalMode, draftId)
+  lazy val submitRoute = controllers.routes.CYMinusThreeEarlierYearsLiabilityController.onSubmit(draftId)
 
   "EarlierYearsToPayThanAskedYesNoView view" must {
 
     val view = viewFor[EarlierYearsToPayThanAskedYesNoView](Some(emptyUserAnswers))
 
     def applyView(): HtmlFormat.Appendable =
-      view.apply(taxYear, draftId, NormalMode, submitRoute)(fakeRequest, messages)
+      view.apply(taxYear, draftId, submitRoute)(fakeRequest, messages)
 
     behave like dynamicTitlePage(applyView(), messageKeyPrefix, taxYear)
 

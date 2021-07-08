@@ -14,22 +14,12 @@
  * limitations under the License.
  */
 
-package models.requests
+package models
 
-import models.TaxYear
-import play.api.mvc.PathBindable
+import play.api.libs.json.{Format, Json}
 
-object TaxYearBindable {
+case class FirstTaxYearAvailable(yearsAgo: Int, earlierYearsToDeclare: Boolean)
 
-  implicit def pathBindable(implicit intBinder: PathBindable[Int]) = new PathBindable[TaxYear] {
-    override def bind(key: String, value: String): Either[String, TaxYear] = {
-      for {
-        id <- intBinder.bind(key, value).right
-        taxYear <- TaxYear.from(id).toRight("Not a valid tax year").right
-      } yield taxYear
-    }
-
-    override def unbind(key: String, value: TaxYear): String = value.toString.trim.toLowerCase
-  }
-
+object FirstTaxYearAvailable {
+  implicit val format: Format[FirstTaxYearAvailable] = Json.format[FirstTaxYearAvailable]
 }

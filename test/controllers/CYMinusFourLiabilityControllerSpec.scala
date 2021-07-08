@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import config.annotations.TaxLiability
 import forms.YesNoFormProviderWithArguments
-import models.{CYMinus4TaxYear, NormalMode, TaxYearRange}
+import models.{CYMinus4TaxYears, TaxYearRange}
 import navigation.Navigator
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
@@ -44,12 +44,12 @@ class CYMinusFourLiabilityControllerSpec extends SpecBase with MockitoSugar {
   def form(arguments: Seq[Any]) = formProvider.withPrefix("cyMinusFour.liability", arguments)
 
   val languageUtils: LanguageUtils = injector.instanceOf[LanguageUtils]
-  val taxYearStart: String = new TaxYearRange(languageUtils).startYear(CYMinus4TaxYear)
-  val taxYearEnd: String = new TaxYearRange(languageUtils).endYear(CYMinus4TaxYear)
+  val taxYearStart: String = new TaxYearRange(languageUtils).startYear(CYMinus4TaxYears)
+  val taxYearEnd: String = new TaxYearRange(languageUtils).endYear(CYMinus4TaxYears)
 
   val taxYear: String = s"$taxYearStart to $taxYearEnd"
 
-  lazy val cyMinusFourLiabilityControllerRoute = routes.CYMinusFourLiabilityController.onPageLoad(NormalMode, draftId).url
+  lazy val cyMinusFourLiabilityControllerRoute = routes.CYMinusFourLiabilityController.onPageLoad(draftId).url
 
   "CYMinusFourLiability Controller" must {
 
@@ -68,7 +68,7 @@ class CYMinusFourLiabilityControllerSpec extends SpecBase with MockitoSugar {
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(formWithArgs, draftId, taxYear, NormalMode)(request, messages).toString
+        view(formWithArgs, draftId, taxYear)(request, messages).toString
 
       application.stop()
     }
@@ -90,7 +90,7 @@ class CYMinusFourLiabilityControllerSpec extends SpecBase with MockitoSugar {
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(formWithArgs.fill(true),  draftId, taxYear, NormalMode)(request, messages).toString
+        view(formWithArgs.fill(true),  draftId, taxYear)(request, messages).toString
 
       application.stop()
     }
@@ -138,7 +138,7 @@ class CYMinusFourLiabilityControllerSpec extends SpecBase with MockitoSugar {
       status(result) mustEqual BAD_REQUEST
 
       contentAsString(result) mustEqual
-        view(boundForm, draftId, taxYear, NormalMode)(request, messages).toString
+        view(boundForm, draftId, taxYear)(request, messages).toString
 
       application.stop()
     }

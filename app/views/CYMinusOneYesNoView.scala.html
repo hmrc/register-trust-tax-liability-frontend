@@ -41,14 +41,14 @@
     submitButton: SubmitButton
 )
 
-@(form: Form[_], draftId: String, taxYear: String, mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], draftId: String, taxYear: String)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(
     title = s"${errorPrefix(form)}${messages("cyMinusOne.liability.title", taxYear)}",
     showBackLink = true
 ) {
 
-    @formHelper(action = CYMinusOneLiabilityController.onSubmit(mode, draftId), 'autoComplete -> "off") {
+    @formHelper(action = CYMinusOneLiabilityController.onSubmit(draftId), 'autoComplete -> "off") {
 
         @errorSummary(form.errors)
 

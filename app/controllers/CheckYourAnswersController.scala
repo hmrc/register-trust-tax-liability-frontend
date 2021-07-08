@@ -20,7 +20,6 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.Actions
 import models.Status.Completed
-import models.{CYMinus1TaxYear, CYMinus2TaxYear, CYMinus3TaxYear, CYMinus4TaxYear}
 import pages.TaxLiabilityTaskStatus
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -44,19 +43,8 @@ class CheckYourAnswersController @Inject()(
 
   def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithData(draftId) {
     implicit request =>
-      val taxFor4Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(request.userAnswers, CYMinus4TaxYear)
-      val taxFor3Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(request.userAnswers, CYMinus3TaxYear)
-      val taxFor2Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(request.userAnswers, CYMinus2TaxYear)
-      val taxFor1Years = checkYourAnswersHelper.cyMinusTaxYearAnswers(request.userAnswers, CYMinus1TaxYear)
 
-      val sections = Seq(
-        taxFor4Years,
-        taxFor3Years,
-        taxFor2Years,
-        taxFor1Years
-      ).flatten
-
-      Ok(view(sections, draftId))
+      Ok(view(checkYourAnswersHelper(request.userAnswers), draftId))
   }
 
   def onSubmit(draftId: String): Action[AnyContent] = actions.authWithData(draftId).async {

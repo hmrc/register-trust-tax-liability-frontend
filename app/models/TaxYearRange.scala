@@ -16,30 +16,25 @@
 
 package models
 
-import org.joda.time.{LocalDate => JodaDate}
 import play.api.i18n.Messages
 import uk.gov.hmrc.play.language.LanguageUtils
+import uk.gov.hmrc.time.TaxYear
 
-import java.time.{LocalDate => JavaDate}
 import javax.inject.Inject
 
 class TaxYearRange @Inject()(languageUtils: LanguageUtils) {
 
-  private def taxYearYear(taxYear: TaxYear) = uk.gov.hmrc.time.TaxYear.current.back(taxYear.year)
+  private def taxYearOf(cYMinusNTaxYears: CYMinusNTaxYears): TaxYear = uk.gov.hmrc.time.TaxYear.current.back(cYMinusNTaxYears.n)
 
-  implicit class JodaToJava(date: JodaDate) {
-    def toJavaDate: JavaDate = JavaDate.of(date.getYear, date.getMonthOfYear, date.getDayOfMonth)
-  }
+  def startYear(cYMinusNTaxYears: CYMinusNTaxYears)(implicit messages: Messages): String =
+    languageUtils.Dates.formatDate(taxYearOf(cYMinusNTaxYears).starts)
 
-  def startYear(taxYear: TaxYear)(implicit messages: Messages): String =
-    languageUtils.Dates.formatDate(taxYearYear(taxYear).starts.toJavaDate)
+  def endYear(cYMinusNTaxYears: CYMinusNTaxYears)(implicit messages: Messages): String =
+    languageUtils.Dates.formatDate(taxYearOf(cYMinusNTaxYears).finishes)
 
-  def endYear(taxYear: TaxYear)(implicit messages: Messages): String =
-    languageUtils.Dates.formatDate(taxYearYear(taxYear).finishes.toJavaDate)
+  def yearAtStart(cYMinusNTaxYears: CYMinusNTaxYears): String = taxYearOf(cYMinusNTaxYears).startYear.toString
 
-  def yearAtStart(taxYear: TaxYear): String = taxYearYear(taxYear).startYear.toString
-
-  def toRange(taxYear: TaxYear)(implicit messages: Messages): String = {
+  def toRange(taxYear: CYMinusNTaxYears)(implicit messages: Messages): String = {
     messages("taxYearToRange", startYear(taxYear), endYear(taxYear))
   }
 }

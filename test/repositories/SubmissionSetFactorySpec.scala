@@ -17,11 +17,15 @@
 package repositories
 
 import base.SpecBase
-import models.RegistrationSubmission.{AnswerRow, AnswerSection}
 import models.Status.{Completed, InProgress}
 import models.{RegistrationSubmission, UserAnswers}
-import pages.{CYMinusOneYesNoPage, CYMinusTwoYesNoPage, TaxLiabilityTaskStatus}
+import org.mockito.Matchers.any
+import org.mockito.Mockito.when
 import play.api.libs.json.{JsNull, Json}
+import play.twirl.api.Html
+import services.TaxLiabilityService
+import utils.CheckYourAnswersHelper
+import viewmodels.{AnswerRow, AnswerSection}
 
 import scala.collection.immutable.Nil
 
@@ -29,7 +33,9 @@ class SubmissionSetFactorySpec extends SpecBase {
 
   "Submission set factory" must {
 
-    val factory = injector.instanceOf[SubmissionSetFactory]
+    val mockCheckYourAnswersHelper = mock[CheckYourAnswersHelper]
+    val taxLiabilityService = injector.instanceOf[TaxLiabilityService]
+    val factory = new SubmissionSetFactory(mockCheckYourAnswersHelper, taxLiabilityService)
 
     "reset answer sections and statuses" in {
       val userAnswers: UserAnswers = emptyUserAnswers
@@ -51,37 +57,21 @@ class SubmissionSetFactorySpec extends SpecBase {
 
     "return completed answer sections" when {
 
-      "task is completed with one year" in {
-            val userAnswers: UserAnswers = emptyUserAnswers
-              .set(TaxLiabilityTaskStatus, Completed).success.value
-              .set(CYMinusOneYesNoPage, true).success.value
+      val fakeAnswerSection: AnswerSection = AnswerSection(
+        headingKey = Some("Tax liability 6 April 2019 to 5 April 2020"),
+        rows = List(AnswerRow("Did the trust need to pay any tax from 6 April 2019 to 5 April 2020?", Html("Yes"), None, canEdit = true)),
+        sectionKey = None
+      )
 
-            factory.answerSectionsIfCompleted(userAnswers, Some(Completed)) mustBe
-        List(
-          AnswerSection(
-            Some("Tax liability 6 April 2019 to 5 April 2020"),
-            List(AnswerRow("Did the trust need to pay any tax from 6 April 2019 to 5 April 2020?", "Yes", "")),
-            None
-          )
-        )
-      }
+      "task is completed" in {
 
-      "task is completed with more than one year" in {
-        val userAnswers: UserAnswers = emptyUserAnswers
-          .set(TaxLiabilityTaskStatus, Completed).success.value
-          .set(CYMinusOneYesNoPage, true).success.value
-          .set(CYMinusTwoYesNoPage, true).success.value
+        when(mockCheckYourAnswersHelper.apply(any())(any())).thenReturn(Seq(fakeAnswerSection))
 
-        factory.answerSectionsIfCompleted(userAnswers, Some(Completed)) mustBe
+        factory.answerSectionsIfCompleted(emptyUserAnswers, Some(Completed)) mustBe
           List(
-            AnswerSection(
-              Some("Tax liability 6 April 2018 to 5 April 2019"),
-              List(AnswerRow("Did the trust need to pay any tax from 6 April 2018 to 5 April 2019?", "Yes", "")),
-              None
-            ),
-            AnswerSection(
+            RegistrationSubmission.AnswerSection(
               Some("Tax liability 6 April 2019 to 5 April 2020"),
-              List(AnswerRow("Did the trust need to pay any tax from 6 April 2019 to 5 April 2020?", "Yes", "")),
+              List(RegistrationSubmission.AnswerRow("Did the trust need to pay any tax from 6 April 2019 to 5 April 2020?", "Yes", "")),
               None
             )
           )
