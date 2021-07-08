@@ -17,7 +17,6 @@
 package views
 
 import forms.YesNoFormProviderWithArguments
-import models.NormalMode
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
@@ -35,7 +34,7 @@ class CYMinusThreeLiabilityYesNoViewSpec extends YesNoViewBehaviours {
     val view = viewFor[CYMinusThreeYesNoView](Some(emptyUserAnswers))
 
     def applyView(form: Form[_]): HtmlFormat.Appendable =
-      view.apply(form, draftId, taxYear, NormalMode)(fakeRequest, messages)
+      view.apply(form, draftId, taxYear)(fakeRequest, messages)
 
     behave like dynamicTitlePage(applyView(form), messageKeyPrefix, taxYear)
 

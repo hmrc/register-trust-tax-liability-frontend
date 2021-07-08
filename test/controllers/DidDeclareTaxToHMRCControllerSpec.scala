@@ -19,7 +19,7 @@ package controllers
  import base.SpecBase
  import config.annotations.TaxLiability
  import forms.YesNoFormProviderWithArguments
- import models.{CYMinus1TaxYear, CYMinus2TaxYears, CYMinus3TaxYears, CYMinus4TaxYears, CYMinusNTaxYears, NormalMode, TaxYearRange}
+ import models.{CYMinus1TaxYear, CYMinus2TaxYears, CYMinus3TaxYears, CYMinus4TaxYears, CYMinusNTaxYears, TaxYearRange}
  import navigation.Navigator
  import org.mockito.Matchers.any
  import org.mockito.Mockito.when
@@ -42,7 +42,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
   val formProvider = new YesNoFormProviderWithArguments()
   def form(arguments: Seq[Any]) = formProvider.withPrefix("didDeclareToHMRC", arguments)
 
-  def didDeclareRoute(year: CYMinusNTaxYears) = routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, draftId, year).url
+  def didDeclareRoute(year: CYMinusNTaxYears) = routes.DidDeclareTaxToHMRCController.onPageLoad(draftId, year).url
 
   val languageUtils: LanguageUtils = injector.instanceOf[LanguageUtils]
   val taxYearRange = new TaxYearRange(languageUtils)
@@ -71,7 +71,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs, draftId, CYMinus1TaxYear, range, NormalMode)(request, messages).toString
+          view(formWithArgs, draftId, CYMinus1TaxYear, range)(request, messages).toString
 
         application.stop()
       }
@@ -93,7 +93,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs.fill(true), draftId, CYMinus1TaxYear, range, NormalMode)(request, messages).toString
+          view(formWithArgs.fill(true), draftId, CYMinus1TaxYear, range)(request, messages).toString
 
         application.stop()
       }
@@ -141,7 +141,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, draftId, CYMinus1TaxYear, range, NormalMode)(request, messages).toString
+          view(boundForm, draftId, CYMinus1TaxYear, range)(request, messages).toString
 
         application.stop()
       }
@@ -201,7 +201,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs, draftId, CYMinus2TaxYears, range, NormalMode)(request, messages).toString
+          view(formWithArgs, draftId, CYMinus2TaxYears, range)(request, messages).toString
 
         application.stop()
       }
@@ -223,7 +223,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         val formWithArgs = form(Seq(taxYearStart, taxYearEnd))
 
         contentAsString(result) mustEqual
-          view(formWithArgs.fill(true), draftId, CYMinus2TaxYears, range, NormalMode)(request, messages).toString
+          view(formWithArgs.fill(true), draftId, CYMinus2TaxYears, range)(request, messages).toString
 
         application.stop()
       }
@@ -271,7 +271,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, draftId, CYMinus2TaxYears, range, NormalMode)(request, messages).toString
+          view(boundForm, draftId, CYMinus2TaxYears, range)(request, messages).toString
 
         application.stop()
       }
@@ -331,7 +331,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs, draftId, CYMinus3TaxYears, range, NormalMode)(request, messages).toString
+          view(formWithArgs, draftId, CYMinus3TaxYears, range)(request, messages).toString
 
         application.stop()
       }
@@ -353,7 +353,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs.fill(true), draftId, CYMinus3TaxYears, range, NormalMode)(request, messages).toString
+          view(formWithArgs.fill(true), draftId, CYMinus3TaxYears, range)(request, messages).toString
 
         application.stop()
       }
@@ -401,7 +401,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, draftId, CYMinus3TaxYears, range, NormalMode)(request, messages).toString
+          view(boundForm, draftId, CYMinus3TaxYears, range)(request, messages).toString
 
         application.stop()
       }
@@ -461,7 +461,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs, draftId, CYMinus4TaxYears, range, NormalMode)(request, messages).toString
+          view(formWithArgs, draftId, CYMinus4TaxYears, range)(request, messages).toString
 
         application.stop()
       }
@@ -483,7 +483,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(formWithArgs.fill(true), draftId, CYMinus4TaxYears, range, NormalMode)(request, messages).toString
+          view(formWithArgs.fill(true), draftId, CYMinus4TaxYears, range)(request, messages).toString
 
         application.stop()
       }
@@ -531,7 +531,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, draftId, CYMinus4TaxYears, range, NormalMode)(request, messages).toString
+          view(boundForm, draftId, CYMinus4TaxYears, range)(request, messages).toString
 
         application.stop()
       }

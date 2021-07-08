@@ -18,7 +18,6 @@ package controllers
 
 import base.SpecBase
 import config.annotations.TaxLiability
-import models.NormalMode
 import navigation.Navigator
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
@@ -40,9 +39,9 @@ class CYMinusFourEarlierYearsLiabilityControllerSpec extends SpecBase with Mocki
 
   val taxYear: String = TaxYear.current.back(4).startYear.toString
 
-  lazy val cyMinusFourEarlierYearsLiabilityControllerRoute = routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId).url
+  lazy val cyMinusFourEarlierYearsLiabilityControllerRoute = routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(draftId).url
 
-  lazy val submitRoute = routes.CYMinusFourEarlierYearsLiabilityController.onSubmit(NormalMode, draftId)
+  lazy val submitRoute = routes.CYMinusFourEarlierYearsLiabilityController.onSubmit(draftId)
 
   "CYMinusFourEarlierYearsLiability Controller" must {
 
@@ -59,7 +58,7 @@ class CYMinusFourEarlierYearsLiabilityControllerSpec extends SpecBase with Mocki
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(taxYear, draftId, NormalMode, submitRoute)(request, messages).toString
+        view(taxYear, draftId, submitRoute)(request, messages).toString
 
       application.stop()
     }
@@ -79,7 +78,7 @@ class CYMinusFourEarlierYearsLiabilityControllerSpec extends SpecBase with Mocki
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(taxYear, draftId, NormalMode, submitRoute)(request, messages).toString
+        view(taxYear, draftId, submitRoute)(request, messages).toString
 
       application.stop()
     }

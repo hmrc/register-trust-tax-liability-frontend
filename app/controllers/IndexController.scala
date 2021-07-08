@@ -22,8 +22,8 @@ import controllers.actions.Actions
 import controllers.routes._
 import handlers.ErrorHandler
 import models.Status.Completed
+import models.UserAnswers
 import models.requests.OptionalDataRequest
-import models.{NormalMode, UserAnswers}
 import pages.{TaxLiabilityTaskStatus, TrustStartDatePage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -91,17 +91,17 @@ class IndexController @Inject()(
 
         firstTaxYearAvailable.yearsAgo match {
           case 4 if firstTaxYearAvailable.earlierYearsToDeclare =>
-            Redirect(CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId))
+            Redirect(CYMinusFourEarlierYearsLiabilityController.onPageLoad(draftId))
           case 4 =>
-            Redirect(CYMinusFourLiabilityController.onPageLoad(NormalMode, draftId))
+            Redirect(CYMinusFourLiabilityController.onPageLoad(draftId))
           case 3 if firstTaxYearAvailable.earlierYearsToDeclare =>
-            Redirect(CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId))
+            Redirect(CYMinusThreeEarlierYearsLiabilityController.onPageLoad(draftId))
           case 3 =>
-            Redirect(CYMinusThreeLiabilityController.onPageLoad(NormalMode, draftId))
+            Redirect(CYMinusThreeLiabilityController.onPageLoad(draftId))
           case 2 =>
-            Redirect(CYMinusTwoLiabilityController.onPageLoad(NormalMode, draftId))
+            Redirect(CYMinusTwoLiabilityController.onPageLoad(draftId))
           case 1 =>
-            Redirect(CYMinusOneLiabilityController.onPageLoad(NormalMode, draftId))
+            Redirect(CYMinusOneLiabilityController.onPageLoad(draftId))
           case _ =>
             InternalServerError(errorHandler.internalServerErrorTemplate)
         }

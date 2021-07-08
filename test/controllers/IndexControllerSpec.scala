@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import connectors.SubmissionDraftConnector
 import models.Status.Completed
-import models.{FirstTaxYearAvailable, NormalMode, StartDate}
+import models.{FirstTaxYearAvailable, StartDate}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import pages.{TaxLiabilityTaskStatus, TrustStartDatePage}
@@ -62,7 +62,7 @@ class IndexControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId).url)
+        redirectLocation(result) mustBe Some(routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(draftId).url)
 
         verify(registrationsRepository, times(0)).resetCache(any())(any(), any())
 
@@ -121,7 +121,7 @@ class IndexControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode, draftId).url)
+        redirectLocation(result) mustBe Some(routes.CYMinusTwoLiabilityController.onPageLoad(draftId).url)
 
         verify(registrationsRepository, times(1)).resetCache(any())(any(), any())
 
@@ -173,7 +173,7 @@ class IndexControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId).url)
+        redirectLocation(result) mustBe Some(routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(draftId).url)
 
         application.stop()
       }
@@ -201,7 +201,7 @@ class IndexControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CYMinusFourLiabilityController.onPageLoad(NormalMode, draftId).url)
+        redirectLocation(result) mustBe Some(routes.CYMinusFourLiabilityController.onPageLoad(draftId).url)
 
         application.stop()
       }
@@ -229,7 +229,7 @@ class IndexControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(NormalMode, draftId).url)
+        redirectLocation(result) mustBe Some(routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(draftId).url)
 
         application.stop()
       }
@@ -257,7 +257,7 @@ class IndexControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode, draftId).url)
+        redirectLocation(result) mustBe Some(routes.CYMinusThreeLiabilityController.onPageLoad(draftId).url)
 
         application.stop()
       }
@@ -285,7 +285,7 @@ class IndexControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode, draftId).url)
+        redirectLocation(result) mustBe Some(routes.CYMinusTwoLiabilityController.onPageLoad(draftId).url)
 
         application.stop()
       }
@@ -313,7 +313,7 @@ class IndexControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CYMinusOneLiabilityController.onPageLoad(NormalMode, draftId).url)
+        redirectLocation(result) mustBe Some(routes.CYMinusOneLiabilityController.onPageLoad(draftId).url)
 
         application.stop()
       }

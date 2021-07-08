@@ -19,7 +19,7 @@ package controllers
 import config.annotations.TaxLiability
 import controllers.actions.Actions
 import forms.YesNoFormProviderWithArguments
-import models.{CYMinusNTaxYears, Mode, TaxYearRange}
+import models.{CYMinusNTaxYears, TaxYearRange}
 import navigation.Navigator
 import pages.DidDeclareTaxToHMRCYesNoPage
 import play.api.data.Form
@@ -44,7 +44,7 @@ class DidDeclareTaxToHMRCController @Inject()(
 
   def form(ranges: Seq[String]): Form[Boolean] = formProvider.withPrefix("didDeclareToHMRC", ranges)
 
-  def onPageLoad(mode: Mode, draftId: String, taxYear: CYMinusNTaxYears): Action[AnyContent] = actions.authWithData(draftId) {
+  def onPageLoad(draftId: String, taxYear: CYMinusNTaxYears): Action[AnyContent] = actions.authWithData(draftId) {
     implicit request =>
 
       val f = form(Seq(taxYearRange.startYear(taxYear), taxYearRange.endYear(taxYear)))
@@ -54,22 +54,22 @@ class DidDeclareTaxToHMRCController @Inject()(
         case Some(value) => f.fill(value)
       }
 
-      Ok(view(preparedForm, draftId, taxYear, taxYearRange.toRange(taxYear), mode))
+      Ok(view(preparedForm, draftId, taxYear, taxYearRange.toRange(taxYear)))
   }
 
-  def onSubmit(mode: Mode, draftId: String, taxYear: CYMinusNTaxYears): Action[AnyContent] = actions.authWithData(draftId).async {
+  def onSubmit(draftId: String, taxYear: CYMinusNTaxYears): Action[AnyContent] = actions.authWithData(draftId).async {
     implicit request =>
 
       form(Seq(taxYearRange.startYear(taxYear), taxYearRange.endYear(taxYear))).bindFromRequest().fold(
         formWithErrors => {
-          Future.successful(BadRequest(view(formWithErrors, draftId, taxYear, taxYearRange.toRange(taxYear), mode)))
+          Future.successful(BadRequest(view(formWithErrors, draftId, taxYear, taxYearRange.toRange(taxYear))))
         },
         value => {
           val page = DidDeclareTaxToHMRCYesNoPage(taxYear)
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(page, value))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(page, draftId, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(page, draftId, updatedAnswers))
         }
       )
   }

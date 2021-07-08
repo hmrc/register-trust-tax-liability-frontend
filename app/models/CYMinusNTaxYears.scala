@@ -32,25 +32,25 @@ case object CYMinus4TaxYears extends CYMinusNTaxYears {
   override val n: Int = 4
   override val messagePrefix: String = "cyMinusFour"
   override val page: QuestionPage[Boolean] = CYMinusFourYesNoPage
-  override def changeUrl(draftId: String): String = CYMinusFourLiabilityController.onPageLoad(NormalMode, draftId).url
+  override def changeUrl(draftId: String): String = CYMinusFourLiabilityController.onPageLoad(draftId).url
 }
 case object CYMinus3TaxYears extends CYMinusNTaxYears {
   override val n: Int = 3
   override val messagePrefix: String = "cyMinusThree"
   override val page: QuestionPage[Boolean] = CYMinusThreeYesNoPage
-  override def changeUrl(draftId: String): String = CYMinusThreeLiabilityController.onPageLoad(NormalMode, draftId).url
+  override def changeUrl(draftId: String): String = CYMinusThreeLiabilityController.onPageLoad(draftId).url
 }
 case object CYMinus2TaxYears extends CYMinusNTaxYears {
   override val n: Int = 2
   override val messagePrefix: String = "cyMinusTwo"
   override val page: QuestionPage[Boolean] = CYMinusTwoYesNoPage
-  override def changeUrl(draftId: String): String = CYMinusTwoLiabilityController.onPageLoad(NormalMode, draftId).url
+  override def changeUrl(draftId: String): String = CYMinusTwoLiabilityController.onPageLoad(draftId).url
 }
 case object CYMinus1TaxYear extends CYMinusNTaxYears {
   override val n: Int = 1
   override val messagePrefix: String = "cyMinusOne"
   override val page: QuestionPage[Boolean] = CYMinusOneYesNoPage
-  override def changeUrl(draftId: String): String = CYMinusOneLiabilityController.onPageLoad(NormalMode, draftId).url
+  override def changeUrl(draftId: String): String = CYMinusOneLiabilityController.onPageLoad(draftId).url
 }
 
 object CYMinusNTaxYears {

@@ -18,7 +18,7 @@ package utils
 
 import base.SpecBase
 import controllers.routes
-import models.{CYMinus1TaxYear, CYMinus2TaxYears, CYMinus3TaxYears, CYMinus4TaxYears, NormalMode, TaxYearRange}
+import models.{CYMinus1TaxYear, CYMinus2TaxYears, CYMinus3TaxYears, CYMinus4TaxYears, TaxYearRange}
 import pages._
 import play.twirl.api.Html
 import viewmodels.{AnswerRow, AnswerSection}
@@ -54,13 +54,13 @@ class CheckYourAnswersHelperSpec extends SpecBase {
             AnswerRow(
               label = messages("cyMinusFour.liability.checkYourAnswersLabel", taxYearRange.toRange(CYMinus4TaxYears)),
               answer = Html("Yes"),
-              changeUrl = Some(routes.CYMinusFourLiabilityController.onPageLoad(NormalMode, draftId).url),
+              changeUrl = Some(routes.CYMinusFourLiabilityController.onPageLoad(draftId).url),
               canEdit = true
             ),
             AnswerRow(
               label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRange.toRange(CYMinus4TaxYears)),
               answer = Html("Yes"),
-              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, draftId, CYMinus4TaxYears).url),
+              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(draftId, CYMinus4TaxYears).url),
               canEdit = true
             )
           )
@@ -71,13 +71,13 @@ class CheckYourAnswersHelperSpec extends SpecBase {
             AnswerRow(
               label = messages("cyMinusThree.liability.checkYourAnswersLabel", taxYearRange.toRange(CYMinus3TaxYears)),
               answer = Html("Yes"),
-              changeUrl = Some(routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode, draftId).url),
+              changeUrl = Some(routes.CYMinusThreeLiabilityController.onPageLoad(draftId).url),
               canEdit = true
             ),
             AnswerRow(
               label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRange.toRange(CYMinus3TaxYears)),
               answer = Html("Yes"),
-              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, draftId, CYMinus3TaxYears).url),
+              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(draftId, CYMinus3TaxYears).url),
               canEdit = true
             )
           )
@@ -88,13 +88,13 @@ class CheckYourAnswersHelperSpec extends SpecBase {
             AnswerRow(
               label = messages("cyMinusTwo.liability.checkYourAnswersLabel", taxYearRange.toRange(CYMinus2TaxYears)),
               answer = Html("Yes"),
-              changeUrl = Some(routes.CYMinusTwoLiabilityController.onPageLoad(NormalMode, draftId).url),
+              changeUrl = Some(routes.CYMinusTwoLiabilityController.onPageLoad(draftId).url),
               canEdit = true
             ),
             AnswerRow(
               label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRange.toRange(CYMinus2TaxYears)),
               answer = Html("No"),
-              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, draftId, CYMinus2TaxYears).url),
+              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(draftId, CYMinus2TaxYears).url),
               canEdit = true
             )
           )
@@ -105,13 +105,13 @@ class CheckYourAnswersHelperSpec extends SpecBase {
             AnswerRow(
               label = messages("cyMinusOne.liability.checkYourAnswersLabel", taxYearRange.toRange(CYMinus1TaxYear)),
               answer = Html("Yes"),
-              changeUrl = Some(routes.CYMinusOneLiabilityController.onPageLoad(NormalMode, draftId).url),
+              changeUrl = Some(routes.CYMinusOneLiabilityController.onPageLoad(draftId).url),
               canEdit = true
             ),
             AnswerRow(
               label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRange.toRange(CYMinus1TaxYear)),
               answer = Html("No"),
-              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, draftId, CYMinus1TaxYear).url),
+              changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(draftId, CYMinus1TaxYear).url),
               canEdit = true
             )
           )

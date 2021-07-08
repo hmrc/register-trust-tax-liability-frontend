@@ -17,7 +17,7 @@
 package utils
 
 import com.google.inject.Inject
-import models.{CYMinusNTaxYears, NormalMode, TaxYearRange, UserAnswers}
+import models.{CYMinusNTaxYears, TaxYearRange, UserAnswers}
 import pages._
 import play.api.i18n.Messages
 import viewmodels.{AnswerRow, AnswerSection}
@@ -43,7 +43,7 @@ class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter,
         bound.yesNoQuestion(
           query = DidDeclareTaxToHMRCYesNoPage(taxYear),
           labelKey = "didDeclareToHMRC",
-          changeUrl = Some(controllers.routes.DidDeclareTaxToHMRCController.onPageLoad(NormalMode, userAnswers.draftId, taxYear).url),
+          changeUrl = Some(controllers.routes.DidDeclareTaxToHMRCController.onPageLoad(userAnswers.draftId, taxYear).url),
           arguments = toRange
         )
       ).flatten

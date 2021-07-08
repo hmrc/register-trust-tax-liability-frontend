@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import config.annotations.TaxLiability
 import forms.YesNoFormProviderWithArguments
-import models.{CYMinus3TaxYears, NormalMode, TaxYearRange}
+import models.{CYMinus3TaxYears, TaxYearRange}
 import navigation.Navigator
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
@@ -49,7 +49,7 @@ class CYMinusThreeLiabilityControllerSpec extends SpecBase with MockitoSugar {
 
   val taxYear: String = s"$taxYearStart to $taxYearEnd"
 
-  lazy val cyMinusThreeLiabilityControllerRoute = routes.CYMinusThreeLiabilityController.onPageLoad(NormalMode, draftId).url
+  lazy val cyMinusThreeLiabilityControllerRoute = routes.CYMinusThreeLiabilityController.onPageLoad(draftId).url
 
   "CYMinusThreeLiability Controller" must {
 
@@ -68,7 +68,7 @@ class CYMinusThreeLiabilityControllerSpec extends SpecBase with MockitoSugar {
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(formWithArgs,draftId , taxYear, NormalMode)(request, messages).toString
+        view(formWithArgs,draftId , taxYear)(request, messages).toString
 
       application.stop()
     }
@@ -90,7 +90,7 @@ class CYMinusThreeLiabilityControllerSpec extends SpecBase with MockitoSugar {
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(formWithArgs.fill(true),draftId , taxYear, NormalMode)(request, messages).toString
+        view(formWithArgs.fill(true),draftId , taxYear)(request, messages).toString
 
       application.stop()
     }
@@ -138,7 +138,7 @@ class CYMinusThreeLiabilityControllerSpec extends SpecBase with MockitoSugar {
       status(result) mustEqual BAD_REQUEST
 
       contentAsString(result) mustEqual
-        view(boundForm,draftId , taxYear, NormalMode)(request, messages).toString
+        view(boundForm,draftId , taxYear)(request, messages).toString
 
       application.stop()
     }
