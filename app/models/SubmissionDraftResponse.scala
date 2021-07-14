@@ -36,7 +36,7 @@ object RegistrationSubmission {
   }
 
   // Answer row and section, for display in print summary.
-  case class AnswerRow(label: String, answer: String, labelArg: String)
+  case class AnswerRow(label: String, answer: String, labelArgs: Seq[String])
 
   object AnswerRow {
     implicit lazy val format: OFormat[AnswerRow] = Json.format[AnswerRow]
@@ -44,7 +44,8 @@ object RegistrationSubmission {
 
   case class AnswerSection(headingKey: Option[String],
                            rows: Seq[AnswerRow],
-                           sectionKey: Option[String])
+                           sectionKey: Option[String],
+                           headingArgs: Seq[String])
 
   object AnswerSection {
     implicit lazy val format: OFormat[AnswerSection] = Json.format[AnswerSection]

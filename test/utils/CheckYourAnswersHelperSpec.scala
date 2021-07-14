@@ -49,72 +49,84 @@ class CheckYourAnswersHelperSpec extends SpecBase {
 
       result mustBe Seq(
         AnswerSection(
-          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRange.toRange(CYMinus4TaxYears))),
+          headingKey = "taxLiabilityBetweenYears.checkYourAnswerSectionHeading",
           rows = Seq(
             AnswerRow(
-              label = messages("cyMinusFour.liability.checkYourAnswersLabel", taxYearRange.toRange(CYMinus4TaxYears)),
+              label = "cyMinusFour.liability.checkYourAnswersLabel",
               answer = Html("Yes"),
               changeUrl = Some(routes.CYMinusFourLiabilityController.onPageLoad(draftId).url),
+              labelArgs = taxYearRange.toLabelArgs(CYMinus4TaxYears),
               canEdit = true
             ),
             AnswerRow(
-              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRange.toRange(CYMinus4TaxYears)),
+              label = "didDeclareToHMRC.checkYourAnswersLabel",
               answer = Html("Yes"),
               changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(draftId, CYMinus4TaxYears).url),
+              labelArgs = taxYearRange.toLabelArgs(CYMinus4TaxYears),
               canEdit = true
             )
-          )
+          ),
+          headingArgs = taxYearRange.toLabelArgs(CYMinus4TaxYears)
         ),
         AnswerSection(
-          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRange.toRange(CYMinus3TaxYears))),
+          headingKey = "taxLiabilityBetweenYears.checkYourAnswerSectionHeading",
           rows = Seq(
             AnswerRow(
-              label = messages("cyMinusThree.liability.checkYourAnswersLabel", taxYearRange.toRange(CYMinus3TaxYears)),
+              label = "cyMinusThree.liability.checkYourAnswersLabel",
               answer = Html("Yes"),
               changeUrl = Some(routes.CYMinusThreeLiabilityController.onPageLoad(draftId).url),
+              labelArgs = taxYearRange.toLabelArgs(CYMinus3TaxYears),
               canEdit = true
             ),
             AnswerRow(
-              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRange.toRange(CYMinus3TaxYears)),
+              label = "didDeclareToHMRC.checkYourAnswersLabel",
               answer = Html("Yes"),
               changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(draftId, CYMinus3TaxYears).url),
+              labelArgs = taxYearRange.toLabelArgs(CYMinus3TaxYears),
               canEdit = true
             )
-          )
+          ),
+          headingArgs = taxYearRange.toLabelArgs(CYMinus3TaxYears)
         ),
         AnswerSection(
-          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRange.toRange(CYMinus2TaxYears))),
+          headingKey = "taxLiabilityBetweenYears.checkYourAnswerSectionHeading",
           rows = Seq(
             AnswerRow(
-              label = messages("cyMinusTwo.liability.checkYourAnswersLabel", taxYearRange.toRange(CYMinus2TaxYears)),
+              label = "cyMinusTwo.liability.checkYourAnswersLabel",
               answer = Html("Yes"),
               changeUrl = Some(routes.CYMinusTwoLiabilityController.onPageLoad(draftId).url),
+              labelArgs = taxYearRange.toLabelArgs(CYMinus2TaxYears),
               canEdit = true
             ),
             AnswerRow(
-              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRange.toRange(CYMinus2TaxYears)),
+              label = "didDeclareToHMRC.checkYourAnswersLabel",
               answer = Html("No"),
               changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(draftId, CYMinus2TaxYears).url),
+              labelArgs = taxYearRange.toLabelArgs(CYMinus2TaxYears),
               canEdit = true
             )
-          )
+          ),
+          headingArgs = taxYearRange.toLabelArgs(CYMinus2TaxYears)
         ),
         AnswerSection(
-          headingKey = Some(messages("taxLiabilityBetweenYears.checkYourAnswerSectionHeading", taxYearRange.toRange(CYMinus1TaxYear))),
+          headingKey = "taxLiabilityBetweenYears.checkYourAnswerSectionHeading",
           rows = Seq(
             AnswerRow(
-              label = messages("cyMinusOne.liability.checkYourAnswersLabel", taxYearRange.toRange(CYMinus1TaxYear)),
+              label = "cyMinusOne.liability.checkYourAnswersLabel",
               answer = Html("Yes"),
               changeUrl = Some(routes.CYMinusOneLiabilityController.onPageLoad(draftId).url),
+              labelArgs = taxYearRange.toLabelArgs(CYMinus1TaxYear),
               canEdit = true
             ),
             AnswerRow(
-              label = messages("didDeclareToHMRC.checkYourAnswersLabel", taxYearRange.toRange(CYMinus1TaxYear)),
+              label = "didDeclareToHMRC.checkYourAnswersLabel",
               answer = Html("No"),
               changeUrl = Some(routes.DidDeclareTaxToHMRCController.onPageLoad(draftId, CYMinus1TaxYear).url),
+              labelArgs = taxYearRange.toLabelArgs(CYMinus1TaxYear),
               canEdit = true
             )
-          )
+          ),
+          headingArgs = taxYearRange.toLabelArgs(CYMinus1TaxYear)
         )
       )
     }

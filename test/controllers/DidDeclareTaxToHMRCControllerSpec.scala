@@ -52,8 +52,8 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
     "for previous tax year" must {
 
       val taxYear: CYMinusNTaxYears = CYMinus1TaxYear
-      val taxYearStart: String = taxYearRange.startYear(taxYear)
-      val taxYearEnd: String = taxYearRange.endYear(taxYear)
+      val taxYearStart: String = taxYearRange.startDate(taxYear)
+      val taxYearEnd: String = taxYearRange.endDate(taxYear)
       val range: String = taxYearRange.toRange(taxYear)
       
       "return OK and the correct view for a GET" in {
@@ -182,8 +182,8 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
     "for current tax year minus 2" must {
 
       val taxYear: CYMinusNTaxYears = CYMinus2TaxYears
-      val taxYearStart: String = taxYearRange.startYear(taxYear)
-      val taxYearEnd: String = taxYearRange.endYear(taxYear)
+      val taxYearStart: String = taxYearRange.startDate(taxYear)
+      val taxYearEnd: String = taxYearRange.endDate(taxYear)
       val range: String = taxYearRange.toRange(taxYear)
       
       "return OK and the correct view for a GET" in {
@@ -312,8 +312,8 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
     "for current tax year minus 3" must {
 
       val taxYear: CYMinusNTaxYears = CYMinus3TaxYears
-      val taxYearStart: String = taxYearRange.startYear(taxYear)
-      val taxYearEnd: String = taxYearRange.endYear(taxYear)
+      val taxYearStart: String = taxYearRange.startDate(taxYear)
+      val taxYearEnd: String = taxYearRange.endDate(taxYear)
       val range: String = taxYearRange.toRange(taxYear)
       
       "return OK and the correct view for a GET" in {
@@ -442,8 +442,8 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
     "for current tax year minus 4" must {
 
       val taxYear: CYMinusNTaxYears = CYMinus4TaxYears
-      val taxYearStart: String = taxYearRange.startYear(taxYear)
-      val taxYearEnd: String = taxYearRange.endYear(taxYear)
+      val taxYearStart: String = taxYearRange.startDate(taxYear)
+      val taxYearEnd: String = taxYearRange.endDate(taxYear)
       val range: String = taxYearRange.toRange(taxYear)
       
       "return OK and the correct view for a GET" in {

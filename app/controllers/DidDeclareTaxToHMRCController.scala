@@ -47,7 +47,7 @@ class DidDeclareTaxToHMRCController @Inject()(
   def onPageLoad(draftId: String, taxYear: CYMinusNTaxYears): Action[AnyContent] = actions.authWithData(draftId) {
     implicit request =>
 
-      val f = form(Seq(taxYearRange.startYear(taxYear), taxYearRange.endYear(taxYear)))
+      val f = form(Seq(taxYearRange.startDate(taxYear), taxYearRange.endDate(taxYear)))
 
       val preparedForm = request.userAnswers.get(DidDeclareTaxToHMRCYesNoPage(taxYear)) match {
         case None => f
@@ -60,7 +60,7 @@ class DidDeclareTaxToHMRCController @Inject()(
   def onSubmit(draftId: String, taxYear: CYMinusNTaxYears): Action[AnyContent] = actions.authWithData(draftId).async {
     implicit request =>
 
-      form(Seq(taxYearRange.startYear(taxYear), taxYearRange.endYear(taxYear))).bindFromRequest().fold(
+      form(Seq(taxYearRange.startDate(taxYear), taxYearRange.endDate(taxYear))).bindFromRequest().fold(
         formWithErrors => {
           Future.successful(BadRequest(view(formWithErrors, draftId, taxYear, taxYearRange.toRange(taxYear))))
         },

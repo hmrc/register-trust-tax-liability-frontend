@@ -61,25 +61,25 @@ earlierYearsLiability.title = You must tell HMRC if the trust needed to pay any 
 earlierYearsLiability.heading = You must tell HMRC if the trust needed to pay any tax before {0}
 earlierYearsLiability.p1 = You will need to send a schedule of any chargeable income.
 
-cyMinusFour.liability.checkYourAnswersLabel = Did the trust need to pay any tax from {0}?
+cyMinusFour.liability.checkYourAnswersLabel = Did the trust need to pay any tax from {0} to {1}?
 cyMinusFour.liability.title = Did the trust need to pay any tax from {0}?
 cyMinusFour.liability.heading = Did the trust need to pay any tax from {0}?
 cyMinusFour.liability.p1 = This does not include Inheritance Tax.
 cyMinusFour.liability.error.required = Select yes if the trust needed to pay any tax from {0} to {1}
 
-cyMinusThree.liability.checkYourAnswersLabel = Did the trust need to pay any tax from {0}?
+cyMinusThree.liability.checkYourAnswersLabel = Did the trust need to pay any tax from {0} to {1}?
 cyMinusThree.liability.title = Did the trust need to pay any tax from {0}?
 cyMinusThree.liability.heading = Did the trust need to pay any tax from {0}?
 cyMinusThree.liability.p1 = This does not include Inheritance Tax.
 cyMinusThree.liability.error.required = Select yes if the trust needed to pay any tax from {0} to {1}
 
-cyMinusTwo.liability.checkYourAnswersLabel = Did the trust need to pay any tax from {0}?
+cyMinusTwo.liability.checkYourAnswersLabel = Did the trust need to pay any tax from {0} to {1}?
 cyMinusTwo.liability.title = Did the trust need to pay any tax from {0}?
 cyMinusTwo.liability.heading = Did the trust need to pay any tax from {0}?
 cyMinusTwo.liability.p1 = This does not include Inheritance Tax.
 cyMinusTwo.liability.error.required = Select yes if the trust needed to pay any tax from {0} to {1}
 
-cyMinusOne.liability.checkYourAnswersLabel = Did the trust need to pay any tax from {0}?
+cyMinusOne.liability.checkYourAnswersLabel = Did the trust need to pay any tax from {0} to {1}?
 cyMinusOne.liability.title = Did the trust need to pay any tax from {0}?
 cyMinusOne.liability.heading = Did the trust need to pay any tax from {0}?
 cyMinusOne.liability.p1 = This does not include Inheritance Tax.
@@ -88,10 +88,10 @@ cyMinusOne.liability.error.required = Select yes if the trust needed to pay any 
 taxYearAndRange = {0} and {1}
 taxYearToRange = {0} to {1}
 
-didDeclareToHMRC.checkYourAnswersLabel = Was the tax from {0} declared?
+didDeclareToHMRC.checkYourAnswersLabel = Was the tax from {0} to {1} declared?
 didDeclareToHMRC.title = Was the tax from {0} declared?
 didDeclareToHMRC.heading = Was the tax from {0} declared?
 didDeclareToHMRC.p1 = You must have sent a full voluntary disclosure for {0}.
 didDeclareToHMRC.error.required = Select yes if the tax from {0} to {1} was declared
 
-taxLiabilityBetweenYears.checkYourAnswerSectionHeading = Tax liability {0}
+taxLiabilityBetweenYears.checkYourAnswerSectionHeading = Tax liability {0} to {1}

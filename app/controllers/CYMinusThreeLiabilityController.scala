@@ -49,7 +49,7 @@ class CYMinusThreeLiabilityController @Inject()(
   def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithData(draftId) {
     implicit request =>
 
-      val f = form(Seq(taxYearRange.startYear(workingTaxYear), taxYearRange.endYear(workingTaxYear)))
+      val f = form(Seq(taxYearRange.startDate(workingTaxYear), taxYearRange.endDate(workingTaxYear)))
 
       val preparedForm = request.userAnswers.get(CYMinusThreeYesNoPage) match {
         case None => f
@@ -62,7 +62,7 @@ class CYMinusThreeLiabilityController @Inject()(
   def onSubmit(draftId: String): Action[AnyContent] = actions.authWithData(draftId).async {
     implicit request =>
 
-      val f = form(Seq(taxYearRange.startYear(workingTaxYear), taxYearRange.endYear(workingTaxYear)))
+      val f = form(Seq(taxYearRange.startDate(workingTaxYear), taxYearRange.endDate(workingTaxYear)))
 
       f.bindFromRequest().fold(
         formWithErrors =>
