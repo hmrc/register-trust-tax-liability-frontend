@@ -17,15 +17,30 @@
 package controllers
 
 import base.SpecBase
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
+import models.TaskStatus.Completed
+import org.mockito.Matchers.{any, eq => eqTo}
+import org.mockito.Mockito
+import org.mockito.Mockito.{reset, when}
+import org.scalatest.BeforeAndAfterEach
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.TrustsStoreService
+import uk.gov.hmrc.http.HttpResponse
 import views.html.CheckYourAnswersView
 
 import scala.concurrent.Future
 
-class CheckYourAnswersControllerSpec extends SpecBase {
+class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
+
+  private val mockTrustsStoreService: TrustsStoreService = mock[TrustsStoreService]
+
+  override def beforeEach(): Unit = {
+    reset(mockTrustsStoreService)
+
+    when(mockTrustsStoreService.updateTaskStatus(any(), any())(any(), any()))
+      .thenReturn(Future.successful(HttpResponse(OK, "")))
+  }
 
   "Check Your Answers Controller" must {
 
@@ -64,21 +79,27 @@ class CheckYourAnswersControllerSpec extends SpecBase {
 
     "redirect to the next page when valid data is submitted" in {
 
+      val userAnswers = emptyUserAnswers
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[TrustsStoreService].toInstance(mockTrustsStoreService))
+        .build()
 
       when(registrationsRepository.set(any())(any(), any())).thenReturn(Future.successful(true))
 
       val controller = application.injector.instanceOf[CheckYourAnswersController]
 
-      val request =
-        FakeRequest(POST, routes.CheckYourAnswersController.onSubmit(draftId).url)
+      val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit(draftId).url)
 
       val result = controller.onSubmit(draftId).apply(request)
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual "http://localhost:9781/trusts-registration/draftId/registration-progress"
+
+      val inOrder = Mockito.inOrder(mockTrustsStoreService, registrationsRepository)
+      inOrder.verify(mockTrustsStoreService).updateTaskStatus(eqTo(draftId), eqTo(Completed))(any(), any())
+      inOrder.verify(registrationsRepository).set(eqTo(userAnswers))(any(), any())
 
       application.stop()
     }
@@ -87,8 +108,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request =
-        FakeRequest(POST, routes.CheckYourAnswersController.onSubmit(draftId).url)
+      val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit(draftId).url)
 
       val result = route(application, request).value
 

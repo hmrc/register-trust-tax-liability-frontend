@@ -19,17 +19,16 @@ package controllers
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.Actions
-import models.Status.Completed
-import pages.TaxLiabilityTaskStatus
+import models.TaskStatus.Completed
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.RegistrationsRepository
+import services.TrustsStoreService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.CheckYourAnswersHelper
 import views.html.CheckYourAnswersView
 
 import scala.concurrent.ExecutionContext.Implicits._
-import scala.concurrent.Future
 
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
@@ -38,7 +37,8 @@ class CheckYourAnswersController @Inject()(
                                             checkYourAnswersHelper: CheckYourAnswersHelper,
                                             actions: Actions,
                                             registrationsRepository: RegistrationsRepository,
-                                            val appConfig : FrontendAppConfig
+                                            val appConfig: FrontendAppConfig,
+                                            trustsStoreService: TrustsStoreService
                                           ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithData(draftId) {
@@ -51,8 +51,8 @@ class CheckYourAnswersController @Inject()(
     implicit request =>
 
       for {
-        updatedAnswers <- Future.fromTry(request.userAnswers.set(TaxLiabilityTaskStatus, Completed))
-        _ <- registrationsRepository.set(updatedAnswers)
+        _ <- trustsStoreService.updateTaskStatus(draftId, Completed)
+        _ <- registrationsRepository.set(request.userAnswers)
       } yield {
         Redirect(appConfig.registrationProgressUrl(draftId))
       }
