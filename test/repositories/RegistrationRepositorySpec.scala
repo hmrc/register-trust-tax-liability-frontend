@@ -34,7 +34,7 @@ import scala.concurrent.{Await, Future}
 
 class RegistrationRepositorySpec extends SpecBase with MustMatchers with MockitoSugar {
 
-  private val unusedSubmissionSetFactory = mock[SubmissionSetFactory];
+  private val unusedSubmissionSetFactory = mock[SubmissionSetFactory]
 
   private def createRepository(connector: SubmissionDraftConnector, submissionSetFactory: SubmissionSetFactory) = {
     new DefaultRegistrationsRepository(connector, frontendAppConfig, submissionSetFactory)
@@ -117,7 +117,7 @@ class RegistrationRepositorySpec extends SpecBase with MustMatchers with Mockito
         )
 
         val mockSubmissionSetFactory = mock[SubmissionSetFactory]
-        when(mockSubmissionSetFactory.createFrom(any())(any())).thenReturn(submissionSet)
+        when(mockSubmissionSetFactory.createFrom(any())(any(), any(), any())).thenReturn(Future.successful(submissionSet))
 
         val repository = createRepository(mockConnector, mockSubmissionSetFactory)
 
