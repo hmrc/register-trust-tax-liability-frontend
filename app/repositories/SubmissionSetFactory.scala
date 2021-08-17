@@ -16,18 +16,21 @@
 
 package repositories
 
+import models.Status.{Completed, InProgress}
 import models._
-import pages.TaxLiabilityTaskStatus
 import play.api.i18n.Messages
 import play.api.libs.json.{JsNull, Json}
-import services.TaxLiabilityService
+import services.{TaxLiabilityService, TrustsStoreService}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.CheckYourAnswersHelper
 import viewmodels.{AnswerRow, AnswerSection}
 
 import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class SubmissionSetFactory @Inject()(checkYourAnswersHelper: CheckYourAnswersHelper,
-                                     taxLiabilityService: TaxLiabilityService) {
+                                     taxLiabilityService: TaxLiabilityService,
+                                     trustsStoreService: TrustsStoreService) {
 
   def reset(userAnswers: UserAnswers): RegistrationSubmission.DataSet = {
     RegistrationSubmission.DataSet(
@@ -38,15 +41,17 @@ class SubmissionSetFactory @Inject()(checkYourAnswersHelper: CheckYourAnswersHel
     )
   }
 
-  def createFrom(userAnswers: UserAnswers)(implicit messages: Messages): RegistrationSubmission.DataSet = {
-    val status = userAnswers.get(TaxLiabilityTaskStatus).orElse(Some(Status.InProgress))
-
-    RegistrationSubmission.DataSet(
-      data = Json.toJson(userAnswers),
-      status = status,
-      registrationPieces = mappedDataIfCompleted(userAnswers, status),
-      answerSections = answerSectionsIfCompleted(userAnswers, status)
-    )
+  def createFrom(userAnswers: UserAnswers)
+                (implicit hc: HeaderCarrier, ec: ExecutionContext,messages: Messages): Future[RegistrationSubmission.DataSet] = {
+    trustsStoreService.getTaskStatus(userAnswers.draftId) map { taskStatus =>
+      val status = Some(if (taskStatus.isCompleted) Completed else InProgress)
+      RegistrationSubmission.DataSet(
+        data = Json.toJson(userAnswers),
+        status = status,
+        registrationPieces = mappedDataIfCompleted(userAnswers, status),
+        answerSections = answerSectionsIfCompleted(userAnswers, status)
+      )
+    }
   }
 
   private def mappedDataIfCompleted(userAnswers: UserAnswers, status: Option[Status]): List[RegistrationSubmission.MappedPiece] = {
@@ -62,9 +67,8 @@ class SubmissionSetFactory @Inject()(checkYourAnswersHelper: CheckYourAnswersHel
     }
   }
 
-  def answerSectionsIfCompleted(userAnswers: UserAnswers, status: Option[Status])
+  private def answerSectionsIfCompleted(userAnswers: UserAnswers, status: Option[Status])
                                (implicit messages: Messages): List[RegistrationSubmission.AnswerSection] = {
-
     if (status.contains(Status.Completed)) {
       checkYourAnswersHelper(userAnswers).map(convertForSubmission).toList
     } else {

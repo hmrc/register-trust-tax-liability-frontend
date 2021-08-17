@@ -17,25 +17,34 @@
 package repositories
 
 import base.SpecBase
-import models.Status.{Completed, InProgress}
-import models.{RegistrationSubmission, UserAnswers}
+import generators.ModelGenerators
+import models.Status._
+import models.TaskStatus.TaskStatus
+import models.{RegistrationSubmission, TaskStatus, UserAnswers, YearReturnType}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsNull, Json}
 import play.twirl.api.Html
-import services.TaxLiabilityService
+import services.{TaxLiabilityService, TrustsStoreService}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.CheckYourAnswersHelper
 import viewmodels.{AnswerRow, AnswerSection}
 
 import scala.collection.immutable.Nil
+import scala.concurrent.Future
 
-class SubmissionSetFactorySpec extends SpecBase {
+class SubmissionSetFactorySpec extends SpecBase with ScalaCheckPropertyChecks with ModelGenerators {
+
+  val mockCheckYourAnswersHelper: CheckYourAnswersHelper = mock[CheckYourAnswersHelper]
+  val mockTaxLiabilityService: TaxLiabilityService = mock[TaxLiabilityService]
+  val mockTrustsStoreService: TrustsStoreService = mock[TrustsStoreService]
+  val factory = new SubmissionSetFactory(mockCheckYourAnswersHelper, mockTaxLiabilityService, mockTrustsStoreService)
+
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
   "Submission set factory" must {
-
-    val mockCheckYourAnswersHelper = mock[CheckYourAnswersHelper]
-    val taxLiabilityService = injector.instanceOf[TaxLiabilityService]
-    val factory = new SubmissionSetFactory(mockCheckYourAnswersHelper, taxLiabilityService)
 
     "reset answer sections and statuses" in {
       val userAnswers: UserAnswers = emptyUserAnswers
@@ -51,8 +60,20 @@ class SubmissionSetFactorySpec extends SpecBase {
 
     "return no answer sections if not completed" in {
 
-      factory.answerSectionsIfCompleted(emptyUserAnswers, Some(InProgress))
-        .mustBe(Nil)
+      forAll(arbitrary[TaskStatus].suchThat(_ != TaskStatus.Completed)) { status =>
+        when(mockTrustsStoreService.getTaskStatus(any())(any(), any())).thenReturn(Future.successful(status))
+
+        val userAnswers = emptyUserAnswers
+
+        whenReady(factory.createFrom(userAnswers)) {
+          _ mustBe RegistrationSubmission.DataSet(
+            data = Json.toJson(userAnswers),
+            status = Some(InProgress),
+            registrationPieces = Nil,
+            answerSections = Nil
+          )
+        }
+      }
     }
 
     "return completed answer sections" when {
@@ -64,19 +85,52 @@ class SubmissionSetFactorySpec extends SpecBase {
         headingArgs = Seq("6 April 2019", "5 April 2020")
       )
 
-      "task is completed" in {
+      val fakeRegistrationSubmissionAnswerSection = RegistrationSubmission.AnswerSection(
+        headingKey = Some("taxLiabilityBetweenYears.checkYourAnswerSectionHeading"),
+        rows = List(RegistrationSubmission.AnswerRow("cyMinusOne.liability", "Yes", Seq("6 April 2019", "5 April 2020"))),
+        sectionKey = None,
+        headingArgs = Seq("6 April 2019", "5 April 2020")
+      )
 
-        when(mockCheckYourAnswersHelper.apply(any())(any())).thenReturn(Seq(fakeAnswerSection))
+      "task is completed" when {
 
-        factory.answerSectionsIfCompleted(emptyUserAnswers, Some(Completed)) mustBe
-          List(
-            RegistrationSubmission.AnswerSection(
-              headingKey = Some("taxLiabilityBetweenYears.checkYourAnswerSectionHeading"),
-              rows = List(RegistrationSubmission.AnswerRow("cyMinusOne.liability", "Yes", Seq("6 April 2019", "5 April 2020"))),
-              sectionKey = None,
-              headingArgs = Seq("6 April 2019", "5 April 2020")
+        "no tax years to send down" in {
+
+          when(mockTrustsStoreService.getTaskStatus(any())(any(), any())).thenReturn(Future.successful(TaskStatus.Completed))
+          when(mockCheckYourAnswersHelper.apply(any())(any())).thenReturn(Seq(fakeAnswerSection))
+          when(mockTaxLiabilityService.evaluateTaxYears(any())).thenReturn(Nil)
+
+          val userAnswers = emptyUserAnswers
+
+          whenReady(factory.createFrom(userAnswers)) {
+            _ mustBe RegistrationSubmission.DataSet(
+              data = Json.toJson(userAnswers),
+              status = Some(Completed),
+              registrationPieces = Nil,
+              answerSections = List(fakeRegistrationSubmissionAnswerSection)
             )
-          )
+          }
+        }
+
+        "tax years to send down" in {
+
+          val fakeYearsReturns = List(YearReturnType("20", taxConsequence = true))
+
+          when(mockTrustsStoreService.getTaskStatus(any())(any(), any())).thenReturn(Future.successful(TaskStatus.Completed))
+          when(mockCheckYourAnswersHelper.apply(any())(any())).thenReturn(Seq(fakeAnswerSection))
+          when(mockTaxLiabilityService.evaluateTaxYears(any())).thenReturn(fakeYearsReturns)
+
+          val userAnswers = emptyUserAnswers
+
+          whenReady(factory.createFrom(userAnswers)) {
+            _ mustBe RegistrationSubmission.DataSet(
+              data = Json.toJson(userAnswers),
+              status = Some(Completed),
+              registrationPieces = List(RegistrationSubmission.MappedPiece("yearsReturns", Json.obj("returns" -> Json.toJson(fakeYearsReturns)))),
+              answerSections = List(fakeRegistrationSubmissionAnswerSection)
+            )
+          }
+        }
       }
     }
   }

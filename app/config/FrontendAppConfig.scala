@@ -49,6 +49,7 @@ class FrontendAppConfig @Inject()(val configuration: Configuration,
   lazy val trustsUrl: String = servicesConfig.baseUrl("trusts")
   lazy val createAgentServicesAccountUrl: String = configuration.get[String]("urls.createAgentServicesAccount")
   lazy val maintainATrustFrontendUrl: String = configuration.get[String]("urls.maintainATrust")
+  lazy val trustsStoreUrl: String = servicesConfig.baseUrl("trusts-store")
 
   def registrationProgressUrl(draftId: String): String =
     configuration.get[String]("urls.registrationProgress").replace(":draftId", draftId)

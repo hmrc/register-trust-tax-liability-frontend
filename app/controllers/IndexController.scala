@@ -21,14 +21,15 @@ import connectors.SubmissionDraftConnector
 import controllers.actions.Actions
 import controllers.routes._
 import handlers.ErrorHandler
-import models.Status.Completed
+import models.TaskStatus.{InProgress, TaskStatus}
 import models.UserAnswers
 import models.requests.OptionalDataRequest
-import pages.{TaxLiabilityTaskStatus, TrustStartDatePage}
+import pages.TrustStartDatePage
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.RegistrationsRepository
+import services.TrustsStoreService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Session
 
@@ -42,7 +43,8 @@ class IndexController @Inject()(
                                  actions: Actions,
                                  repository: RegistrationsRepository,
                                  errorHandler: ErrorHandler,
-                                 config: FrontendAppConfig
+                                 config: FrontendAppConfig,
+                                 trustsStoreService: TrustsStoreService
                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
   private def startNewSession(draftId: String, startDate: LocalDate)(implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
@@ -62,23 +64,34 @@ class IndexController @Inject()(
 
       submissionDraftConnector.getTrustStartDate(draftId) flatMap {
         case Some(date) =>
-          val userAnswers: UserAnswers = request.userAnswers
-            .getOrElse(UserAnswers.startNewSession(draftId, request.internalId))
 
-          (userAnswers.get(TrustStartDatePage), userAnswers.get(TaxLiabilityTaskStatus)) match {
-            case (Some(cachedDate), Some(Completed)) if cachedDate.isEqual(date.startDate) =>
-              logger.info(s"[Session ID: ${Session.id(hc)}] trust start date has not changed and answers previously completed, redirecting to answers")
-              Future.successful(Redirect(CheckYourAnswersController.onPageLoad(draftId)))
-            case (Some(cachedDate), _) if cachedDate.isEqual(date.startDate) =>
-              logger.info(s"[Session ID: ${Session.id(hc)}] trust start date has not changed but answers not previously completed, continuing session")
-              redirect(draftId)
-            case (Some(_), _) =>
-              logger.info(s"[Session ID: ${Session.id(hc)}] trust start date has changed, starting new session")
-              startNewSession(draftId, date.startDate)
-            case (None, _) =>
-              logger.info(s"[Session ID: ${Session.id(hc)}] no existing trust start date saved, starting new session")
-              startNewSession(draftId, date.startDate)
+          def redirectForTaskStatus(taskStatus: TaskStatus): Future[Result] = {
+            val userAnswers: UserAnswers = request.userAnswers
+              .getOrElse(UserAnswers.startNewSession(draftId, request.internalId))
+
+            userAnswers.get(TrustStartDatePage) match {
+              case Some(cachedDate) if cachedDate.isEqual(date.startDate) =>
+                if (taskStatus.isCompleted) {
+                  logger.info(s"[Session ID: ${Session.id(hc)}] trust start date has not changed and answers previously completed, redirecting to answers")
+                  Future.successful(Redirect(CheckYourAnswersController.onPageLoad(draftId)))
+                } else {
+                  logger.info(s"[Session ID: ${Session.id(hc)}] trust start date has not changed but answers not previously completed, continuing session")
+                  redirect(draftId)
+                }
+              case Some(_) =>
+                logger.info(s"[Session ID: ${Session.id(hc)}] trust start date has changed, starting new session")
+                startNewSession(draftId, date.startDate)
+              case None =>
+                logger.info(s"[Session ID: ${Session.id(hc)}] no existing trust start date saved, starting new session")
+                startNewSession(draftId, date.startDate)
+            }
           }
+
+          for {
+            taskStatus <- trustsStoreService.getTaskStatus(draftId)
+            _ <- trustsStoreService.updateTaskStatus(draftId, InProgress)
+            result <- redirectForTaskStatus(taskStatus)
+          } yield result
         case None =>
           logger.info(s"[Session ID: ${Session.id(hc)}] no start date available, returning to /registration-progress")
           Future.successful(Redirect(config.registrationProgressUrl(draftId)))

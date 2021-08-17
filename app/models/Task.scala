@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package pages
+package models
 
-import models.Status
-import play.api.libs.json.JsPath
+import models.TaskStatus.TaskStatus
+import play.api.libs.json.{Format, Json}
 
-case object TaxLiabilityTaskStatus extends QuestionPage[Status] {
+case class Task(taxLiability: TaskStatus)
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "status"
+object Task {
+  implicit val formats: Format[Task] = Json.format[Task]
 }
