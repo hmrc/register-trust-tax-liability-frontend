@@ -19,7 +19,7 @@ package config
 import com.google.inject.{Inject, Singleton}
 import controllers.routes
 import play.api.Configuration
-import play.api.i18n.Lang
+import play.api.i18n.{Lang, Messages}
 import play.api.mvc.Call
 import uk.gov.hmrc.hmrcfrontend.config.ContactFrontendConfig
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -30,6 +30,9 @@ class FrontendAppConfig @Inject()(val configuration: Configuration,
                                   contactFrontendConfig: ContactFrontendConfig) {
 
   val repositoryKey: String = "taxLiability"
+
+  final val ENGLISH = "en"
+  final val WELSH = "cy"
 
   val betaFeedbackUrl = s"${contactFrontendConfig.baseUrl.get}/contact/beta-feedback?service=${contactFrontendConfig.serviceId.get}"
 
@@ -58,8 +61,8 @@ class FrontendAppConfig @Inject()(val configuration: Configuration,
     configuration.get[Boolean]("microservice.services.features.welsh-translation")
 
   def languageMap: Map[String, Lang] = Map(
-    "english" -> Lang("en"),
-    "cymraeg" -> Lang("cy")
+    "english" -> Lang(ENGLISH),
+    "cymraeg" -> Lang(WELSH)
   )
 
   def routeToSwitchLanguage: String => Call =
@@ -67,4 +70,11 @@ class FrontendAppConfig @Inject()(val configuration: Configuration,
 
   def registerTrustAsTrusteeUrl: String = configuration.get[String]("urls.registerTrustAsTrustee")
 
+  def helplineUrl(implicit messages: Messages): String = {
+    val path = messages.lang.code match {
+      case WELSH => "urls.welshHelpline"
+      case _ => "urls.trustsHelpline"
+    }
+    configuration.get[String](path)
+  }
 }
