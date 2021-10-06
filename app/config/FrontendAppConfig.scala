@@ -31,6 +31,9 @@ class FrontendAppConfig @Inject()(val configuration: Configuration,
 
   val repositoryKey: String = "taxLiability"
 
+  final val ENGLISH = "en"
+  final val WELSH = "cy"
+
   val betaFeedbackUrl = s"${contactFrontendConfig.baseUrl.get}/contact/beta-feedback?service=${contactFrontendConfig.serviceId.get}"
 
   lazy val authUrl: String = servicesConfig.baseUrl("auth")
@@ -58,8 +61,8 @@ class FrontendAppConfig @Inject()(val configuration: Configuration,
     configuration.get[Boolean]("microservice.services.features.welsh-translation")
 
   def languageMap: Map[String, Lang] = Map(
-    "english" -> Lang("en"),
-    "cymraeg" -> Lang("cy")
+    "english" -> Lang(ENGLISH),
+    "cymraeg" -> Lang(WELSH)
   )
 
   def routeToSwitchLanguage: String => Call =
