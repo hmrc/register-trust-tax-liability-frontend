@@ -23,9 +23,12 @@ import javax.inject.Inject
 
 class TaxLiabilityService @Inject()(taxYearService: TaxYearService) {
 
+  final val MonthsToSubtract: Int = 6 // October 5th
+
   def evaluateTaxYears(userAnswers: UserAnswers): List[YearReturnType] = {
 
-    val halfwayThroughTaxYear = taxYearService.currentTaxYear.finishes.minusMonths(6) // October 5th
+    val halfwayThroughTaxYear =
+      taxYearService.currentTaxYear.finishes.minusMonths(MonthsToSubtract)
 
     CYMinusNTaxYears.taxYears.foldLeft[List[YearReturnType]](Nil)((acc, taxYear) => {
       if (userAnswers.get(DidDeclareTaxToHMRCYesNoPage(taxYear)).contains(false)) {

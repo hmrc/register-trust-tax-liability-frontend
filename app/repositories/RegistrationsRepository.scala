@@ -27,7 +27,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DefaultRegistrationsRepository @Inject()(submissionDraftConnector: SubmissionDraftConnector,
+class DefaultRegistrationsRepository @Inject()(
+                                                submissionDraftConnector: SubmissionDraftConnector,
                                                config: FrontendAppConfig,
                                                submissionSetFactory: SubmissionSetFactory
                                         )(implicit ec: ExecutionContext) extends RegistrationsRepository {
@@ -37,11 +38,10 @@ class DefaultRegistrationsRepository @Inject()(submissionDraftConnector: Submiss
 
   override def set(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, messages: Messages): Future[Boolean] = {
     for {
-      dataSet <- submissionSetFactory.createFrom(userAnswers)
       response <- submissionDraftConnector.setDraftSectionSet(
         userAnswers.draftId,
         userAnswersSection,
-        dataSet
+        submissionSetFactory.createFrom(userAnswers)
       )
     } yield {
       response.status == http.Status.OK

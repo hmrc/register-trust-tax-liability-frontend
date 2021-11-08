@@ -16,65 +16,47 @@
 
 package repositories
 
-import models.Status.{Completed, InProgress}
 import models._
 import play.api.i18n.Messages
 import play.api.libs.json.{JsNull, Json}
-import services.{TaxLiabilityService, TrustsStoreService}
-import uk.gov.hmrc.http.HeaderCarrier
+import services.TaxLiabilityService
 import utils.CheckYourAnswersHelper
 import viewmodels.{AnswerRow, AnswerSection}
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
 class SubmissionSetFactory @Inject()(checkYourAnswersHelper: CheckYourAnswersHelper,
-                                     taxLiabilityService: TaxLiabilityService,
-                                     trustsStoreService: TrustsStoreService) {
+                                     taxLiabilityService: TaxLiabilityService) {
 
   def reset(userAnswers: UserAnswers): RegistrationSubmission.DataSet = {
     RegistrationSubmission.DataSet(
       data = Json.toJson(userAnswers),
-      status = Some(Status.InProgress),
       registrationPieces = List(RegistrationSubmission.MappedPiece("yearsReturns", JsNull)),
       answerSections = Nil
     )
   }
 
   def createFrom(userAnswers: UserAnswers)
-                (implicit hc: HeaderCarrier, ec: ExecutionContext,messages: Messages): Future[RegistrationSubmission.DataSet] = {
-    trustsStoreService.getTaskStatus(userAnswers.draftId) map { taskStatus =>
-      val status = Some(if (taskStatus.isCompleted) Completed else InProgress)
-      RegistrationSubmission.DataSet(
-        data = Json.toJson(userAnswers),
-        status = status,
-        registrationPieces = mappedDataIfCompleted(userAnswers, status),
-        answerSections = answerSectionsIfCompleted(userAnswers, status)
-      )
+                (implicit messages: Messages): RegistrationSubmission.DataSet = {
+    RegistrationSubmission.DataSet(
+      data = Json.toJson(userAnswers),
+      registrationPieces = mappedData(userAnswers),
+      answerSections = answerSections(userAnswers)
+    )
+  }
+
+  private def mappedData(userAnswers: UserAnswers): List[RegistrationSubmission.MappedPiece] = {
+    taxLiabilityService.evaluateTaxYears(userAnswers) match {
+      case Nil => List.empty
+      case yearsReturns =>
+        val payload = Json.obj("returns" -> Json.toJson(yearsReturns))
+        List(RegistrationSubmission.MappedPiece("yearsReturns", payload))
     }
   }
 
-  private def mappedDataIfCompleted(userAnswers: UserAnswers, status: Option[Status]): List[RegistrationSubmission.MappedPiece] = {
-    if (status.contains(Status.Completed)) {
-      taxLiabilityService.evaluateTaxYears(userAnswers) match {
-        case Nil => List.empty
-        case yearsReturns =>
-          val payload = Json.obj("returns" -> Json.toJson(yearsReturns))
-          List(RegistrationSubmission.MappedPiece("yearsReturns", payload))
-      }
-    } else {
-      List.empty
-    }
-  }
-
-  private def answerSectionsIfCompleted(userAnswers: UserAnswers, status: Option[Status])
-                               (implicit messages: Messages): List[RegistrationSubmission.AnswerSection] = {
-    if (status.contains(Status.Completed)) {
-      checkYourAnswersHelper(userAnswers).map(convertForSubmission).toList
-    } else {
-      List.empty
-    }
-  }
+  private def answerSections(userAnswers: UserAnswers)
+                            (implicit messages: Messages): List[RegistrationSubmission.AnswerSection] =
+    checkYourAnswersHelper(userAnswers).map(convertForSubmission).toList
 
   private def convertForSubmission(section: AnswerSection): RegistrationSubmission.AnswerSection = {
     RegistrationSubmission.AnswerSection(

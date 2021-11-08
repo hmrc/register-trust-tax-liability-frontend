@@ -18,7 +18,6 @@ package repositories
 
 import base.SpecBase
 import connectors.SubmissionDraftConnector
-import models.Status.InProgress
 import models._
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{verify, when}
@@ -111,13 +110,12 @@ class RegistrationRepositorySpec extends SpecBase with MustMatchers with Mockito
 
         val submissionSet = RegistrationSubmission.DataSet(
           Json.obj(),
-          Some(InProgress),
           List.empty,
           List.empty
         )
 
         val mockSubmissionSetFactory = mock[SubmissionSetFactory]
-        when(mockSubmissionSetFactory.createFrom(any())(any(), any(), any())).thenReturn(Future.successful(submissionSet))
+        when(mockSubmissionSetFactory.createFrom(any())(any())).thenReturn(submissionSet)
 
         val repository = createRepository(mockConnector, mockSubmissionSetFactory)
 
@@ -143,7 +141,6 @@ class RegistrationRepositorySpec extends SpecBase with MustMatchers with Mockito
 
         val submissionSet = RegistrationSubmission.DataSet(
           Json.obj(),
-          None,
           List.empty,
           List.empty
         )
