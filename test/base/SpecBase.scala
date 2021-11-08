@@ -18,7 +18,7 @@ package base
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.{Status, UserAnswers}
+import models.UserAnswers
 import navigation.FakeNavigator
 import org.scalatest.TryValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -63,12 +63,8 @@ trait SpecBase extends PlaySpec with GuiceOneAppPerSuite with Mocked with TryVal
   implicit def messages: Messages = messagesApi.preferred(fakeRequest)
 
   private def fakeDraftIdAction(userAnswers: Option[UserAnswers]): FakeDraftIdRetrievalActionProvider =
-    new FakeDraftIdRetrievalActionProvider(
-      draftId,
-      Status.InProgress,
-      userAnswers,
-      registrationsRepository
-    )
+    new FakeDraftIdRetrievalActionProvider(userAnswers)
+    
   protected def applicationBuilder(userAnswers: Option[UserAnswers] = None,
                                    affinityGroup: AffinityGroup = AffinityGroup.Organisation,
                                    enrolments: Enrolments = Enrolments(Set.empty[Enrolment])
