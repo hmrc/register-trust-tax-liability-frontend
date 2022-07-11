@@ -20,14 +20,15 @@ import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.Task
 import models.TaskStatus.Completed
-import org.scalatest.{MustMatchers, OptionValues}
+import org.scalatest.OptionValues
+import org.scalatest.matchers.must.Matchers
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.WireMockHelper
 
-class TrustsStoreConnectorSpec extends SpecBase with MustMatchers with OptionValues with WireMockHelper {
+class TrustsStoreConnectorSpec extends SpecBase with Matchers with OptionValues with WireMockHelper {
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 

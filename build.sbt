@@ -14,7 +14,7 @@ lazy val root = (project in file("."))
     DefaultBuildSettings.defaultSettings(),
     SbtDistributablesPlugin.publishingSettings,
     inConfig(Test)(testSettings),
-    scalaVersion := "2.12.12",
+    scalaVersion := "2.12.16",
     SilencerSettings(),
     majorVersion := 0,
     name := appName,
@@ -34,7 +34,7 @@ lazy val root = (project in file("."))
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*filters.*;.*handlers.*;.*components.*;.*repositories.*;" +
       ".*BuildInfo.*;.*javascript.*;.*FrontendAuditConnector.*;.*Routes.*;.*GuiceInjector;" +
       ".*ControllerConfiguration;.*LanguageSwitchController",
-    ScoverageKeys.coverageMinimum := 70,
+    ScoverageKeys.coverageMinimumStmtTotal := 70,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
     scalacOptions ++= Seq("-feature"),
