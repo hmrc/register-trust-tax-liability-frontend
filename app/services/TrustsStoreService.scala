@@ -34,5 +34,5 @@ class TrustsStoreService @Inject()(trustsStoreConnector: TrustsStoreConnector) {
                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[TaskStatus] = {
     trustsStoreConnector.getTaskStatus(draftId).map(_.taxLiability)
   }
-  
+
 }

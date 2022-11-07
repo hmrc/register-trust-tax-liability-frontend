@@ -31,10 +31,10 @@ lazy val root = (project in file("."))
       "controllers.routes._"
     ),
     PlayKeys.playDefaultPort := 8838,
-    ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*filters.*;.*handlers.*;.*components.*;.*repositories.*;" +
+    ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*filters.*;.*handlers.*;.*components.*;" +
       ".*BuildInfo.*;.*javascript.*;.*FrontendAuditConnector.*;.*Routes.*;.*GuiceInjector;" +
       ".*ControllerConfiguration;.*LanguageSwitchController",
-    ScoverageKeys.coverageMinimumStmtTotal := 70,
+    ScoverageKeys.coverageMinimumStmtTotal := 80,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
     scalacOptions ++= Seq("-feature"),
@@ -71,3 +71,5 @@ lazy val testSettings: Seq[Def.Setting[_]] = Seq(
 )
 
 dependencyOverrides ++= AppDependencies.overrides
+
+addCommandAlias("scalastyleAll", "all scalastyle test:scalastyle")

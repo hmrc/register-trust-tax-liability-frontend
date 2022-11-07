@@ -21,10 +21,10 @@ package controllers
  import forms.YesNoFormProviderWithArguments
  import models.{CYMinus1TaxYear, CYMinus2TaxYears, CYMinus3TaxYears, CYMinus4TaxYears, CYMinusNTaxYears, TaxYearRange}
  import navigation.Navigator
- import org.mockito.Matchers.any
- import org.mockito.Mockito.when
- import org.scalatestplus.mockito.MockitoSugar
+ import org.mockito.ArgumentMatchers.any
+ import org.mockito.MockitoSugar
  import pages.DidDeclareTaxToHMRCYesNoPage
+ import play.api.data.Form
  import play.api.inject.bind
  import play.api.mvc.Call
  import play.api.test.FakeRequest
@@ -37,15 +37,15 @@ package controllers
 
 class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
 
-  override def onwardRoute = Call("GET", "/foo")
+  override def onwardRoute: Call = Call("GET", "/foo")
 
-  val formProvider = new YesNoFormProviderWithArguments()
-  def form(arguments: Seq[Any]) = formProvider.withPrefix("didDeclareToHMRC", arguments)
+  private val formProvider = new YesNoFormProviderWithArguments()
+  private def form(arguments: Seq[Any]): Form[Boolean] = formProvider.withPrefix("didDeclareToHMRC", arguments)
 
-  def didDeclareRoute(year: CYMinusNTaxYears) = routes.DidDeclareTaxToHMRCController.onPageLoad(draftId, year).url
+  private def didDeclareRoute(year: CYMinusNTaxYears) = routes.DidDeclareTaxToHMRCController.onPageLoad(draftId, year).url
 
-  val languageUtils: LanguageUtils = injector.instanceOf[LanguageUtils]
-  val taxYearRange = new TaxYearRange(languageUtils)
+  private val languageUtils: LanguageUtils = injector.instanceOf[LanguageUtils]
+  private val taxYearRange = new TaxYearRange(languageUtils)
 
   "DidDeclareTaxToHMRC Controller" when {
 
@@ -55,7 +55,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
       val taxYearStart: String = taxYearRange.startDate(taxYear)
       val taxYearEnd: String = taxYearRange.endDate(taxYear)
       val range: String = taxYearRange.toRange(taxYear)
-      
+
       "return OK and the correct view for a GET" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
@@ -185,7 +185,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
       val taxYearStart: String = taxYearRange.startDate(taxYear)
       val taxYearEnd: String = taxYearRange.endDate(taxYear)
       val range: String = taxYearRange.toRange(taxYear)
-      
+
       "return OK and the correct view for a GET" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
@@ -315,7 +315,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
       val taxYearStart: String = taxYearRange.startDate(taxYear)
       val taxYearEnd: String = taxYearRange.endDate(taxYear)
       val range: String = taxYearRange.toRange(taxYear)
-      
+
       "return OK and the correct view for a GET" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
@@ -445,7 +445,7 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
       val taxYearStart: String = taxYearRange.startDate(taxYear)
       val taxYearEnd: String = taxYearRange.endDate(taxYear)
       val range: String = taxYearRange.toRange(taxYear)
-      
+
       "return OK and the correct view for a GET" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()

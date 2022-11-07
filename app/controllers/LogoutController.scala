@@ -57,7 +57,7 @@ class LogoutController @Inject()(appConfig: FrontendAppConfig,
       )
 
     }
-    
+
     Redirect(appConfig.logoutUrl).withSession(session = ("feedbackId", Session.id(hc)))
 
   }
