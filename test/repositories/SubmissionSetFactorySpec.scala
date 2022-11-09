@@ -19,13 +19,11 @@ package repositories
 import base.SpecBase
 import generators.ModelGenerators
 import models.{RegistrationSubmission, UserAnswers, YearReturnType}
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.any
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsNull, Json}
 import play.twirl.api.Html
 import services.TaxLiabilityService
-import uk.gov.hmrc.http.HeaderCarrier
 import utils.CheckYourAnswersHelper
 import viewmodels.{AnswerRow, AnswerSection}
 
@@ -33,11 +31,9 @@ import scala.collection.immutable.Nil
 
 class SubmissionSetFactorySpec extends SpecBase with ScalaCheckPropertyChecks with ModelGenerators {
 
-  val mockCheckYourAnswersHelper: CheckYourAnswersHelper = mock[CheckYourAnswersHelper]
-  val mockTaxLiabilityService: TaxLiabilityService = mock[TaxLiabilityService]
-  val factory = new SubmissionSetFactory(mockCheckYourAnswersHelper, mockTaxLiabilityService)
-
-  implicit val hc: HeaderCarrier = HeaderCarrier()
+  private val mockCheckYourAnswersHelper: CheckYourAnswersHelper = mock[CheckYourAnswersHelper]
+  private val mockTaxLiabilityService: TaxLiabilityService = mock[TaxLiabilityService]
+  private val factory = new SubmissionSetFactory(mockCheckYourAnswersHelper, mockTaxLiabilityService)
 
   "Submission set factory" must {
 

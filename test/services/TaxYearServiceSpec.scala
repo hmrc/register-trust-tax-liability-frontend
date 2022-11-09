@@ -18,15 +18,14 @@ package services
 
 import base.SpecBase
 import generators.DateGenerators
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import uk.gov.hmrc.time.TaxYear
 
 class TaxYearServiceSpec extends SpecBase with ScalaCheckPropertyChecks with DateGenerators with BeforeAndAfterEach {
 
-  val taxYearService: TaxYearService = mock[TaxYearService]
+  private val taxYearService: TaxYearService = mock[TaxYearService]
 
   override def beforeEach(): Unit = {
     reset(taxYearService)

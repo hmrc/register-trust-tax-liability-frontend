@@ -80,5 +80,4 @@ object CYMinusNTaxYears {
 
     override def unbind(key: String, value: CYMinusNTaxYears): String = value.toString.trim.toLowerCase
   }
-
 }

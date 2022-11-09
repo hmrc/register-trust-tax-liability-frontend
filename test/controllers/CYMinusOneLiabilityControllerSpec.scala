@@ -21,10 +21,10 @@ import config.annotations.TaxLiability
 import forms.YesNoFormProviderWithArguments
 import models.{CYMinus1TaxYear, TaxYearRange}
 import navigation.Navigator
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar
 import pages.CYMinusOneYesNoPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -37,19 +37,19 @@ import scala.concurrent.Future
 
 class CYMinusOneLiabilityControllerSpec extends SpecBase with MockitoSugar {
 
-  override def onwardRoute = Call("GET", "/foo")
+  override def onwardRoute: Call = Call("GET", "/foo")
 
-  val formProvider = new YesNoFormProviderWithArguments()
+  private val formProvider = new YesNoFormProviderWithArguments()
 
-  def form(arguments: Seq[Any]) = formProvider.withPrefix("cyMinusOne.liability", arguments)
+  private def form(arguments: Seq[Any]): Form[Boolean] = formProvider.withPrefix("cyMinusOne.liability", arguments)
 
-  val languageUtils: LanguageUtils = injector.instanceOf[LanguageUtils]
-  val taxYearStart: String = new TaxYearRange(languageUtils).startDate(CYMinus1TaxYear)
-  val taxYearEnd: String = new TaxYearRange(languageUtils).endDate(CYMinus1TaxYear)
+  private val languageUtils: LanguageUtils = injector.instanceOf[LanguageUtils]
+  private val taxYearStart: String = new TaxYearRange(languageUtils).startDate(CYMinus1TaxYear)
+  private val taxYearEnd: String = new TaxYearRange(languageUtils).endDate(CYMinus1TaxYear)
 
-  val taxYear: String = s"$taxYearStart to $taxYearEnd"
+  private val taxYear: String = s"$taxYearStart to $taxYearEnd"
 
-  lazy val cyMinusOneLiabilityControllerRoute = routes.CYMinusOneLiabilityController.onPageLoad(draftId).url
+  private lazy val cyMinusOneLiabilityControllerRoute = routes.CYMinusOneLiabilityController.onPageLoad(draftId).url
 
   "CYMinusOneLiability Controller" must {
 

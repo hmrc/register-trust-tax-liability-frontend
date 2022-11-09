@@ -20,9 +20,8 @@ import base.SpecBase
 import connectors.SubmissionDraftConnector
 import models.TaskStatus.{Completed, InProgress}
 import models.{FirstTaxYearAvailable, StartDate}
-import org.mockito.Matchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito
-import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import pages.TrustStartDatePage
 import play.api.inject.bind
@@ -35,7 +34,7 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 class IndexControllerSpec extends SpecBase with BeforeAndAfterEach {
-  
+
   private val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
   private val mockTrustsStoreService = mock[TrustsStoreService]
 
@@ -44,7 +43,7 @@ class IndexControllerSpec extends SpecBase with BeforeAndAfterEach {
 
     when(mockTrustsStoreService.getTaskStatus(any())(any(), any()))
       .thenReturn(Future.successful(InProgress))
-    
+
     when(mockTrustsStoreService.updateTaskStatus(any(), any())(any(), any()))
       .thenReturn(Future.successful(HttpResponse(OK, "")))
 
@@ -53,7 +52,7 @@ class IndexControllerSpec extends SpecBase with BeforeAndAfterEach {
   }
 
   "Index Controller" must {
-    
+
     val startDate = LocalDate.of(2015, 5, 1)
 
     "for an existing session" when {
@@ -80,7 +79,7 @@ class IndexControllerSpec extends SpecBase with BeforeAndAfterEach {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(draftId).url)
 
-        verify(registrationsRepository, never()).resetCache(any())(any(), any())
+        verify(registrationsRepository, never).resetCache(any())(any(), any())
 
         val inOrder = Mockito.inOrder(mockTrustsStoreService)
         inOrder.verify(mockTrustsStoreService).getTaskStatus(eqTo(draftId))(any(), any())
@@ -90,7 +89,7 @@ class IndexControllerSpec extends SpecBase with BeforeAndAfterEach {
       }
 
       "redirect to user answers if trust start date is not changed and answers previously completed" in {
-        
+
         when(mockTrustsStoreService.getTaskStatus(any())(any(), any())).thenReturn(Future.successful(Completed))
 
         val existingUserAnswers = emptyUserAnswers.set(TrustStartDatePage, startDate).success.value
@@ -110,7 +109,7 @@ class IndexControllerSpec extends SpecBase with BeforeAndAfterEach {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(routes.CheckYourAnswersController.onPageLoad(draftId).url)
 
-        verify(registrationsRepository, never()).resetCache(any())(any(), any())
+        verify(registrationsRepository, never).resetCache(any())(any(), any())
 
         val inOrder = Mockito.inOrder(mockTrustsStoreService)
         inOrder.verify(mockTrustsStoreService).getTaskStatus(eqTo(draftId))(any(), any())
@@ -166,7 +165,7 @@ class IndexControllerSpec extends SpecBase with BeforeAndAfterEach {
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustBe "http://localhost:9781/trusts-registration/draftId/registration-progress"
 
-      verify(mockTrustsStoreService, never()).updateTaskStatus(eqTo(draftId), eqTo(InProgress))(any(), any())
+      verify(mockTrustsStoreService, never).updateTaskStatus(eqTo(draftId), eqTo(InProgress))(any(), any())
 
       application.stop()
     }

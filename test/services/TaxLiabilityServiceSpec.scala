@@ -19,8 +19,7 @@ package services
 import base.SpecBase
 import generators.DateGenerators
 import models.{CYMinus1TaxYear, CYMinus2TaxYears, CYMinus3TaxYears, CYMinus4TaxYears, YearReturnType}
-import org.mockito.Matchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.ArgumentMatchers.any
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -30,8 +29,8 @@ import java.time.LocalDate
 
 class TaxLiabilityServiceSpec extends SpecBase with ScalaCheckPropertyChecks with DateGenerators with BeforeAndAfterEach {
 
-  val mockTaxYearService: TaxYearService = mock[TaxYearService]
-  val taxLiabilityService = new TaxLiabilityService(mockTaxYearService)
+  private val mockTaxYearService: TaxYearService = mock[TaxYearService]
+  private val taxLiabilityService = new TaxLiabilityService(mockTaxYearService)
 
   override def beforeEach(): Unit = {
     reset(mockTaxYearService)

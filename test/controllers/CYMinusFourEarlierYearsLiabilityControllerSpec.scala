@@ -19,9 +19,8 @@ package controllers
 import base.SpecBase
 import config.annotations.TaxLiability
 import navigation.Navigator
-import org.mockito.Matchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar
 import pages.CYMinusFourEarlierYearsYesNoPage
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -35,13 +34,13 @@ import scala.concurrent.Future
 
 class CYMinusFourEarlierYearsLiabilityControllerSpec extends SpecBase with MockitoSugar {
 
-  override def onwardRoute = Call("GET", "/foo")
+  override def onwardRoute: Call = Call("GET", "/foo")
 
-  val taxYear: String = TaxYear.current.back(4).startYear.toString
+  private val taxYear: String = TaxYear.current.back(4).startYear.toString
 
-  lazy val cyMinusFourEarlierYearsLiabilityControllerRoute = routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(draftId).url
+  private lazy val cyMinusFourEarlierYearsLiabilityControllerRoute = routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(draftId).url
 
-  lazy val submitRoute = routes.CYMinusFourEarlierYearsLiabilityController.onSubmit(draftId)
+  private lazy val submitRoute = routes.CYMinusFourEarlierYearsLiabilityController.onSubmit(draftId)
 
   "CYMinusFourEarlierYearsLiability Controller" must {
 
