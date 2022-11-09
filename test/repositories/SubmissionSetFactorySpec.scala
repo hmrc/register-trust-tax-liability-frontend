@@ -24,7 +24,6 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsNull, Json}
 import play.twirl.api.Html
 import services.TaxLiabilityService
-import uk.gov.hmrc.http.HeaderCarrier
 import utils.CheckYourAnswersHelper
 import viewmodels.{AnswerRow, AnswerSection}
 
@@ -35,8 +34,6 @@ class SubmissionSetFactorySpec extends SpecBase with ScalaCheckPropertyChecks wi
   private val mockCheckYourAnswersHelper: CheckYourAnswersHelper = mock[CheckYourAnswersHelper]
   private val mockTaxLiabilityService: TaxLiabilityService = mock[TaxLiabilityService]
   private val factory = new SubmissionSetFactory(mockCheckYourAnswersHelper, mockTaxLiabilityService)
-
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   "Submission set factory" must {
 
