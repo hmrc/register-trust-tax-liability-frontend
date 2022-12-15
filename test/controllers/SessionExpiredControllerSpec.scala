@@ -54,7 +54,7 @@ class SessionExpiredControllerSpec extends SpecBase {
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustBe
-        s"${frontendAppConfig.loginUrl}?continue=http%3A%2F%2Flocalhost%3A9781%2Ftrusts-registration&origin=register-trust-liability-frontend"
+        s"${frontendAppConfig.loginUrl}?continue=http%3A%2F%2Flocalhost%3A9781%2Ftrusts-registration%2Ftax-liability&origin=register-trust-liability-frontend"
 
       application.stop()
 
