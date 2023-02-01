@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.CheckYourAnswersHelper
 import views.html.CheckYourAnswersView
 
-import scala.concurrent.ExecutionContext.Implicits._
+import scala.concurrent.ExecutionContext
 
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
@@ -39,7 +39,7 @@ class CheckYourAnswersController @Inject()(
                                             registrationsRepository: RegistrationsRepository,
                                             val appConfig: FrontendAppConfig,
                                             trustsStoreService: TrustsStoreService
-                                          ) extends FrontendBaseController with I18nSupport {
+                                          )(implicit val ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithData(draftId) {
     implicit request =>

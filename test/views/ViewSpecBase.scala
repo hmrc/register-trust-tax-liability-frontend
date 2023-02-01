@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,9 +65,8 @@ trait ViewSpecBase extends SpecBase {
     assert(doc.getElementById(id) != null, "\n\nElement " + id + " was not rendered on the page.\n")
   }
 
-  def assertRenderedByClass(doc: Document, cssClass: String): Assertion = {
-    assert(doc.getElementsByClass(cssClass) != null, "\n\nElement " + cssClass + " was not rendered on the page.\n")
-  }
+  def assertRenderedByClass(doc: Document, cssClass: String): Assertion =
+    assert(!doc.getElementsByClass(cssClass).isEmpty, "\n\nElement " + cssClass + " was not rendered on the page.\n")
 
   def assertNotRenderedById(doc: Document, id: String): Assertion = {
     assert(doc.getElementById(id) == null, "\n\nElement " + id + " was rendered on the page.\n")

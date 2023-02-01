@@ -12,7 +12,6 @@ lazy val root = (project in file("."))
   .settings(
     DefaultBuildSettings.scalaSettings,
     DefaultBuildSettings.defaultSettings(),
-    SbtDistributablesPlugin.publishingSettings,
     inConfig(Test)(testSettings),
     scalaVersion := "2.12.16",
     SilencerSettings(),
