@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ class SectionFormatterSpec extends SpecBase {
             classes = "govuk-!-width-two-thirds",
             content = Text("Did the trust need to pay any tax from 6 April 2019 to 5 April 2020?")
           ),
-          value = Value(HtmlContent("Yes")),
+          value = Value(classes = "govuk-!-width-one-half", content = HtmlContent("Yes")),
           actions = Option(Actions(items = Seq(ActionItem(href = routes.CYMinusOneLiabilityController.onPageLoad(draftId).url,
             classes = s"change-link-0",
             visuallyHiddenText = Some("Did the trust need to pay any tax from 6 April 2019 to 5 April 2020?"),
@@ -71,7 +71,7 @@ class SectionFormatterSpec extends SpecBase {
             classes = "govuk-!-width-two-thirds",
             content = Text("Was the tax from 6 April 2019 to 5 April 2020 declared?")
           ),
-          value = Value(HtmlContent("No")),
+          value = Value(classes = "govuk-!-width-one-half", content = HtmlContent("No")),
           actions = Option(Actions(items = Seq(ActionItem(href = routes.DidDeclareTaxToHMRCController.onPageLoad(draftId, CYMinus1TaxYear).url,
             classes = s"change-link-1",
             visuallyHiddenText = Some("Was the tax from 6 April 2019 to 5 April 2020 declared?"),
