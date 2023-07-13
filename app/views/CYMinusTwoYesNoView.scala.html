@@ -32,7 +32,7 @@
     showBackLink = true
 ) {
 
-    @formHelper(action = CYMinusTwoLiabilityController.onSubmit(draftId), 'autoComplete -> "off") {
+    @formHelper(action = CYMinusTwoLiabilityController.onSubmit(draftId), Symbol("autoComplete") -> "off") {
 
         @errorSummary(form.errors)
 
