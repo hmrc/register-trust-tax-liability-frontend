@@ -73,8 +73,8 @@ object CYMinusNTaxYears {
       }
 
       for {
-        id <- intBinder.bind(key, value).right
-        taxYear <- taxYearFromId(id).toRight("Not a valid tax year").right
+        id <- intBinder.bind(key, value)
+        taxYear <- taxYearFromId(id).toRight("Not a valid tax year")
       } yield taxYear
     }
 

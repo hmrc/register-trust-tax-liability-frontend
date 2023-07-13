@@ -34,7 +34,7 @@
     showBackLink = true
 ) {
 
-    @formHelper(action = CheckYourAnswersController.onSubmit(draftId), 'autoComplete -> "off") {
+    @formHelper(action = CheckYourAnswersController.onSubmit(draftId), Symbol("autoComplete") -> "off") {
 
         @heading("checkYourAnswers.heading")
 
