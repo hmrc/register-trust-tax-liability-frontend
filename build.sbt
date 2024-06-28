@@ -6,7 +6,8 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 lazy val appName: String = "register-trust-tax-liability-frontend"
 
-ThisBuild / scalaVersion := "2.13.12"
+ThisBuild / scalaVersion := "2.13.14"
+ThisBuild / majorVersion := 0
 
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
@@ -15,7 +16,6 @@ lazy val root = (project in file("."))
     DefaultBuildSettings.scalaSettings,
     DefaultBuildSettings.defaultSettings(),
     inConfig(Test)(testSettings),
-    majorVersion := 0,
     name := appName,
     RoutesKeys.routesImport += "models._",
     RoutesKeys.routesImport += "models.CYMinusNTaxYears._",
