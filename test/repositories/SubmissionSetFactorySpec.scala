@@ -20,14 +20,13 @@ import base.SpecBase
 import generators.ModelGenerators
 import models.{RegistrationSubmission, UserAnswers, YearReturnType}
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsNull, Json}
 import play.twirl.api.Html
 import services.TaxLiabilityService
 import utils.CheckYourAnswersHelper
 import viewmodels.{AnswerRow, AnswerSection}
-
-import scala.collection.immutable.Nil
 
 class SubmissionSetFactorySpec extends SpecBase with ScalaCheckPropertyChecks with ModelGenerators {
 

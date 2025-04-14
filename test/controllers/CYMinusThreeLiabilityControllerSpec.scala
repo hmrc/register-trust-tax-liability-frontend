@@ -22,7 +22,8 @@ import forms.YesNoFormProviderWithArguments
 import models.{CYMinus3TaxYears, TaxYearRange}
 import navigation.Navigator
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
 import pages.CYMinusThreeYesNoPage
 import play.api.data.Form
 import play.api.inject.bind
