@@ -22,6 +22,7 @@ import models.TaskStatus.{Completed, InProgress}
 import models.{FirstTaxYearAvailable, StartDate}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito
+import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import pages.TrustStartDatePage
 import play.api.inject.bind
@@ -79,7 +80,7 @@ class IndexControllerSpec extends SpecBase with BeforeAndAfterEach {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(routes.CYMinusFourEarlierYearsLiabilityController.onPageLoad(draftId).url)
 
-        verify(registrationsRepository, never).resetCache(any())(any(), any())
+        verify(registrationsRepository, never()).resetCache(any())(any(), any())
 
         val inOrder = Mockito.inOrder(mockTrustsStoreService)
         inOrder.verify(mockTrustsStoreService).getTaskStatus(eqTo(draftId))(any(), any())
