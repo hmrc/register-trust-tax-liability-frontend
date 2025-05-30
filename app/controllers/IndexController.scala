@@ -101,7 +101,6 @@ class IndexController @Inject()(
   private def redirect(draftId: String)(implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
     submissionDraftConnector.getFirstTaxYearAvailable(draftId).map {
       firstTaxYearAvailable =>
-
         firstTaxYearAvailable.yearsAgo match {
           case 4 if firstTaxYearAvailable.earlierYearsToDeclare =>
             Redirect(CYMinusFourEarlierYearsLiabilityController.onPageLoad(draftId))
@@ -116,7 +115,8 @@ class IndexController @Inject()(
           case 1 =>
             Redirect(CYMinusOneLiabilityController.onPageLoad(draftId))
           case _ =>
-            InternalServerError(errorHandler.internalServerErrorTemplate)
+//            InternalServerError(errorHandler.internalServerErrorTemplate)
+            errorHandler.internalServerErrorTemplate.map(InternalServerError(_))
         }
     }
   }
