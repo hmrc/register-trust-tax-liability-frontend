@@ -13,8 +13,6 @@ lazy val root = (project in file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(
-    DefaultBuildSettings.scalaSettings,
-    DefaultBuildSettings.defaultSettings(),
     inConfig(Test)(testSettings),
     name := appName,
     RoutesKeys.routesImport += "models._",

@@ -99,24 +99,23 @@ class IndexController @Inject()(
   }
 
   private def redirect(draftId: String)(implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
-    submissionDraftConnector.getFirstTaxYearAvailable(draftId).map {
+    submissionDraftConnector.getFirstTaxYearAvailable(draftId).flatMap {
       firstTaxYearAvailable =>
-
         firstTaxYearAvailable.yearsAgo match {
           case 4 if firstTaxYearAvailable.earlierYearsToDeclare =>
-            Redirect(CYMinusFourEarlierYearsLiabilityController.onPageLoad(draftId))
+            Future.successful(Redirect(CYMinusFourEarlierYearsLiabilityController.onPageLoad(draftId)))
           case 4 =>
-            Redirect(CYMinusFourLiabilityController.onPageLoad(draftId))
+            Future.successful(Redirect(CYMinusFourLiabilityController.onPageLoad(draftId)))
           case 3 if firstTaxYearAvailable.earlierYearsToDeclare =>
-            Redirect(CYMinusThreeEarlierYearsLiabilityController.onPageLoad(draftId))
+            Future.successful(Redirect(CYMinusThreeEarlierYearsLiabilityController.onPageLoad(draftId)))
           case 3 =>
-            Redirect(CYMinusThreeLiabilityController.onPageLoad(draftId))
+            Future.successful(Redirect(CYMinusThreeLiabilityController.onPageLoad(draftId)))
           case 2 =>
-            Redirect(CYMinusTwoLiabilityController.onPageLoad(draftId))
+            Future.successful(Redirect(CYMinusTwoLiabilityController.onPageLoad(draftId)))
           case 1 =>
-            Redirect(CYMinusOneLiabilityController.onPageLoad(draftId))
+            Future.successful(Redirect(CYMinusOneLiabilityController.onPageLoad(draftId)))
           case _ =>
-            InternalServerError(errorHandler.internalServerErrorTemplate)
+            errorHandler.internalServerErrorTemplate.map(InternalServerError(_))
         }
     }
   }

@@ -18,32 +18,42 @@ package connectors
 
 import config.FrontendAppConfig
 import models.{FirstTaxYearAvailable, RegistrationSubmission, StartDate, SubmissionDraftResponse}
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SubmissionDraftConnector @Inject()(http: HttpClient, config: FrontendAppConfig) {
+class SubmissionDraftConnector @Inject()(http: HttpClientV2, config: FrontendAppConfig) {
 
   private val submissionsBaseUrl = s"${config.trustsUrl}/trusts/register/submission-drafts"
 
   def setDraftSectionSet(draftId: String, section: String, data: RegistrationSubmission.DataSet)
                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-    http.POST[JsValue, HttpResponse](s"$submissionsBaseUrl/$draftId/set/$section", Json.toJson(data))
+    http
+      .post(url"$submissionsBaseUrl/$draftId/set/$section")
+      .withBody(Json.toJson(data))
+      .execute[HttpResponse]
   }
 
   def getDraftSection(draftId: String, section: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SubmissionDraftResponse] = {
-    http.GET[SubmissionDraftResponse](s"$submissionsBaseUrl/$draftId/$section")
+    http
+      .get(url"$submissionsBaseUrl/$draftId/$section")
+      .execute[SubmissionDraftResponse]
   }
 
   def getTrustStartDate(draftId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[StartDate]] = {
-    http.GET[Option[StartDate]](s"$submissionsBaseUrl/$draftId/when-trust-setup")
+    http
+      .get(url"$submissionsBaseUrl/$draftId/when-trust-setup")
+      .execute[Option[StartDate]]
   }
 
   def getFirstTaxYearAvailable(draftId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[FirstTaxYearAvailable] = {
-    http.GET[FirstTaxYearAvailable](s"$submissionsBaseUrl/$draftId/first-tax-year-available")
+    http
+      .get(url"$submissionsBaseUrl/$draftId/first-tax-year-available")
+      .execute[FirstTaxYearAvailable]
   }
 
 }
