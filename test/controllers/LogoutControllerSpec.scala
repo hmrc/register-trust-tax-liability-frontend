@@ -18,36 +18,55 @@ package controllers
 
 import base.SpecBase
 import org.mockito.ArgumentMatchers.{eq => eqTo, _}
-import org.mockito.Mockito.{never, verify}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.{never, times, verify}
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
-class LogoutControllerSpec extends SpecBase with MockitoSugar {
+class LogoutControllerSpec extends SpecBase {
 
-  "logout should redirect to feedback and audit" in {
+  "LogoutController.logout" must {
 
-    val mockAuditConnector = mock[AuditConnector]
+    "redirect to logoutUrl and audit when logoutAudit is enabled" in {
+      val mockAuditConnector = mock[AuditConnector]
 
-    val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-    .overrides(bind[AuditConnector].toInstance(mockAuditConnector))
-    .build()
+      val application = applicationBuilder(Some(emptyUserAnswers))
+        .configure("microservice.services.features.auditing.logout" -> true)
+        .overrides(bind[AuditConnector].toInstance(mockAuditConnector))
+        .build()
 
-    val request = FakeRequest(GET, routes.LogoutController.logout().url)
+      val request = FakeRequest(GET, routes.LogoutController.logout().url)
+      val result  = route(application, request).value
 
-    val result = route(application, request).value
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe frontendAppConfig.logoutUrl
 
-    status(result) mustEqual SEE_OTHER
+      verify(mockAuditConnector, times(1))
+        .sendExplicitAudit(eqTo("trusts"), any[Map[String, String]])(any(), any())
 
-    redirectLocation(result).value mustBe frontendAppConfig.logoutUrl
+      application.stop()
+    }
 
-    verify(mockAuditConnector, never())
-      .sendExplicitAudit(eqTo("trusts"), any[Map[String, String]])(any(), any())
+    "redirect to logoutUrl and not audit when logoutAudit is disabled" in {
+      val mockAuditConnector = mock[AuditConnector]
 
-    application.stop()
+      val application = applicationBuilder(Some(emptyUserAnswers))
+        .configure("microservice.services.features.auditing.logout" -> false)
+        .overrides(bind[AuditConnector].toInstance(mockAuditConnector))
+        .build()
 
+      val request = FakeRequest(GET, routes.LogoutController.logout().url)
+      val result  = route(application, request).value
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe
+        application.injector.instanceOf[config.FrontendAppConfig].logoutUrl
+
+      verify(mockAuditConnector, never)
+        .sendExplicitAudit(eqTo("trusts"), any[Map[String, String]])(any(), any())
+
+      application.stop()
+    }
   }
-
 }
