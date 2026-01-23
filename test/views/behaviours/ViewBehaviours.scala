@@ -32,9 +32,7 @@ trait ViewBehaviours extends ViewSpecBase {
 
         "have the correct banner title" in {
 
-          val doc = asDocument(view)
-          val bannerTitle = doc.getElementsByClass("govuk-header__link govuk-header__service-name")
-          bannerTitle.html() mustBe messages("service.name")
+          asDocument(view).getElementsByClass("govuk-service-navigation__service-name").text().trim mustBe messages("service.name")
         }
 
         "display the correct browser title" in {
@@ -74,10 +72,7 @@ trait ViewBehaviours extends ViewSpecBase {
       "rendered" must {
 
         "have the correct banner title" in {
-
-          val doc = asDocument(view)
-          val bannerTitle = doc.getElementsByClass("govuk-header__link govuk-header__service-name")
-          bannerTitle.html() mustBe messages("service.name")
+          asDocument(view).getElementsByClass("govuk-service-navigation__service-name").text().trim mustBe messages("service.name")
         }
 
         "display the correct browser title" in {
