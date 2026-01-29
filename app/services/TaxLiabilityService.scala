@@ -21,7 +21,7 @@ import pages.DidDeclareTaxToHMRCYesNoPage
 
 import javax.inject.Inject
 
-class TaxLiabilityService @Inject()(taxYearService: TaxYearService) {
+class TaxLiabilityService @Inject() (taxYearService: TaxYearService) {
 
   final val MonthsToSubtract: Int = 6 // October 5th
 
@@ -30,7 +30,7 @@ class TaxLiabilityService @Inject()(taxYearService: TaxYearService) {
     val halfwayThroughTaxYear =
       taxYearService.currentTaxYear.finishes.minusMonths(MonthsToSubtract)
 
-    CYMinusNTaxYears.taxYears.foldLeft[List[YearReturnType]](Nil)((acc, taxYear) => {
+    CYMinusNTaxYears.taxYears.foldLeft[List[YearReturnType]](Nil)((acc, taxYear) =>
       if (userAnswers.get(DidDeclareTaxToHMRCYesNoPage(taxYear)).contains(false)) {
         taxYear match {
           case CYMinus1TaxYear =>
@@ -38,7 +38,7 @@ class TaxLiabilityService @Inject()(taxYearService: TaxYearService) {
               taxReturnYear = taxYearService.nTaxYearsAgoFinishYear(taxYear.n),
               taxConsequence = taxYearService.currentDate.isAfter(halfwayThroughTaxYear)
             )
-          case _ =>
+          case _               =>
             acc :+ YearReturnType(
               taxReturnYear = taxYearService.nTaxYearsAgoFinishYear(taxYear.n),
               taxConsequence = true
@@ -47,7 +47,7 @@ class TaxLiabilityService @Inject()(taxYearService: TaxYearService) {
       } else {
         acc
       }
-    })
+    )
   }
 
 }

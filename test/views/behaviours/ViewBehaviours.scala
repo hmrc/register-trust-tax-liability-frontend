@@ -22,9 +22,7 @@ import views.ViewSpecBase
 
 trait ViewBehaviours extends ViewSpecBase {
 
-  def normalPage(view: HtmlFormat.Appendable,
-                 messageKeyPrefix: String,
-                 expectedGuidanceKeys: String*): Unit = {
+  def normalPage(view: HtmlFormat.Appendable, messageKeyPrefix: String, expectedGuidanceKeys: String*): Unit =
 
     "behave like a normal page" when {
 
@@ -32,7 +30,9 @@ trait ViewBehaviours extends ViewSpecBase {
 
         "have the correct banner title" in {
 
-          asDocument(view).getElementsByClass("govuk-service-navigation__service-name").text().trim mustBe messages("service.name")
+          asDocument(view).getElementsByClass("govuk-service-navigation__service-name").text().trim mustBe messages(
+            "service.name"
+          )
         }
 
         "display the correct browser title" in {
@@ -60,19 +60,22 @@ trait ViewBehaviours extends ViewSpecBase {
         }
       }
     }
-  }
 
-  def dynamicTitlePage(view: HtmlFormat.Appendable,
-                       messageKeyPrefix: String,
-                       messageKeyParam: String,
-                       expectedGuidanceKeys: String*): Unit = {
+  def dynamicTitlePage(
+    view: HtmlFormat.Appendable,
+    messageKeyPrefix: String,
+    messageKeyParam: String,
+    expectedGuidanceKeys: String*
+  ): Unit =
 
     "behave like a dynamic title page" when {
 
       "rendered" must {
 
         "have the correct banner title" in {
-          asDocument(view).getElementsByClass("govuk-service-navigation__service-name").text().trim mustBe messages("service.name")
+          asDocument(view).getElementsByClass("govuk-service-navigation__service-name").text().trim mustBe messages(
+            "service.name"
+          )
         }
 
         "display the correct browser title" in {
@@ -100,35 +103,34 @@ trait ViewBehaviours extends ViewSpecBase {
         }
       }
     }
-  }
 
-  def pageWithHint[A](form: Form[A],
-                      createView: Form[A] => HtmlFormat.Appendable,
-                      expectedHintKey: String,
-                      messageArgs: Seq[String] = Nil): Unit = {
+  def pageWithHint[A](
+    form: Form[A],
+    createView: Form[A] => HtmlFormat.Appendable,
+    expectedHintKey: String,
+    messageArgs: Seq[String] = Nil
+  ): Unit =
 
     "behave like a page with hint text" in {
 
       val doc = asDocument(createView(form))
       assertContainsHint(doc, "value", Some(messages(expectedHintKey, messageArgs: _*)))
     }
-  }
 
-  def pageWithBackLink(view: HtmlFormat.Appendable): Unit = {
+  def pageWithBackLink(view: HtmlFormat.Appendable): Unit =
 
     "behave like a page with a back link" in {
 
       val doc = asDocument(view)
       assertRenderedById(doc, "back-link")
     }
-  }
 
-  def pageWithASubmitButton(view: HtmlFormat.Appendable): Unit = {
+  def pageWithASubmitButton(view: HtmlFormat.Appendable): Unit =
 
     "behave like a page with a submit button" in {
 
       val doc = asDocument(view)
       assertRenderedById(doc, "submit")
     }
-  }
+
 }

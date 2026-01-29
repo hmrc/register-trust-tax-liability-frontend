@@ -22,15 +22,13 @@ import pages._
 import play.api.i18n.Messages
 import viewmodels.{AnswerRow, AnswerSection}
 
-class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter,
-                                       taxYearRange: TaxYearRange) {
+class CheckYourAnswersHelper @Inject() (answerRowConverter: AnswerRowConverter, taxYearRange: TaxYearRange) {
 
   def apply(userAnswers: UserAnswers)(implicit messages: Messages): Seq[AnswerSection] = {
 
     val bound = answerRowConverter.bind(userAnswers)
 
-    CYMinusNTaxYears.taxYears.foldLeft[Seq[AnswerSection]](Nil)((acc, taxYear) => {
-
+    CYMinusNTaxYears.taxYears.foldLeft[Seq[AnswerSection]](Nil) { (acc, taxYear) =>
       val args = taxYearRange.toLabelArgs(taxYear)
 
       val answerRows: Seq[AnswerRow] = Seq(
@@ -43,20 +41,22 @@ class CheckYourAnswersHelper @Inject()(answerRowConverter: AnswerRowConverter,
         bound.yesNoQuestion(
           query = DidDeclareTaxToHMRCYesNoPage(taxYear),
           labelKey = "didDeclareToHMRC",
-          changeUrl = Some(controllers.routes.DidDeclareTaxToHMRCController.onPageLoad(userAnswers.draftId, taxYear).url),
+          changeUrl =
+            Some(controllers.routes.DidDeclareTaxToHMRCController.onPageLoad(userAnswers.draftId, taxYear).url),
           arguments = args
         )
       ).flatten
 
       answerRows match {
         case Nil => acc
-        case _ => acc :+ AnswerSection(
-          headingKey = "taxLiabilityBetweenYears.checkYourAnswerSectionHeading",
-          rows = answerRows,
-          headingArgs = args
-        )
+        case _   =>
+          acc :+ AnswerSection(
+            headingKey = "taxLiabilityBetweenYears.checkYourAnswerSectionHeading",
+            rows = answerRows,
+            headingArgs = args
+          )
       }
-    })
+    }
   }
 
 }

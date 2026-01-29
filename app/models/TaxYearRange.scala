@@ -22,9 +22,10 @@ import uk.gov.hmrc.time.TaxYear
 
 import javax.inject.Inject
 
-class TaxYearRange @Inject()(languageUtils: LanguageUtils) {
+class TaxYearRange @Inject() (languageUtils: LanguageUtils) {
 
-  private def taxYearOf(cYMinusNTaxYears: CYMinusNTaxYears): TaxYear = uk.gov.hmrc.time.TaxYear.current.back(cYMinusNTaxYears.n)
+  private def taxYearOf(cYMinusNTaxYears: CYMinusNTaxYears): TaxYear =
+    uk.gov.hmrc.time.TaxYear.current.back(cYMinusNTaxYears.n)
 
   def startDate(cYMinusNTaxYears: CYMinusNTaxYears)(implicit messages: Messages): String =
     languageUtils.Dates.formatDate(taxYearOf(cYMinusNTaxYears).starts)
@@ -34,10 +35,10 @@ class TaxYearRange @Inject()(languageUtils: LanguageUtils) {
 
   def yearAtStart(cYMinusNTaxYears: CYMinusNTaxYears): String = taxYearOf(cYMinusNTaxYears).startYear.toString
 
-  def toRange(cYMinusNTaxYears: CYMinusNTaxYears)(implicit messages: Messages): String = {
+  def toRange(cYMinusNTaxYears: CYMinusNTaxYears)(implicit messages: Messages): String =
     messages("taxYearToRange", startDate(cYMinusNTaxYears), endDate(cYMinusNTaxYears))
-  }
 
   def toLabelArgs(cYMinusNTaxYears: CYMinusNTaxYears)(implicit messages: Messages): Seq[String] =
     Seq(startDate(cYMinusNTaxYears), endDate(cYMinusNTaxYears))
+
 }

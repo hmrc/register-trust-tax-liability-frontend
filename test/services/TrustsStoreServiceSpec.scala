@@ -33,7 +33,7 @@ class TrustsStoreServiceSpec extends SpecBase {
 
   private val featureFlagService = new TrustsStoreService(mockConnector)
 
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
+  implicit private val hc: HeaderCarrier = HeaderCarrier()
 
   "TrustsStoreService" when {
 
@@ -67,4 +67,5 @@ class TrustsStoreServiceSpec extends SpecBase {
       }
     }
   }
+
 }

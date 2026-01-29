@@ -25,54 +25,51 @@ import viewmodels.{AnswerRow, AnswerSection}
 
 import javax.inject.Inject
 
-class SubmissionSetFactory @Inject()(checkYourAnswersHelper: CheckYourAnswersHelper,
-                                     taxLiabilityService: TaxLiabilityService) {
+class SubmissionSetFactory @Inject() (
+  checkYourAnswersHelper: CheckYourAnswersHelper,
+  taxLiabilityService: TaxLiabilityService
+) {
 
-  def reset(userAnswers: UserAnswers): RegistrationSubmission.DataSet = {
+  def reset(userAnswers: UserAnswers): RegistrationSubmission.DataSet =
     RegistrationSubmission.DataSet(
       data = Json.toJson(userAnswers),
       registrationPieces = List(RegistrationSubmission.MappedPiece("yearsReturns", JsNull)),
       answerSections = Nil
     )
-  }
 
-  def createFrom(userAnswers: UserAnswers)
-                (implicit messages: Messages): RegistrationSubmission.DataSet = {
+  def createFrom(userAnswers: UserAnswers)(implicit messages: Messages): RegistrationSubmission.DataSet =
     RegistrationSubmission.DataSet(
       data = Json.toJson(userAnswers),
       registrationPieces = mappedData(userAnswers),
       answerSections = answerSections(userAnswers)
     )
-  }
 
-  private def mappedData(userAnswers: UserAnswers): List[RegistrationSubmission.MappedPiece] = {
+  private def mappedData(userAnswers: UserAnswers): List[RegistrationSubmission.MappedPiece] =
     taxLiabilityService.evaluateTaxYears(userAnswers) match {
-      case Nil => List.empty
+      case Nil          => List.empty
       case yearsReturns =>
         val payload = Json.obj("returns" -> Json.toJson(yearsReturns))
         List(RegistrationSubmission.MappedPiece("yearsReturns", payload))
     }
-  }
 
-  private def answerSections(userAnswers: UserAnswers)
-                            (implicit messages: Messages): List[RegistrationSubmission.AnswerSection] =
+  private def answerSections(userAnswers: UserAnswers)(implicit
+    messages: Messages
+  ): List[RegistrationSubmission.AnswerSection] =
     checkYourAnswersHelper(userAnswers).map(convertForSubmission).toList
 
-  private def convertForSubmission(section: AnswerSection): RegistrationSubmission.AnswerSection = {
+  private def convertForSubmission(section: AnswerSection): RegistrationSubmission.AnswerSection =
     RegistrationSubmission.AnswerSection(
       headingKey = Some(section.headingKey),
       rows = section.rows.map(convertForSubmission),
       sectionKey = section.sectionKey,
       headingArgs = section.headingArgs
     )
-  }
 
-  private def convertForSubmission(row: AnswerRow): RegistrationSubmission.AnswerRow = {
+  private def convertForSubmission(row: AnswerRow): RegistrationSubmission.AnswerRow =
     RegistrationSubmission.AnswerRow(
       label = row.label,
       answer = row.answer.toString,
       labelArgs = row.labelArgs
     )
-  }
 
 }

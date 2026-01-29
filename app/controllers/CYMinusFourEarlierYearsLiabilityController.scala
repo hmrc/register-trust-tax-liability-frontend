@@ -29,26 +29,24 @@ import views.html.EarlierYearsToPayThanAskedYesNoView
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class CYMinusFourEarlierYearsLiabilityController @Inject()(
-                                                            val controllerComponents: MessagesControllerComponents,
-                                                            @TaxLiability navigator: Navigator,
-                                                            actions: Actions,
-                                                            view: EarlierYearsToPayThanAskedYesNoView,
-                                                            taxYearRange: TaxYearRange
-                                                          ) extends FrontendBaseController with I18nSupport {
+class CYMinusFourEarlierYearsLiabilityController @Inject() (
+  val controllerComponents: MessagesControllerComponents,
+  @TaxLiability navigator: Navigator,
+  actions: Actions,
+  view: EarlierYearsToPayThanAskedYesNoView,
+  taxYearRange: TaxYearRange
+) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithData(draftId) {
-    implicit request =>
+  def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithData(draftId) { implicit request =>
+    val start = taxYearRange.yearAtStart(CYMinus4TaxYears)
 
-      val start = taxYearRange.yearAtStart(CYMinus4TaxYears)
+    val continueUrl = routes.CYMinusFourEarlierYearsLiabilityController.onSubmit(draftId)
 
-      val continueUrl = routes.CYMinusFourEarlierYearsLiabilityController.onSubmit(draftId)
-
-      Ok(view(start, draftId, continueUrl))
+    Ok(view(start, draftId, continueUrl))
   }
 
-  def onSubmit(draftId: String): Action[AnyContent] = actions.authWithData(draftId).async {
-    implicit request =>
-      Future.successful(Redirect(navigator.nextPage(CYMinusFourEarlierYearsYesNoPage, draftId, request.userAnswers)))
+  def onSubmit(draftId: String): Action[AnyContent] = actions.authWithData(draftId).async { implicit request =>
+    Future.successful(Redirect(navigator.nextPage(CYMinusFourEarlierYearsYesNoPage, draftId, request.userAnswers)))
   }
+
 }

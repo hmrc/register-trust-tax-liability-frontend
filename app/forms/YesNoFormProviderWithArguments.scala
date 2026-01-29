@@ -29,4 +29,5 @@ class YesNoFormProviderWithArguments @Inject() extends Mappings {
         args = arguments
       )
     )
+
 }

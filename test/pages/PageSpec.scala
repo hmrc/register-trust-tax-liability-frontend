@@ -30,4 +30,5 @@ class PageSpec extends SpecBase {
       pageString mustBe "TestPage"
     }
   }
+
 }

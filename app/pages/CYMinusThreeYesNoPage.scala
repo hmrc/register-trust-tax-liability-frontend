@@ -27,11 +27,11 @@ case object CYMinusThreeYesNoPage extends QuestionPage[Boolean] {
 
   override def toString: String = "cyMinusThreeYesNo"
 
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = {
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
       case Some(false) =>
         userAnswers.remove(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYears))
-      case _ =>  super.cleanup(value, userAnswers)
+      case _           => super.cleanup(value, userAnswers)
     }
-  }
+
 }

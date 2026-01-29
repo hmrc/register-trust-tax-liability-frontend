@@ -25,9 +25,10 @@ import views.html.CYMinusOneYesNoView
 class CYMinusOneLiabilityYesNoViewSpec extends YesNoViewBehaviours {
 
   val messageKeyPrefix = "cyMinusOne.liability"
-  val taxYear = "tax range"
+  val taxYear          = "tax range"
 
-  val form: Form[Boolean] = new YesNoFormProviderWithArguments().withPrefix(messageKeyPrefix, Seq("6 April 2019", "5 April 2020"))
+  val form: Form[Boolean] =
+    new YesNoFormProviderWithArguments().withPrefix(messageKeyPrefix, Seq("6 April 2019", "5 April 2020"))
 
   "CYMinusOneLiabilityYesNo view" must {
 
@@ -44,4 +45,5 @@ class CYMinusOneLiabilityYesNoViewSpec extends YesNoViewBehaviours {
 
     behave like pageWithASubmitButton(applyView(form))
   }
+
 }

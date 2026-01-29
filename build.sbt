@@ -7,7 +7,7 @@ ThisBuild / majorVersion := 0
 
 lazy val microservice = Project("register-trust-tax-liability-frontend", file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
-  .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
+  .disablePlugins(JUnitXmlReportPlugin) // Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(CodeCoverageSettings())
   .settings(
     RoutesKeys.routesImport ++= Seq(
@@ -33,11 +33,13 @@ lazy val microservice = Project("register-trust-tax-liability-frontend", file(".
     ),
     Concat.groups := Seq(
       "javascripts/registertrusttaxliabilityfrontend-app.js" ->
-        group(Seq(
-          "javascripts/registertrusttaxliabilityfrontend.js",
-          "javascripts/iebacklink.js",
-          "javascripts/print.js"
-        ))
+        group(
+          Seq(
+            "javascripts/registertrusttaxliabilityfrontend.js",
+            "javascripts/iebacklink.js",
+            "javascripts/print.js"
+          )
+        )
     ),
     uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
     pipelineStages := Seq(digest),
@@ -53,3 +55,5 @@ lazy val testSettings: Seq[Def.Setting[?]] = Seq(
     "-Dconfig.resource=test.application.conf"
   )
 )
+
+addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt Test/scalafmt")

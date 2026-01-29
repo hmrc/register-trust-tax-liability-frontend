@@ -21,22 +21,24 @@ import play.api.data.format.Formatter
 
 trait Formatters {
 
-  private[mappings] def stringFormatterWithArguments(errorKey: String,
-                                                     args: Seq[Any]): Formatter[String] = new Formatter[String] {
+  private[mappings] def stringFormatterWithArguments(errorKey: String, args: Seq[Any]): Formatter[String] =
+    new Formatter[String] {
 
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
-      data.get(key) match {
-        case None | Some("") => Left(Seq(FormError(key, errorKey, args)))
-        case Some(s) => Right(s)
-      }
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
+        data.get(key) match {
+          case None | Some("") => Left(Seq(FormError(key, errorKey, args)))
+          case Some(s)         => Right(s)
+        }
 
-    override def unbind(key: String, value: String): Map[String, String] =
-      Map(key -> value)
-  }
+      override def unbind(key: String, value: String): Map[String, String] =
+        Map(key -> value)
+    }
 
-  private[mappings] def booleanFormatterWithArguments(requiredKey: String,
-                                                      invalidKey: String,
-                                                      args: Seq[Any]): Formatter[Boolean] = new Formatter[Boolean] {
+  private[mappings] def booleanFormatterWithArguments(
+    requiredKey: String,
+    invalidKey: String,
+    args: Seq[Any]
+  ): Formatter[Boolean] = new Formatter[Boolean] {
 
     private val baseFormatter = stringFormatterWithArguments(requiredKey, args)
 
@@ -44,10 +46,10 @@ trait Formatters {
       baseFormatter
         .bind(key, data)
         .flatMap {
-        case "true" => Right(true)
-        case "false" => Right(false)
-        case _ => Left(Seq(FormError(key, invalidKey, args)))
-      }
+          case "true"  => Right(true)
+          case "false" => Right(false)
+          case _       => Left(Seq(FormError(key, invalidKey, args)))
+        }
 
     def unbind(key: String, value: Boolean): Map[String, String] = Map(key -> value.toString)
   }

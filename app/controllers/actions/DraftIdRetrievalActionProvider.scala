@@ -25,8 +25,10 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DraftIdDataRetrievalActionProviderImpl @Inject()(registrationsRepository: RegistrationsRepository, executionContext: ExecutionContext)
-  extends DraftIdRetrievalActionProvider {
+class DraftIdDataRetrievalActionProviderImpl @Inject() (
+  registrationsRepository: RegistrationsRepository,
+  executionContext: ExecutionContext
+) extends DraftIdRetrievalActionProvider {
 
   def apply(draftId: String): DraftIdDataRetrievalAction =
     new DraftIdDataRetrievalAction(draftId, registrationsRepository, executionContext)
@@ -35,23 +37,28 @@ class DraftIdDataRetrievalActionProviderImpl @Inject()(registrationsRepository: 
 
 trait DraftIdRetrievalActionProvider {
 
-  def apply(draftId : String) : DraftIdDataRetrievalAction
+  def apply(draftId: String): DraftIdDataRetrievalAction
 
 }
 
 class DraftIdDataRetrievalAction(
-                                  draftId : String,
-                                  registrationsRepository: RegistrationsRepository,
-                                  implicit protected val executionContext: ExecutionContext
-                                )
-  extends ActionTransformer[IdentifierRequest, OptionalDataRequest] {
+  draftId: String,
+  registrationsRepository: RegistrationsRepository,
+  implicit protected val executionContext: ExecutionContext
+) extends ActionTransformer[IdentifierRequest, OptionalDataRequest] {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    registrationsRepository.get(draftId).map {
-      userAnswers =>
-        OptionalDataRequest(request.request, request.identifier, userAnswers, request.affinityGroup, request.enrolments, request.agentARN)
+    registrationsRepository.get(draftId).map { userAnswers =>
+      OptionalDataRequest(
+        request.request,
+        request.identifier,
+        userAnswers,
+        request.affinityGroup,
+        request.enrolments,
+        request.agentARN
+      )
     }
   }
 

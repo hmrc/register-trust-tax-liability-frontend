@@ -26,24 +26,37 @@ import viewmodels.{AnswerRow, AnswerSection}
 class CheckYourAnswersHelperSpec extends SpecBase {
 
   val checkYourAnswersHelper: CheckYourAnswersHelper = injector.instanceOf[CheckYourAnswersHelper]
-  val taxYearRange: TaxYearRange = injector.instanceOf[TaxYearRange]
+  val taxYearRange: TaxYearRange                     = injector.instanceOf[TaxYearRange]
 
   "CheckYourAnswersHelper" must {
 
     "render answer rows" in {
 
       val userAnswers = emptyUserAnswers
-        .set(CYMinusFourYesNoPage, true).success.value
-        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYears), true).success.value
-
-        .set(CYMinusThreeYesNoPage, true).success.value
-        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYears), true).success.value
-
-        .set(CYMinusTwoYesNoPage, true).success.value
-        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYears), false).success.value
-
-        .set(CYMinusOneYesNoPage, true).success.value
-        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
+        .set(CYMinusFourYesNoPage, true)
+        .success
+        .value
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYears), true)
+        .success
+        .value
+        .set(CYMinusThreeYesNoPage, true)
+        .success
+        .value
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYears), true)
+        .success
+        .value
+        .set(CYMinusTwoYesNoPage, true)
+        .success
+        .value
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYears), false)
+        .success
+        .value
+        .set(CYMinusOneYesNoPage, true)
+        .success
+        .value
+        .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), false)
+        .success
+        .value
 
       val result = checkYourAnswersHelper.apply(userAnswers)
 

@@ -16,46 +16,47 @@
 
 package controllers
 
- import base.SpecBase
- import config.annotations.TaxLiability
- import forms.YesNoFormProviderWithArguments
- import models.{CYMinus1TaxYear, CYMinus2TaxYears, CYMinus3TaxYears, CYMinus4TaxYears, CYMinusNTaxYears, TaxYearRange}
- import navigation.Navigator
- import org.mockito.ArgumentMatchers.any
- import org.mockito.Mockito.when
- import org.scalatestplus.mockito.MockitoSugar
- import pages.DidDeclareTaxToHMRCYesNoPage
- import play.api.data.Form
- import play.api.inject.bind
- import play.api.mvc.Call
- import play.api.test.FakeRequest
- import play.api.test.Helpers._
- import repositories.RegistrationsRepository
- import uk.gov.hmrc.play.language.LanguageUtils
- import views.html.DidDeclareTaxToHMRCYesNoView
+import base.SpecBase
+import config.annotations.TaxLiability
+import forms.YesNoFormProviderWithArguments
+import models.{CYMinus1TaxYear, CYMinus2TaxYears, CYMinus3TaxYears, CYMinus4TaxYears, CYMinusNTaxYears, TaxYearRange}
+import navigation.Navigator
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
+import pages.DidDeclareTaxToHMRCYesNoPage
+import play.api.data.Form
+import play.api.inject.bind
+import play.api.mvc.Call
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import repositories.RegistrationsRepository
+import uk.gov.hmrc.play.language.LanguageUtils
+import views.html.DidDeclareTaxToHMRCYesNoView
 
- import scala.concurrent.Future
+import scala.concurrent.Future
 
 class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
 
   override def onwardRoute: Call = Call("GET", "/foo")
 
-  private val formProvider = new YesNoFormProviderWithArguments()
+  private val formProvider                             = new YesNoFormProviderWithArguments()
   private def form(arguments: Seq[Any]): Form[Boolean] = formProvider.withPrefix("didDeclareToHMRC", arguments)
 
-  private def didDeclareRoute(year: CYMinusNTaxYears) = routes.DidDeclareTaxToHMRCController.onPageLoad(draftId, year).url
+  private def didDeclareRoute(year: CYMinusNTaxYears) =
+    routes.DidDeclareTaxToHMRCController.onPageLoad(draftId, year).url
 
   private val languageUtils: LanguageUtils = injector.instanceOf[LanguageUtils]
-  private val taxYearRange = new TaxYearRange(languageUtils)
+  private val taxYearRange                 = new TaxYearRange(languageUtils)
 
   "DidDeclareTaxToHMRC Controller" when {
 
     "for previous tax year" must {
 
       val taxYear: CYMinusNTaxYears = CYMinus1TaxYear
-      val taxYearStart: String = taxYearRange.startDate(taxYear)
-      val taxYearEnd: String = taxYearRange.endDate(taxYear)
-      val range: String = taxYearRange.toRange(taxYear)
+      val taxYearStart: String      = taxYearRange.startDate(taxYear)
+      val taxYearEnd: String        = taxYearRange.endDate(taxYear)
+      val range: String             = taxYearRange.toRange(taxYear)
 
       "return OK and the correct view for a GET" in {
 
@@ -183,9 +184,9 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
     "for current tax year minus 2" must {
 
       val taxYear: CYMinusNTaxYears = CYMinus2TaxYears
-      val taxYearStart: String = taxYearRange.startDate(taxYear)
-      val taxYearEnd: String = taxYearRange.endDate(taxYear)
-      val range: String = taxYearRange.toRange(taxYear)
+      val taxYearStart: String      = taxYearRange.startDate(taxYear)
+      val taxYearEnd: String        = taxYearRange.endDate(taxYear)
+      val range: String             = taxYearRange.toRange(taxYear)
 
       "return OK and the correct view for a GET" in {
 
@@ -313,9 +314,9 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
     "for current tax year minus 3" must {
 
       val taxYear: CYMinusNTaxYears = CYMinus3TaxYears
-      val taxYearStart: String = taxYearRange.startDate(taxYear)
-      val taxYearEnd: String = taxYearRange.endDate(taxYear)
-      val range: String = taxYearRange.toRange(taxYear)
+      val taxYearStart: String      = taxYearRange.startDate(taxYear)
+      val taxYearEnd: String        = taxYearRange.endDate(taxYear)
+      val range: String             = taxYearRange.toRange(taxYear)
 
       "return OK and the correct view for a GET" in {
 
@@ -443,9 +444,9 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
     "for current tax year minus 4" must {
 
       val taxYear: CYMinusNTaxYears = CYMinus4TaxYears
-      val taxYearStart: String = taxYearRange.startDate(taxYear)
-      val taxYearEnd: String = taxYearRange.endDate(taxYear)
-      val range: String = taxYearRange.toRange(taxYear)
+      val taxYearStart: String      = taxYearRange.startDate(taxYear)
+      val taxYearEnd: String        = taxYearRange.endDate(taxYear)
+      val range: String             = taxYearRange.toRange(taxYear)
 
       "return OK and the correct view for a GET" in {
 
@@ -571,4 +572,5 @@ class DidDeclareTaxToHMRCControllerSpec extends SpecBase with MockitoSugar {
     }
 
   }
+
 }
