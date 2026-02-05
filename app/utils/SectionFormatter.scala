@@ -23,19 +23,24 @@ import viewmodels.{AnswerRow, AnswerSection}
 
 object SectionFormatter {
 
-  def formatAnswerSection(section: AnswerSection)(implicit messages: Messages): Seq[SummaryListRow] = {
-    section.rows.zipWithIndex.map {
-      case (row: AnswerRow, i: Int) =>
-        SummaryListRow(
-          key = Key(classes = "govuk-!-width-two-thirds", content = Text(messages(row.label, row.labelArgs: _*))),
-          value = Value(classes = "govuk-!-width-one-half", content = HtmlContent(row.answer)),
-          actions = Option(Actions(items = Seq(ActionItem(href = row.changeUrl.getOrElse(""),
-            classes = s"change-link-$i",
-            visuallyHiddenText = Some(messages(row.label, row.labelArgs: _*)),
-            content = Text(messages("site.edit"))
-          ))))
+  def formatAnswerSection(section: AnswerSection)(implicit messages: Messages): Seq[SummaryListRow] =
+    section.rows.zipWithIndex.map { case (row: AnswerRow, i: Int) =>
+      SummaryListRow(
+        key = Key(classes = "govuk-!-width-two-thirds", content = Text(messages(row.label, row.labelArgs: _*))),
+        value = Value(classes = "govuk-!-width-one-half", content = HtmlContent(row.answer)),
+        actions = Option(
+          Actions(items =
+            Seq(
+              ActionItem(
+                href = row.changeUrl.getOrElse(""),
+                classes = s"change-link-$i",
+                visuallyHiddenText = Some(messages(row.label, row.labelArgs: _*)),
+                content = Text(messages("site.edit"))
+              )
+            )
+          )
         )
+      )
     }
-  }
 
 }

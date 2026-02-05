@@ -37,7 +37,7 @@ import scala.concurrent.Future
 class IndexControllerSpec extends SpecBase with BeforeAndAfterEach {
 
   private val mockSubmissionDraftConnector = mock[SubmissionDraftConnector]
-  private val mockTrustsStoreService = mock[TrustsStoreService]
+  private val mockTrustsStoreService       = mock[TrustsStoreService]
 
   override def beforeEach(): Unit = {
     reset(mockSubmissionDraftConnector, mockTrustsStoreService, registrationsRepository)
@@ -345,4 +345,5 @@ class IndexControllerSpec extends SpecBase with BeforeAndAfterEach {
       }
     }
   }
+
 }

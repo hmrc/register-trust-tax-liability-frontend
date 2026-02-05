@@ -38,12 +38,12 @@ class IdentifierActionSpec extends SpecBase {
 
   private def identifierAction: IdentifierAction = {
     val parser: BodyParsers.Default = injector.instanceOf[BodyParsers.Default]
-    val trustsAuth = new TrustsAuthorisedFunctions(mockAuthConnector, appConfig)
+    val trustsAuth                  = new TrustsAuthorisedFunctions(mockAuthConnector, appConfig)
     new IdentifierAction(parser, trustsAuth, appConfig)
   }
 
   class Harness(identifierAction: IdentifierAction) {
-    def onPageLoad(): Action[AnyContent] = identifierAction { _ => Results.Ok }
+    def onPageLoad(): Action[AnyContent] = identifierAction(_ => Results.Ok)
   }
 
   "IdentifierAction" must {
@@ -61,7 +61,7 @@ class IdentifierActionSpec extends SpecBase {
       )
 
       val controller = new Harness(identifierAction)
-      val result = controller.onPageLoad()(idRequest)
+      val result     = controller.onPageLoad()(idRequest)
 
       status(result) mustBe SEE_OTHER
     }
@@ -71,9 +71,9 @@ class IdentifierActionSpec extends SpecBase {
         .thenReturn(Future.failed(MissingBearerToken()))
 
       val controller = new Harness(identifierAction)
-      val result = controller.onPageLoad()(fakeRequest)
+      val result     = controller.onPageLoad()(fakeRequest)
 
-      status(result) mustBe SEE_OTHER
+      status(result)               mustBe SEE_OTHER
       redirectLocation(result).value must startWith(appConfig.loginUrl)
     }
 
@@ -81,15 +81,16 @@ class IdentifierActionSpec extends SpecBase {
       when(mockAuthConnector.authorise(any(), any())(any(), any()))
         .thenReturn(Future.failed(MissingBearerToken()))
 
-      val action = identifierAction
+      val action                              = identifierAction
       val actionBuilder: DefaultActionBuilder = injector.instanceOf[DefaultActionBuilder]
-      val inner: Action[AnyContent] = actionBuilder { _ => Results.Ok }
-      val composed: Action[AnyContent] = action.composeAction(inner)
+      val inner: Action[AnyContent]           = actionBuilder(_ => Results.Ok)
+      val composed: Action[AnyContent]        = action.composeAction(inner)
 
       val result = composed(fakeRequest)
 
-      status(result) mustBe SEE_OTHER
+      status(result)               mustBe SEE_OTHER
       redirectLocation(result).value must startWith(appConfig.loginUrl)
     }
   }
+
 }

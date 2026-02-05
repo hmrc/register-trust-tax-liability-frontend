@@ -21,9 +21,9 @@ import play.api.data.{Form, FormError}
 
 class YesNoFormProviderWithArgumentsSpec extends BooleanFieldBehaviours {
 
-  val prefix = "didDeclareToHMRC"
+  val prefix      = "didDeclareToHMRC"
   val requiredKey = s"$prefix.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form: Form[Boolean] = new YesNoFormProviderWithArguments().withPrefix(prefix, Nil)
 
@@ -43,4 +43,5 @@ class YesNoFormProviderWithArgumentsSpec extends BooleanFieldBehaviours {
       requiredError = FormError(fieldName, requiredKey)
     )
   }
+
 }

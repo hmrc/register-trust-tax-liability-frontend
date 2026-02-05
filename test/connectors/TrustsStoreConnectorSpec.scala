@@ -30,15 +30,16 @@ import utils.WireMockHelper
 
 class TrustsStoreConnectorSpec extends SpecBase with Matchers with OptionValues with WireMockHelper {
 
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
+  implicit private val hc: HeaderCarrier = HeaderCarrier()
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
       Seq(
         "microservice.services.trusts-store.port" -> server.port(),
-        "auditing.enabled" -> false
+        "auditing.enabled"                        -> false
       ): _*
-    ).build()
+    )
+    .build()
 
   private lazy val connector = injector.instanceOf[TrustsStoreConnector]
 
@@ -79,8 +80,7 @@ class TrustsStoreConnectorSpec extends SpecBase with Matchers with OptionValues 
 
       "return OK with the current task status" in {
 
-        val json = Json.parse(
-          """
+        val json = Json.parse("""
             |{
             |  "taxLiability": "completed"
             |}
@@ -97,4 +97,5 @@ class TrustsStoreConnectorSpec extends SpecBase with Matchers with OptionValues 
       }
     }
   }
+
 }

@@ -33,4 +33,5 @@ class Module extends AbstractModule {
 
     bind(classOf[Navigator]).annotatedWith(classOf[TaxLiability]).to(classOf[TaxLiabilityNavigator]).asEagerSingleton()
   }
+
 }

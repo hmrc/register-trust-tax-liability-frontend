@@ -25,4 +25,5 @@ trait ModelGenerators {
   implicit lazy val arbitraryTaskStatus: Arbitrary[TaskStatus] = Arbitrary {
     Gen.oneOf(TaskStatus.values)
   }
+
 }

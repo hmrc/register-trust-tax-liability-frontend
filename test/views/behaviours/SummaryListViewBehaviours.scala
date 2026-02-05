@@ -21,8 +21,7 @@ import viewmodels.AnswerSection
 
 trait SummaryListViewBehaviours extends ViewBehaviours {
 
-  def summaryListPage(view: HtmlFormat.Appendable,
-                      answerSections: Seq[AnswerSection] = Nil): Unit = {
+  def summaryListPage(view: HtmlFormat.Appendable, answerSections: Seq[AnswerSection] = Nil): Unit =
 
     "behave like a page with a summary list" in {
 
@@ -40,7 +39,7 @@ trait SummaryListViewBehaviours extends ViewBehaviours {
         h2.text mustBe messages(answerSection.headingKey, answerSection.headingArgs: _*)
 
         val summaryList = summaryLists.get(i)
-        val listRows = summaryList.getElementsByClass("govuk-summary-list__row")
+        val listRows    = summaryList.getElementsByClass("govuk-summary-list__row")
         listRows.size mustBe answerSection.rows.size
 
         for ((answerRow, j) <- answerSection.rows.zipWithIndex) {
@@ -57,5 +56,5 @@ trait SummaryListViewBehaviours extends ViewBehaviours {
         }
       }
     }
-  }
+
 }

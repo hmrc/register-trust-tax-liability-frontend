@@ -33,27 +33,27 @@ class CYMinusNTaxYearsSpec extends AnyFreeSpec {
     "must have the correct n, messagePrefix and changeUrl" in {
       val draftId = "draft-123"
 
-      CYMinus4TaxYears.n mustBe 4
-      CYMinus4TaxYears.messagePrefix mustBe "cyMinusFour"
-      CYMinus4TaxYears.toString mustBe "4"
+      CYMinus4TaxYears.n                  mustBe 4
+      CYMinus4TaxYears.messagePrefix      mustBe "cyMinusFour"
+      CYMinus4TaxYears.toString           mustBe "4"
       CYMinus4TaxYears.changeUrl(draftId) mustBe
         CYMinusFourLiabilityController.onPageLoad(draftId).url
 
-      CYMinus3TaxYears.n mustBe 3
-      CYMinus3TaxYears.messagePrefix mustBe "cyMinusThree"
-      CYMinus3TaxYears.toString mustBe "3"
+      CYMinus3TaxYears.n                  mustBe 3
+      CYMinus3TaxYears.messagePrefix      mustBe "cyMinusThree"
+      CYMinus3TaxYears.toString           mustBe "3"
       CYMinus3TaxYears.changeUrl(draftId) mustBe
         CYMinusThreeLiabilityController.onPageLoad(draftId).url
 
-      CYMinus2TaxYears.n mustBe 2
-      CYMinus2TaxYears.messagePrefix mustBe "cyMinusTwo"
-      CYMinus2TaxYears.toString mustBe "2"
+      CYMinus2TaxYears.n                  mustBe 2
+      CYMinus2TaxYears.messagePrefix      mustBe "cyMinusTwo"
+      CYMinus2TaxYears.toString           mustBe "2"
       CYMinus2TaxYears.changeUrl(draftId) mustBe
         CYMinusTwoLiabilityController.onPageLoad(draftId).url
 
-      CYMinus1TaxYear.n mustBe 1
-      CYMinus1TaxYear.messagePrefix mustBe "cyMinusOne"
-      CYMinus1TaxYear.toString mustBe "1"
+      CYMinus1TaxYear.n                  mustBe 1
+      CYMinus1TaxYear.messagePrefix      mustBe "cyMinusOne"
+      CYMinus1TaxYear.toString           mustBe "1"
       CYMinus1TaxYear.changeUrl(draftId) mustBe
         CYMinusOneLiabilityController.onPageLoad(draftId).url
     }
@@ -71,8 +71,8 @@ class CYMinusNTaxYearsSpec extends AnyFreeSpec {
     }
 
     "must return an error for invalid ids" in {
-      binder.bind("taxYear", "0") mustBe Left("Not a valid tax year")
-      binder.bind("taxYear", "5") mustBe Left("Not a valid tax year")
+      binder.bind("taxYear", "0")   mustBe Left("Not a valid tax year")
+      binder.bind("taxYear", "5")   mustBe Left("Not a valid tax year")
       binder.bind("taxYear", "abc") mustBe a[Left[_, _]]
     }
 
@@ -80,7 +80,7 @@ class CYMinusNTaxYearsSpec extends AnyFreeSpec {
       binder.unbind("taxYear", CYMinus4TaxYears) mustBe "4"
       binder.unbind("taxYear", CYMinus3TaxYears) mustBe "3"
       binder.unbind("taxYear", CYMinus2TaxYears) mustBe "2"
-      binder.unbind("taxYear", CYMinus1TaxYear) mustBe "1"
+      binder.unbind("taxYear", CYMinus1TaxYear)  mustBe "1"
     }
   }
 

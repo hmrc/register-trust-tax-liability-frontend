@@ -30,31 +30,27 @@ import views.html.CheckYourAnswersView
 
 import scala.concurrent.ExecutionContext
 
-class CheckYourAnswersController @Inject()(
-                                            override val messagesApi: MessagesApi,
-                                            val controllerComponents: MessagesControllerComponents,
-                                            view: CheckYourAnswersView,
-                                            checkYourAnswersHelper: CheckYourAnswersHelper,
-                                            actions: Actions,
-                                            registrationsRepository: RegistrationsRepository,
-                                            val appConfig: FrontendAppConfig,
-                                            trustsStoreService: TrustsStoreService
-                                          )(implicit val ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class CheckYourAnswersController @Inject() (
+  override val messagesApi: MessagesApi,
+  val controllerComponents: MessagesControllerComponents,
+  view: CheckYourAnswersView,
+  checkYourAnswersHelper: CheckYourAnswersHelper,
+  actions: Actions,
+  registrationsRepository: RegistrationsRepository,
+  val appConfig: FrontendAppConfig,
+  trustsStoreService: TrustsStoreService
+)(implicit val ec: ExecutionContext)
+    extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithData(draftId) {
-    implicit request =>
-
-      Ok(view(checkYourAnswersHelper(request.userAnswers), draftId))
+  def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithData(draftId) { implicit request =>
+    Ok(view(checkYourAnswersHelper(request.userAnswers), draftId))
   }
 
-  def onSubmit(draftId: String): Action[AnyContent] = actions.authWithData(draftId).async {
-    implicit request =>
-
-      for {
-        _ <- trustsStoreService.updateTaskStatus(draftId, Completed)
-        _ <- registrationsRepository.set(request.userAnswers)
-      } yield {
-        Redirect(appConfig.registrationProgressUrl(draftId))
-      }
+  def onSubmit(draftId: String): Action[AnyContent] = actions.authWithData(draftId).async { implicit request =>
+    for {
+      _ <- trustsStoreService.updateTaskStatus(draftId, Completed)
+      _ <- registrationsRepository.set(request.userAnswers)
+    } yield Redirect(appConfig.registrationProgressUrl(draftId))
   }
+
 }

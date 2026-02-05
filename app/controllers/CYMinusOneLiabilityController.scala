@@ -32,42 +32,39 @@ import views.html.CYMinusOneYesNoView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CYMinusOneLiabilityController @Inject()(
-                                               val controllerComponents: MessagesControllerComponents,
-                                               @TaxLiability navigator: Navigator,
-                                               actions: Actions,
-                                               formProvider: YesNoFormProviderWithArguments,
-                                               sessionRepository: RegistrationsRepository,
-                                               view: CYMinusOneYesNoView,
-                                               taxYearRange: TaxYearRange
-                                             )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class CYMinusOneLiabilityController @Inject() (
+  val controllerComponents: MessagesControllerComponents,
+  @TaxLiability navigator: Navigator,
+  actions: Actions,
+  formProvider: YesNoFormProviderWithArguments,
+  sessionRepository: RegistrationsRepository,
+  view: CYMinusOneYesNoView,
+  taxYearRange: TaxYearRange
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController with I18nSupport {
 
   def form(ranges: Seq[String]): Form[Boolean] = formProvider.withPrefix("cyMinusOne.liability", ranges)
 
   private val workingTaxYear = CYMinus1TaxYear
 
-  def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithData(draftId) {
-    implicit request =>
+  def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithData(draftId) { implicit request =>
+    val f = form(Seq(taxYearRange.startDate(workingTaxYear), taxYearRange.endDate(workingTaxYear)))
 
-      val f = form(Seq(taxYearRange.startDate(workingTaxYear), taxYearRange.endDate(workingTaxYear)))
+    val preparedForm = request.userAnswers.get(CYMinusOneYesNoPage) match {
+      case None        => f
+      case Some(value) => f.fill(value)
+    }
 
-      val preparedForm = request.userAnswers.get(CYMinusOneYesNoPage) match {
-        case None => f
-        case Some(value) => f.fill(value)
-      }
-
-      Ok(view(preparedForm, draftId, taxYearRange.toRange(workingTaxYear)))
+    Ok(view(preparedForm, draftId, taxYearRange.toRange(workingTaxYear)))
   }
 
-  def onSubmit(draftId: String): Action[AnyContent] = actions.authWithData(draftId).async {
-    implicit request =>
+  def onSubmit(draftId: String): Action[AnyContent] = actions.authWithData(draftId).async { implicit request =>
+    val f = form(Seq(taxYearRange.startDate(workingTaxYear), taxYearRange.endDate(workingTaxYear)))
 
-      val f = form(Seq(taxYearRange.startDate(workingTaxYear), taxYearRange.endDate(workingTaxYear)))
-
-      f.bindFromRequest().fold(
+    f.bindFromRequest()
+      .fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, draftId, taxYearRange.toRange(workingTaxYear)))),
-
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(CYMinusOneYesNoPage, value))
@@ -75,4 +72,5 @@ class CYMinusOneLiabilityController @Inject()(
           } yield Redirect(navigator.nextPage(CYMinusOneYesNoPage, draftId, updatedAnswers))
       )
   }
+
 }

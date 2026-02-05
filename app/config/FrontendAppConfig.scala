@@ -25,35 +25,38 @@ import uk.gov.hmrc.hmrcfrontend.config.ContactFrontendConfig
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
-class FrontendAppConfig @Inject()(val configuration: Configuration,
-                                  servicesConfig: ServicesConfig,
-                                  contactFrontendConfig: ContactFrontendConfig) {
+class FrontendAppConfig @Inject() (
+  val configuration: Configuration,
+  servicesConfig: ServicesConfig,
+  contactFrontendConfig: ContactFrontendConfig
+) {
 
   val repositoryKey: String = "taxLiability"
 
   final val ENGLISH = "en"
-  final val WELSH = "cy"
+  final val WELSH   = "cy"
 
-  val betaFeedbackUrl = s"${contactFrontendConfig.baseUrl.get}/contact/beta-feedback?service=${contactFrontendConfig.serviceId.get}"
+  val betaFeedbackUrl =
+    s"${contactFrontendConfig.baseUrl.get}/contact/beta-feedback?service=${contactFrontendConfig.serviceId.get}"
 
-  lazy val authUrl: String = servicesConfig.baseUrl("auth")
-  lazy val loginUrl: String = configuration.get[String]("urls.login")
+  lazy val authUrl: String          = servicesConfig.baseUrl("auth")
+  lazy val loginUrl: String         = configuration.get[String]("urls.login")
   lazy val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
-  lazy val logoutUrl: String = configuration.get[String]("urls.logout")
-  val appName: String = configuration.get[String]("appName")
+  lazy val logoutUrl: String        = configuration.get[String]("urls.logout")
+  val appName: String               = configuration.get[String]("appName")
 
   lazy val logoutAudit: Boolean =
     configuration.get[Boolean]("microservice.services.features.auditing.logout")
 
   lazy val countdownLength: Int = configuration.get[Int]("timeout.countdown")
-  lazy val timeoutLength: Int = configuration.get[Int]("timeout.length")
+  lazy val timeoutLength: Int   = configuration.get[Int]("timeout.length")
 
   lazy val registrationStartUrl: String = configuration.get[String]("urls.registrationStart")
 
-  lazy val trustsUrl: String = servicesConfig.baseUrl("trusts")
+  lazy val trustsUrl: String                     = servicesConfig.baseUrl("trusts")
   lazy val createAgentServicesAccountUrl: String = configuration.get[String]("urls.createAgentServicesAccount")
-  lazy val maintainATrustFrontendUrl: String = configuration.get[String]("urls.maintainATrust")
-  lazy val trustsStoreUrl: String = servicesConfig.baseUrl("trusts-store")
+  lazy val maintainATrustFrontendUrl: String     = configuration.get[String]("urls.maintainATrust")
+  lazy val trustsStoreUrl: String                = servicesConfig.baseUrl("trusts-store")
 
   def registrationProgressUrl(draftId: String): String =
     configuration.get[String]("urls.registrationProgress").replace(":draftId", draftId)
@@ -74,8 +77,9 @@ class FrontendAppConfig @Inject()(val configuration: Configuration,
   def helplineUrl(implicit messages: Messages): String = {
     val path = messages.lang.code match {
       case WELSH => "urls.welshHelpline"
-      case _ => "urls.trustsHelpline"
+      case _     => "urls.trustsHelpline"
     }
     configuration.get[String](path)
   }
+
 }

@@ -45,4 +45,5 @@ class DidDeclareTaxToHMRCYesNoViewSpec extends YesNoViewBehaviours {
 
     behave like pageWithASubmitButton(applyView(form))
   }
+
 }

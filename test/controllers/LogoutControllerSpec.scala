@@ -39,7 +39,7 @@ class LogoutControllerSpec extends SpecBase {
       val request = FakeRequest(GET, routes.LogoutController.logout().url)
       val result  = route(application, request).value
 
-      status(result) mustBe SEE_OTHER
+      status(result)                 mustBe SEE_OTHER
       redirectLocation(result).value mustBe frontendAppConfig.logoutUrl
 
       verify(mockAuditConnector, times(1))
@@ -59,7 +59,7 @@ class LogoutControllerSpec extends SpecBase {
       val request = FakeRequest(GET, routes.LogoutController.logout().url)
       val result  = route(application, request).value
 
-      status(result) mustBe SEE_OTHER
+      status(result)                 mustBe SEE_OTHER
       redirectLocation(result).value mustBe
         application.injector.instanceOf[config.FrontendAppConfig].logoutUrl
 
@@ -69,4 +69,5 @@ class LogoutControllerSpec extends SpecBase {
       application.stop()
     }
   }
+
 }

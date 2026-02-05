@@ -39,7 +39,8 @@ class CYMinusThreeEarlierYearsLiabilityControllerSpec extends SpecBase with Mock
 
   private val taxYear: String = TaxYear.current.back(3).startYear.toString
 
-  private lazy val cyMinusThreeEarlierYearsLiabilityControllerRoute = routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(draftId).url
+  private lazy val cyMinusThreeEarlierYearsLiabilityControllerRoute =
+    routes.CYMinusThreeEarlierYearsLiabilityController.onPageLoad(draftId).url
 
   private lazy val submitRoute = routes.CYMinusThreeEarlierYearsLiabilityController.onSubmit(draftId)
 
@@ -137,4 +138,5 @@ class CYMinusThreeEarlierYearsLiabilityControllerSpec extends SpecBase with Mock
       application.stop()
     }
   }
+
 }

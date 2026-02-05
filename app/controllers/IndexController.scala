@@ -37,86 +37,91 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IndexController @Inject()(
-                                 val controllerComponents: MessagesControllerComponents,
-                                 submissionDraftConnector: SubmissionDraftConnector,
-                                 actions: Actions,
-                                 repository: RegistrationsRepository,
-                                 errorHandler: ErrorHandler,
-                                 config: FrontendAppConfig,
-                                 trustsStoreService: TrustsStoreService
-                               )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
+class IndexController @Inject() (
+  val controllerComponents: MessagesControllerComponents,
+  submissionDraftConnector: SubmissionDraftConnector,
+  actions: Actions,
+  repository: RegistrationsRepository,
+  errorHandler: ErrorHandler,
+  config: FrontendAppConfig,
+  trustsStoreService: TrustsStoreService
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController with I18nSupport with Logging {
 
-  private def startNewSession(draftId: String, startDate: LocalDate)(implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
-    val answers = UserAnswers.startNewSession(draftId, request.internalId)
+  private def startNewSession(draftId: String, startDate: LocalDate)(implicit
+    request: OptionalDataRequest[AnyContent]
+  ): Future[Result] = {
+    val answers = UserAnswers
+      .startNewSession(draftId, request.internalId)
       .set(TrustStartDatePage, startDate)
 
     for {
       newSession <- Future.fromTry(answers)
-      _ <- repository.resetCache(newSession)
-      _ <- repository.set(newSession)
-      result <- redirect(draftId)
+      _          <- repository.resetCache(newSession)
+      _          <- repository.set(newSession)
+      result     <- redirect(draftId)
     } yield result
   }
 
-  def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithSession(draftId).async {
-    implicit request =>
+  def onPageLoad(draftId: String): Action[AnyContent] = actions.authWithSession(draftId).async { implicit request =>
+    submissionDraftConnector.getTrustStartDate(draftId) flatMap {
+      case Some(date) =>
 
-      submissionDraftConnector.getTrustStartDate(draftId) flatMap {
-        case Some(date) =>
+        def redirectForTaskStatus(taskStatus: TaskStatus): Future[Result] = {
+          val userAnswers: UserAnswers = request.userAnswers
+            .getOrElse(UserAnswers.startNewSession(draftId, request.internalId))
 
-          def redirectForTaskStatus(taskStatus: TaskStatus): Future[Result] = {
-            val userAnswers: UserAnswers = request.userAnswers
-              .getOrElse(UserAnswers.startNewSession(draftId, request.internalId))
-
-            userAnswers.get(TrustStartDatePage) match {
-              case Some(cachedDate) if cachedDate.isEqual(date.startDate) =>
-                if (taskStatus.isCompleted) {
-                  logger.info(s"[Session ID: ${Session.id(hc)}] trust start date has not changed and answers previously completed, redirecting to answers")
-                  Future.successful(Redirect(CheckYourAnswersController.onPageLoad(draftId)))
-                } else {
-                  logger.info(s"[Session ID: ${Session.id(hc)}] trust start date has not changed but answers not previously completed, continuing session")
-                  redirect(draftId)
-                }
-              case Some(_) =>
-                logger.info(s"[Session ID: ${Session.id(hc)}] trust start date has changed, starting new session")
-                startNewSession(draftId, date.startDate)
-              case None =>
-                logger.info(s"[Session ID: ${Session.id(hc)}] no existing trust start date saved, starting new session")
-                startNewSession(draftId, date.startDate)
-            }
+          userAnswers.get(TrustStartDatePage) match {
+            case Some(cachedDate) if cachedDate.isEqual(date.startDate) =>
+              if (taskStatus.isCompleted) {
+                logger.info(
+                  s"[Session ID: ${Session.id(hc)}] trust start date has not changed and answers previously completed, redirecting to answers"
+                )
+                Future.successful(Redirect(CheckYourAnswersController.onPageLoad(draftId)))
+              } else {
+                logger.info(
+                  s"[Session ID: ${Session.id(hc)}] trust start date has not changed but answers not previously completed, continuing session"
+                )
+                redirect(draftId)
+              }
+            case Some(_)                                                =>
+              logger.info(s"[Session ID: ${Session.id(hc)}] trust start date has changed, starting new session")
+              startNewSession(draftId, date.startDate)
+            case None                                                   =>
+              logger.info(s"[Session ID: ${Session.id(hc)}] no existing trust start date saved, starting new session")
+              startNewSession(draftId, date.startDate)
           }
-
-          for {
-            taskStatus <- trustsStoreService.getTaskStatus(draftId)
-            _ <- trustsStoreService.updateTaskStatus(draftId, InProgress)
-            result <- redirectForTaskStatus(taskStatus)
-          } yield result
-        case None =>
-          logger.info(s"[Session ID: ${Session.id(hc)}] no start date available, returning to /registration-progress")
-          Future.successful(Redirect(config.registrationProgressUrl(draftId)))
-      }
-  }
-
-  private def redirect(draftId: String)(implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
-    submissionDraftConnector.getFirstTaxYearAvailable(draftId).flatMap {
-      firstTaxYearAvailable =>
-        firstTaxYearAvailable.yearsAgo match {
-          case 4 if firstTaxYearAvailable.earlierYearsToDeclare =>
-            Future.successful(Redirect(CYMinusFourEarlierYearsLiabilityController.onPageLoad(draftId)))
-          case 4 =>
-            Future.successful(Redirect(CYMinusFourLiabilityController.onPageLoad(draftId)))
-          case 3 if firstTaxYearAvailable.earlierYearsToDeclare =>
-            Future.successful(Redirect(CYMinusThreeEarlierYearsLiabilityController.onPageLoad(draftId)))
-          case 3 =>
-            Future.successful(Redirect(CYMinusThreeLiabilityController.onPageLoad(draftId)))
-          case 2 =>
-            Future.successful(Redirect(CYMinusTwoLiabilityController.onPageLoad(draftId)))
-          case 1 =>
-            Future.successful(Redirect(CYMinusOneLiabilityController.onPageLoad(draftId)))
-          case _ =>
-            errorHandler.internalServerErrorTemplate.map(InternalServerError(_))
         }
+
+        for {
+          taskStatus <- trustsStoreService.getTaskStatus(draftId)
+          _          <- trustsStoreService.updateTaskStatus(draftId, InProgress)
+          result     <- redirectForTaskStatus(taskStatus)
+        } yield result
+      case None =>
+        logger.info(s"[Session ID: ${Session.id(hc)}] no start date available, returning to /registration-progress")
+        Future.successful(Redirect(config.registrationProgressUrl(draftId)))
     }
   }
+
+  private def redirect(draftId: String)(implicit request: OptionalDataRequest[AnyContent]): Future[Result] =
+    submissionDraftConnector.getFirstTaxYearAvailable(draftId).flatMap { firstTaxYearAvailable =>
+      firstTaxYearAvailable.yearsAgo match {
+        case 4 if firstTaxYearAvailable.earlierYearsToDeclare =>
+          Future.successful(Redirect(CYMinusFourEarlierYearsLiabilityController.onPageLoad(draftId)))
+        case 4                                                =>
+          Future.successful(Redirect(CYMinusFourLiabilityController.onPageLoad(draftId)))
+        case 3 if firstTaxYearAvailable.earlierYearsToDeclare =>
+          Future.successful(Redirect(CYMinusThreeEarlierYearsLiabilityController.onPageLoad(draftId)))
+        case 3                                                =>
+          Future.successful(Redirect(CYMinusThreeLiabilityController.onPageLoad(draftId)))
+        case 2                                                =>
+          Future.successful(Redirect(CYMinusTwoLiabilityController.onPageLoad(draftId)))
+        case 1                                                =>
+          Future.successful(Redirect(CYMinusOneLiabilityController.onPageLoad(draftId)))
+        case _                                                =>
+          errorHandler.internalServerErrorTemplate.map(InternalServerError(_))
+      }
+    }
+
 }

@@ -28,10 +28,11 @@ import pages.DidDeclareTaxToHMRCYesNoPage
 
 import java.time.LocalDate
 
-class TaxLiabilityServiceSpec extends SpecBase with ScalaCheckPropertyChecks with DateGenerators with BeforeAndAfterEach {
+class TaxLiabilityServiceSpec
+    extends SpecBase with ScalaCheckPropertyChecks with DateGenerators with BeforeAndAfterEach {
 
   private val mockTaxYearService: TaxYearService = mock[TaxYearService]
-  private val taxLiabilityService = new TaxLiabilityService(mockTaxYearService)
+  private val taxLiabilityService                = new TaxLiabilityService(mockTaxYearService)
 
   override def beforeEach(): Unit = {
     reset(mockTaxYearService)
@@ -45,17 +46,23 @@ class TaxLiabilityServiceSpec extends SpecBase with ScalaCheckPropertyChecks wit
       "map user answers to list of YearReturnType" when {
 
         "need to pay tax for CY-2, CY-3 and CY-4" must {
-          "create returns with tax consequences for these years" in {
-
+          "create returns with tax consequences for these years" in
             forAll(arbitrary[LocalDate](arbitraryDateInTaxYear)) { date =>
-
               when(mockTaxYearService.currentDate).thenReturn(date)
 
               val userAnswers = emptyUserAnswers
-                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYears), false).success.value
-                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYears), false).success.value
-                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYears), false).success.value
-                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), true).success.value
+                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYears), false)
+                .success
+                .value
+                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYears), false)
+                .success
+                .value
+                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYears), false)
+                .success
+                .value
+                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), true)
+                .success
+                .value
 
               val result = taxLiabilityService.evaluateTaxYears(userAnswers)
 
@@ -65,21 +72,26 @@ class TaxLiabilityServiceSpec extends SpecBase with ScalaCheckPropertyChecks wit
                 YearReturnType(taxReturnYear = "19", taxConsequence = true)
               )
             }
-          }
         }
 
         "need to pay tax for CY-1 (on or before October 5th)" must {
-          "create return without tax consequence for that year" in {
-
+          "create return without tax consequence for that year" in
             forAll(arbitrary[LocalDate](arbitraryDateInTaxYearOnOrBeforeOctober5th)) { date =>
-
               when(mockTaxYearService.currentDate).thenReturn(date)
 
               val userAnswers = emptyUserAnswers
-                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYears), true).success.value
-                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYears), true).success.value
-                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYears), true).success.value
-                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
+                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYears), true)
+                .success
+                .value
+                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYears), true)
+                .success
+                .value
+                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYears), true)
+                .success
+                .value
+                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), false)
+                .success
+                .value
 
               val result = taxLiabilityService.evaluateTaxYears(userAnswers)
 
@@ -87,21 +99,26 @@ class TaxLiabilityServiceSpec extends SpecBase with ScalaCheckPropertyChecks wit
                 YearReturnType(taxReturnYear = "20", taxConsequence = false)
               )
             }
-          }
         }
 
         "need to pay tax for CY-1 (after October 5th)" must {
-          "create return with tax consequence for that year" in {
-
+          "create return with tax consequence for that year" in
             forAll(arbitrary[LocalDate](arbitraryDateInTaxYearAfterOctober5th)) { date =>
-
               when(mockTaxYearService.currentDate).thenReturn(date)
 
               val userAnswers = emptyUserAnswers
-                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYears), true).success.value
-                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYears), true).success.value
-                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYears), true).success.value
-                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), false).success.value
+                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYears), true)
+                .success
+                .value
+                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYears), true)
+                .success
+                .value
+                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYears), true)
+                .success
+                .value
+                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), false)
+                .success
+                .value
 
               val result = taxLiabilityService.evaluateTaxYears(userAnswers)
 
@@ -109,29 +126,34 @@ class TaxLiabilityServiceSpec extends SpecBase with ScalaCheckPropertyChecks wit
                 YearReturnType(taxReturnYear = "20", taxConsequence = true)
               )
             }
-          }
         }
 
         "all tax paid" must {
-          "create no returns" in {
-
+          "create no returns" in
             forAll(arbitrary[LocalDate](arbitraryDateInTaxYear)) { date =>
-
               when(mockTaxYearService.currentDate).thenReturn(date)
 
               val userAnswers = emptyUserAnswers
-                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYears), true).success.value
-                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYears), true).success.value
-                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYears), true).success.value
-                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), true).success.value
+                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus4TaxYears), true)
+                .success
+                .value
+                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus3TaxYears), true)
+                .success
+                .value
+                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus2TaxYears), true)
+                .success
+                .value
+                .set(DidDeclareTaxToHMRCYesNoPage(CYMinus1TaxYear), true)
+                .success
+                .value
 
               val result = taxLiabilityService.evaluateTaxYears(userAnswers)
 
               result mustEqual Nil
             }
-          }
         }
       }
     }
   }
+
 }

@@ -38,16 +38,14 @@ class SubmissionDraftConnectorSpec extends SpecBase with Matchers with OptionVal
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
   override lazy val app: Application = new GuiceApplicationBuilder()
-    .configure(Seq(
-      "microservice.services.trusts.port" -> server.port(),
-      "auditing.enabled" -> false): _*
-    ).build()
+    .configure(Seq("microservice.services.trusts.port" -> server.port(), "auditing.enabled" -> false): _*)
+    .build()
 
   private lazy val connector = injector.instanceOf[SubmissionDraftConnector]
 
-  private val testSection = "section"
-  private val submissionsUrl = s"/trusts/register/submission-drafts"
-  private val submissionUrl = s"$submissionsUrl/$draftId/$testSection"
+  private val testSection      = "section"
+  private val submissionsUrl   = s"/trusts/register/submission-drafts"
+  private val submissionUrl    = s"$submissionsUrl/$draftId/$testSection"
   private val setSubmissionUrl = s"$submissionsUrl/$draftId/set/$testSection"
 
   "SubmissionDraftConnector" when {
@@ -56,8 +54,7 @@ class SubmissionDraftConnectorSpec extends SpecBase with Matchers with OptionVal
 
       "set data for section set" in {
 
-        val sectionData = Json.parse(
-          """
+        val sectionData = Json.parse("""
             |{
             | "field1": "value1",
             | "field2": "value2"
@@ -80,14 +77,14 @@ class SubmissionDraftConnectorSpec extends SpecBase with Matchers with OptionVal
             )
         )
 
-        val result = Await.result(connector.setDraftSectionSet(draftId, testSection, submissionDraftSetData), Duration.Inf)
+        val result =
+          Await.result(connector.setDraftSectionSet(draftId, testSection, submissionDraftSetData), Duration.Inf)
         result.status mustBe Status.OK
       }
 
       "get data for section" in {
 
-        val draftData = Json.parse(
-          """
+        val draftData = Json.parse("""
             |{
             | "field1": "value1",
             | "field2": "value2"
@@ -114,9 +111,10 @@ class SubmissionDraftConnectorSpec extends SpecBase with Matchers with OptionVal
             )
         )
 
-        val result: SubmissionDraftResponse = Await.result(connector.getDraftSection(draftId, testSection), Duration.Inf)
+        val result: SubmissionDraftResponse =
+          Await.result(connector.getDraftSection(draftId, testSection), Duration.Inf)
         result.createdAt mustBe LocalDateTime.of(2012, 2, 3, 9, 30)
-        result.data mustBe draftData
+        result.data      mustBe draftData
       }
     }
 
@@ -127,15 +125,14 @@ class SubmissionDraftConnectorSpec extends SpecBase with Matchers with OptionVal
           .configure(
             Seq(
               "microservice.services.trusts.port" -> server.port(),
-              "auditing.enabled" -> false
+              "auditing.enabled"                  -> false
             ): _*
-          ).build()
-
+          )
+          .build()
 
         val connector = application.injector.instanceOf[SubmissionDraftConnector]
 
-        val json = Json.parse(
-          """
+        val json = Json.parse("""
             |{"startDate": "2010-10-10"}
             |""".stripMargin)
 
@@ -146,9 +143,8 @@ class SubmissionDraftConnectorSpec extends SpecBase with Matchers with OptionVal
 
         val futureResult = connector.getTrustStartDate(draftId)
 
-        whenReady(futureResult) {
-          r =>
-            r.value.startDate mustBe LocalDate.of(2010,10,10)
+        whenReady(futureResult) { r =>
+          r.value.startDate mustBe LocalDate.of(2010, 10, 10)
         }
 
         application.stop()
@@ -159,10 +155,10 @@ class SubmissionDraftConnectorSpec extends SpecBase with Matchers with OptionVal
           .configure(
             Seq(
               "microservice.services.trusts.port" -> server.port(),
-              "auditing.enabled" -> false
+              "auditing.enabled"                  -> false
             ): _*
-          ).build()
-
+          )
+          .build()
 
         val connector = application.injector.instanceOf[SubmissionDraftConnector]
 
@@ -173,9 +169,8 @@ class SubmissionDraftConnectorSpec extends SpecBase with Matchers with OptionVal
 
         val futureResult = connector.getTrustStartDate(draftId)
 
-        whenReady(futureResult) {
-          r =>
-            r mustNot be(defined)
+        whenReady(futureResult) { r =>
+          r mustNot be(defined)
         }
 
         application.stop()
@@ -190,10 +185,10 @@ class SubmissionDraftConnectorSpec extends SpecBase with Matchers with OptionVal
           .configure(
             Seq(
               "microservice.services.trusts.port" -> server.port(),
-              "auditing.enabled" -> false
+              "auditing.enabled"                  -> false
             ): _*
-          ).build()
-
+          )
+          .build()
 
         val connector = application.injector.instanceOf[SubmissionDraftConnector]
 
@@ -215,4 +210,5 @@ class SubmissionDraftConnectorSpec extends SpecBase with Matchers with OptionVal
 
     }
   }
+
 }

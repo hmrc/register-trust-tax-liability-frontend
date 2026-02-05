@@ -45,8 +45,8 @@ class CYMinusTwoLiabilityControllerSpec extends SpecBase with MockitoSugar {
   private def form(arguments: Seq[Any]): Form[Boolean] = formProvider.withPrefix("cyMinusTwo.liability", arguments)
 
   private val languageUtils: LanguageUtils = injector.instanceOf[LanguageUtils]
-  private val taxYearStart: String = new TaxYearRange(languageUtils).startDate(CYMinus2TaxYears)
-  private val taxYearEnd: String = new TaxYearRange(languageUtils).endDate(CYMinus2TaxYears)
+  private val taxYearStart: String         = new TaxYearRange(languageUtils).startDate(CYMinus2TaxYears)
+  private val taxYearEnd: String           = new TaxYearRange(languageUtils).endDate(CYMinus2TaxYears)
 
   private val taxYear: String = s"$taxYearStart to $taxYearEnd"
 
@@ -69,7 +69,7 @@ class CYMinusTwoLiabilityControllerSpec extends SpecBase with MockitoSugar {
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(formWithArgs,draftId , taxYear)(request, messages).toString
+        view(formWithArgs, draftId, taxYear)(request, messages).toString
 
       application.stop()
     }
@@ -91,7 +91,7 @@ class CYMinusTwoLiabilityControllerSpec extends SpecBase with MockitoSugar {
       status(result) mustEqual OK
 
       contentAsString(result) mustEqual
-        view(formWithArgs.fill(true),draftId , taxYear)(request, messages).toString
+        view(formWithArgs.fill(true), draftId, taxYear)(request, messages).toString
 
       application.stop()
     }
@@ -139,7 +139,7 @@ class CYMinusTwoLiabilityControllerSpec extends SpecBase with MockitoSugar {
       status(result) mustEqual BAD_REQUEST
 
       contentAsString(result) mustEqual
-        view(boundForm,draftId , taxYear)(request, messages).toString
+        view(boundForm, draftId, taxYear)(request, messages).toString
 
       application.stop()
     }
@@ -176,4 +176,5 @@ class CYMinusTwoLiabilityControllerSpec extends SpecBase with MockitoSugar {
       application.stop()
     }
   }
+
 }

@@ -119,4 +119,5 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
       application.stop()
     }
   }
+
 }

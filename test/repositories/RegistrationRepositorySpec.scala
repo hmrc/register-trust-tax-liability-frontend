@@ -35,9 +35,8 @@ class RegistrationRepositorySpec extends SpecBase with Matchers with MockitoSuga
 
   private val unusedSubmissionSetFactory = mock[SubmissionSetFactory]
 
-  private def createRepository(connector: SubmissionDraftConnector, submissionSetFactory: SubmissionSetFactory) = {
+  private def createRepository(connector: SubmissionDraftConnector, submissionSetFactory: SubmissionSetFactory) =
     new DefaultRegistrationsRepository(connector, frontendAppConfig, submissionSetFactory)
-  }
 
   "RegistrationRepository" when {
 
@@ -69,8 +68,7 @@ class RegistrationRepositorySpec extends SpecBase with Matchers with MockitoSuga
 
         val draftId = "DraftId"
 
-        val dummyData = Json.parse(
-          """
+        val dummyData = Json.parse("""
             |{
             | "data" : {
             |   "someField": "someValue"
@@ -88,7 +86,7 @@ class RegistrationRepositorySpec extends SpecBase with Matchers with MockitoSuga
 
         val result = Await.result(repository.getMainAnswers(draftId), Duration.Inf)
 
-        val expectedAnswers = Json.obj("someField" -> "someValue")
+        val expectedAnswers     = Json.obj("someField" -> "someValue")
         val expectedUserAnswers = ReadOnlyUserAnswers(expectedAnswers)
 
         result mustBe Some(expectedUserAnswers)
@@ -119,12 +117,16 @@ class RegistrationRepositorySpec extends SpecBase with Matchers with MockitoSuga
 
         val repository = createRepository(mockConnector, mockSubmissionSetFactory)
 
-        when(mockConnector.setDraftSectionSet(any(), any(), any())(any(), any())).thenReturn(Future.successful(HttpResponse(http.Status.OK, "")))
+        when(mockConnector.setDraftSectionSet(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(HttpResponse(http.Status.OK, "")))
 
         val result = Await.result(repository.set(userAnswers), Duration.Inf)
 
         result mustBe true
-        verify(mockConnector).setDraftSectionSet(draftId, frontendAppConfig.repositoryKey, submissionSet)(hc, executionContext)
+        verify(mockConnector).setDraftSectionSet(draftId, frontendAppConfig.repositoryKey, submissionSet)(
+          hc,
+          executionContext
+        )
       }
     }
 
@@ -150,14 +152,19 @@ class RegistrationRepositorySpec extends SpecBase with Matchers with MockitoSuga
 
         val repository = createRepository(mockConnector, mockSubmissionSetFactory)
 
-        when(mockConnector.setDraftSectionSet(any(), any(), any())(any(), any())).thenReturn(Future.successful(HttpResponse(http.Status.OK, "")))
+        when(mockConnector.setDraftSectionSet(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(HttpResponse(http.Status.OK, "")))
 
         val result = Await.result(repository.resetCache(userAnswers), Duration.Inf)
 
         result mustBe true
-        verify(mockConnector).setDraftSectionSet(draftId, frontendAppConfig.repositoryKey, submissionSet)(hc, executionContext)
+        verify(mockConnector).setDraftSectionSet(draftId, frontendAppConfig.repositoryKey, submissionSet)(
+          hc,
+          executionContext
+        )
       }
 
     }
   }
+
 }

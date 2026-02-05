@@ -27,12 +27,14 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TrustsStoreConnector @Inject()(http: HttpClientV2, config: FrontendAppConfig) {
+class TrustsStoreConnector @Inject() (http: HttpClientV2, config: FrontendAppConfig) {
 
   private val baseUrl: String = s"${config.trustsStoreUrl}/trusts-store"
 
-  def updateTaskStatus(draftId: String, taskStatus: TaskStatus)
-                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
+  def updateTaskStatus(draftId: String, taskStatus: TaskStatus)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[HttpResponse] = {
     val url: String = s"$baseUrl/register/tasks/update-tax-liability/$draftId"
     http
       .post(url"$url")
@@ -40,8 +42,7 @@ class TrustsStoreConnector @Inject()(http: HttpClientV2, config: FrontendAppConf
       .execute[HttpResponse]
   }
 
-  def getTaskStatus(draftId: String)
-                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Task] = {
+  def getTaskStatus(draftId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Task] = {
     val url: String = s"$baseUrl/register/tasks/$draftId"
     http
       .get(url"$url")
@@ -49,4 +50,3 @@ class TrustsStoreConnector @Inject()(http: HttpClientV2, config: FrontendAppConf
   }
 
 }
-

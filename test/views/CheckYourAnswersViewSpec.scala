@@ -28,22 +28,23 @@ class CheckYourAnswersViewSpec extends SummaryListViewBehaviours {
 
   val args = Seq("arg1", "arg2")
 
-  val answerSections: Seq[AnswerSection] = CYMinusNTaxYears.taxYears.reverse.foldLeft[Seq[AnswerSection]](Nil)((acc, taxYear) => {
-    val i = taxYear.n
-    acc :+ AnswerSection(
-      headingKey = "taxLiabilityBetweenYears.checkYourAnswerSectionHeading",
-      rows = Seq(
-        AnswerRow(
-          label = s"${taxYear.messagePrefix}.liability.checkYourAnswersLabel",
-          answer = HtmlFormat.escape(s"Answer $i"),
-          changeUrl = Some(s"change-url-$i"),
-          labelArgs = args,
-          canEdit = true
-        )
-      ),
-      headingArgs = args
-    )
-  })
+  val answerSections: Seq[AnswerSection] = CYMinusNTaxYears.taxYears.reverse.foldLeft[Seq[AnswerSection]](Nil) {
+    (acc, taxYear) =>
+      val i = taxYear.n
+      acc :+ AnswerSection(
+        headingKey = "taxLiabilityBetweenYears.checkYourAnswerSectionHeading",
+        rows = Seq(
+          AnswerRow(
+            label = s"${taxYear.messagePrefix}.liability.checkYourAnswersLabel",
+            answer = HtmlFormat.escape(s"Answer $i"),
+            changeUrl = Some(s"change-url-$i"),
+            labelArgs = args,
+            canEdit = true
+          )
+        ),
+        headingArgs = args
+      )
+  }
 
   "CheckAnswers view" must {
 
@@ -59,4 +60,5 @@ class CheckYourAnswersViewSpec extends SummaryListViewBehaviours {
 
     behave like pageWithASubmitButton(applyView)
   }
+
 }

@@ -60,11 +60,18 @@ class SectionFormatterSpec extends SpecBase {
             content = Text("Did the trust need to pay any tax from 6 April 2019 to 5 April 2020?")
           ),
           value = Value(classes = "govuk-!-width-one-half", content = HtmlContent("Yes")),
-          actions = Option(Actions(items = Seq(ActionItem(href = routes.CYMinusOneLiabilityController.onPageLoad(draftId).url,
-            classes = s"change-link-0",
-            visuallyHiddenText = Some("Did the trust need to pay any tax from 6 April 2019 to 5 April 2020?"),
-            content = Text(messages("site.edit"))
-          ))))
+          actions = Option(
+            Actions(items =
+              Seq(
+                ActionItem(
+                  href = routes.CYMinusOneLiabilityController.onPageLoad(draftId).url,
+                  classes = s"change-link-0",
+                  visuallyHiddenText = Some("Did the trust need to pay any tax from 6 April 2019 to 5 April 2020?"),
+                  content = Text(messages("site.edit"))
+                )
+              )
+            )
+          )
         ),
         SummaryListRow(
           key = Key(
@@ -72,13 +79,21 @@ class SectionFormatterSpec extends SpecBase {
             content = Text("Was the tax from 6 April 2019 to 5 April 2020 declared?")
           ),
           value = Value(classes = "govuk-!-width-one-half", content = HtmlContent("No")),
-          actions = Option(Actions(items = Seq(ActionItem(href = routes.DidDeclareTaxToHMRCController.onPageLoad(draftId, CYMinus1TaxYear).url,
-            classes = s"change-link-1",
-            visuallyHiddenText = Some("Was the tax from 6 April 2019 to 5 April 2020 declared?"),
-            content = Text(messages("site.edit"))
-          ))))
+          actions = Option(
+            Actions(items =
+              Seq(
+                ActionItem(
+                  href = routes.DidDeclareTaxToHMRCController.onPageLoad(draftId, CYMinus1TaxYear).url,
+                  classes = s"change-link-1",
+                  visuallyHiddenText = Some("Was the tax from 6 April 2019 to 5 April 2020 declared?"),
+                  content = Text(messages("site.edit"))
+                )
+              )
+            )
+          )
         )
       )
     }
   }
+
 }

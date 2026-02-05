@@ -32,46 +32,46 @@ import views.html.DidDeclareTaxToHMRCYesNoView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DidDeclareTaxToHMRCController @Inject()(
-                                               val controllerComponents: MessagesControllerComponents,
-                                               @TaxLiability navigator: Navigator,
-                                               actions: Actions,
-                                               formProvider: YesNoFormProviderWithArguments,
-                                               sessionRepository: RegistrationsRepository,
-                                               view: DidDeclareTaxToHMRCYesNoView,
-                                               taxYearRange: TaxYearRange
-                                             )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class DidDeclareTaxToHMRCController @Inject() (
+  val controllerComponents: MessagesControllerComponents,
+  @TaxLiability navigator: Navigator,
+  actions: Actions,
+  formProvider: YesNoFormProviderWithArguments,
+  sessionRepository: RegistrationsRepository,
+  view: DidDeclareTaxToHMRCYesNoView,
+  taxYearRange: TaxYearRange
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController with I18nSupport {
 
   def form(ranges: Seq[String]): Form[Boolean] = formProvider.withPrefix("didDeclareToHMRC", ranges)
 
   def onPageLoad(draftId: String, taxYear: CYMinusNTaxYears): Action[AnyContent] = actions.authWithData(draftId) {
     implicit request =>
-
       val f = form(Seq(taxYearRange.startDate(taxYear), taxYearRange.endDate(taxYear)))
 
       val preparedForm = request.userAnswers.get(DidDeclareTaxToHMRCYesNoPage(taxYear)) match {
-        case None => f
+        case None        => f
         case Some(value) => f.fill(value)
       }
 
       Ok(view(preparedForm, draftId, taxYear, taxYearRange.toRange(taxYear)))
   }
 
-  def onSubmit(draftId: String, taxYear: CYMinusNTaxYears): Action[AnyContent] = actions.authWithData(draftId).async {
-    implicit request =>
-
-      form(Seq(taxYearRange.startDate(taxYear), taxYearRange.endDate(taxYear))).bindFromRequest().fold(
-        formWithErrors => {
-          Future.successful(BadRequest(view(formWithErrors, draftId, taxYear, taxYearRange.toRange(taxYear))))
-        },
-        value => {
-          val page = DidDeclareTaxToHMRCYesNoPage(taxYear)
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(page, value))
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(page, draftId, updatedAnswers))
-        }
-      )
-  }
+  def onSubmit(draftId: String, taxYear: CYMinusNTaxYears): Action[AnyContent] =
+    actions.authWithData(draftId).async { implicit request =>
+      form(Seq(taxYearRange.startDate(taxYear), taxYearRange.endDate(taxYear)))
+        .bindFromRequest()
+        .fold(
+          formWithErrors =>
+            Future.successful(BadRequest(view(formWithErrors, draftId, taxYear, taxYearRange.toRange(taxYear)))),
+          value => {
+            val page = DidDeclareTaxToHMRCYesNoPage(taxYear)
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(page, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(page, draftId, updatedAnswers))
+          }
+        )
+    }
 
 }

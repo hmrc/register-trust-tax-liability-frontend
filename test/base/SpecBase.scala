@@ -35,10 +35,11 @@ import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, Enrolments}
 
 import scala.concurrent.ExecutionContext
 
-trait SpecBase extends PlaySpec with GuiceOneAppPerSuite with Mocked with TryValues with ScalaFutures with IntegrationPatience {
+trait SpecBase
+    extends PlaySpec with GuiceOneAppPerSuite with Mocked with TryValues with ScalaFutures with IntegrationPatience {
 
   val draftId: String = "draftId"
-  val userInternalId = "id"
+  val userInternalId  = "id"
 
   val fakeNavigator = new FakeNavigator()
 
@@ -65,10 +66,11 @@ trait SpecBase extends PlaySpec with GuiceOneAppPerSuite with Mocked with TryVal
   private def fakeDraftIdAction(userAnswers: Option[UserAnswers]): FakeDraftIdRetrievalActionProvider =
     new FakeDraftIdRetrievalActionProvider(userAnswers)
 
-  protected def applicationBuilder(userAnswers: Option[UserAnswers] = None,
-                                   affinityGroup: AffinityGroup = AffinityGroup.Organisation,
-                                   enrolments: Enrolments = Enrolments(Set.empty[Enrolment])
-                                  ): GuiceApplicationBuilder =
+  protected def applicationBuilder(
+    userAnswers: Option[UserAnswers] = None,
+    affinityGroup: AffinityGroup = AffinityGroup.Organisation,
+    enrolments: Enrolments = Enrolments(Set.empty[Enrolment])
+  ): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],

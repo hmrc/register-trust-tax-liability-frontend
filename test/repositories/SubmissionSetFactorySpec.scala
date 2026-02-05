@@ -31,8 +31,8 @@ import viewmodels.{AnswerRow, AnswerSection}
 class SubmissionSetFactorySpec extends SpecBase with ScalaCheckPropertyChecks with ModelGenerators {
 
   private val mockCheckYourAnswersHelper: CheckYourAnswersHelper = mock[CheckYourAnswersHelper]
-  private val mockTaxLiabilityService: TaxLiabilityService = mock[TaxLiabilityService]
-  private val factory = new SubmissionSetFactory(mockCheckYourAnswersHelper, mockTaxLiabilityService)
+  private val mockTaxLiabilityService: TaxLiabilityService       = mock[TaxLiabilityService]
+  private val factory                                            = new SubmissionSetFactory(mockCheckYourAnswersHelper, mockTaxLiabilityService)
 
   "Submission set factory" must {
 
@@ -54,24 +54,27 @@ class SubmissionSetFactorySpec extends SpecBase with ScalaCheckPropertyChecks wi
       when(mockCheckYourAnswersHelper.apply(any())(any())).thenReturn(Nil)
 
       factory.createFrom(userAnswers) mustBe RegistrationSubmission.DataSet(
-          data = Json.toJson(userAnswers),
-          registrationPieces = Nil,
-          answerSections = Nil
-        )
+        data = Json.toJson(userAnswers),
+        registrationPieces = Nil,
+        answerSections = Nil
+      )
     }
 
     "return completed answer sections" when {
 
       val fakeAnswerSection: AnswerSection = AnswerSection(
         headingKey = "taxLiabilityBetweenYears.checkYourAnswerSectionHeading",
-        rows = List(AnswerRow("cyMinusOne.liability", Html("Yes"), None, Seq("6 April 2019", "5 April 2020"), canEdit = true)),
+        rows = List(
+          AnswerRow("cyMinusOne.liability", Html("Yes"), None, Seq("6 April 2019", "5 April 2020"), canEdit = true)
+        ),
         sectionKey = None,
         headingArgs = Seq("6 April 2019", "5 April 2020")
       )
 
       val fakeRegistrationSubmissionAnswerSection = RegistrationSubmission.AnswerSection(
         headingKey = Some("taxLiabilityBetweenYears.checkYourAnswerSectionHeading"),
-        rows = List(RegistrationSubmission.AnswerRow("cyMinusOne.liability", "Yes", Seq("6 April 2019", "5 April 2020"))),
+        rows =
+          List(RegistrationSubmission.AnswerRow("cyMinusOne.liability", "Yes", Seq("6 April 2019", "5 April 2020"))),
         sectionKey = None,
         headingArgs = Seq("6 April 2019", "5 April 2020")
       )
@@ -86,10 +89,10 @@ class SubmissionSetFactorySpec extends SpecBase with ScalaCheckPropertyChecks wi
           val userAnswers = emptyUserAnswers
 
           factory.createFrom(userAnswers) mustBe RegistrationSubmission.DataSet(
-              data = Json.toJson(userAnswers),
-              registrationPieces = Nil,
-              answerSections = List(fakeRegistrationSubmissionAnswerSection)
-            )
+            data = Json.toJson(userAnswers),
+            registrationPieces = Nil,
+            answerSections = List(fakeRegistrationSubmissionAnswerSection)
+          )
         }
 
         "tax years to send down" in {
@@ -102,10 +105,12 @@ class SubmissionSetFactorySpec extends SpecBase with ScalaCheckPropertyChecks wi
           val userAnswers = emptyUserAnswers
 
           factory.createFrom(userAnswers) mustBe RegistrationSubmission.DataSet(
-              data = Json.toJson(userAnswers),
-              registrationPieces = List(RegistrationSubmission.MappedPiece("yearsReturns", Json.obj("returns" -> Json.toJson(fakeYearsReturns)))),
-              answerSections = List(fakeRegistrationSubmissionAnswerSection)
-            )
+            data = Json.toJson(userAnswers),
+            registrationPieces = List(
+              RegistrationSubmission.MappedPiece("yearsReturns", Json.obj("returns" -> Json.toJson(fakeYearsReturns)))
+            ),
+            answerSections = List(fakeRegistrationSubmissionAnswerSection)
+          )
         }
       }
     }
