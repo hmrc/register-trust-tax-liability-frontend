@@ -25,27 +25,7 @@ lazy val microservice = Project("register-trust-tax-liability-frontend", file(".
       "controllers.routes._"
     ),
     PlayKeys.playDefaultPort := 8838,
-    libraryDependencies ++= AppDependencies(),
-    scalacOptions ++= Seq(
-      "-feature",
-      "-Wconf:cat=unused-imports&src=html/.*:s",
-      "-Wconf:cat=unused-imports&src=routes/.*:s"
-    ),
-    Concat.groups := Seq(
-      "javascripts/registertrusttaxliabilityfrontend-app.js" ->
-        group(
-          Seq(
-            "javascripts/registertrusttaxliabilityfrontend.js",
-            "javascripts/iebacklink.js",
-            "javascripts/print.js"
-          )
-        )
-    ),
-    uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
-    pipelineStages := Seq(digest),
-    uglifyOps := UglifyOps.singleFile,
-    Assets / pipelineStages := Seq(concat, uglify),
-    uglify / includeFilter := GlobFilter("registertrusttaxliabilityfrontend-*.js")
+    libraryDependencies ++= AppDependencies()
   )
   .settings(inConfig(Test)(testSettings))
 
