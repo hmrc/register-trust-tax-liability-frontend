@@ -51,11 +51,9 @@
             keepAliveButtonText = Some(messages("timeout.keep-alive-button"))
         )
     }
-    @autocompleteCss()
 }
 
 @beforeContentBlock = {
-    @hmrcLanguageSelectHelper()
     @if(showBackLink) {
         @govukBackLink(BackLink(
             attributes = Map("id" -> "back-link", "data-module" -> "hmrc-back-link"), classes="js-enabled", href="#", content = HtmlContent(messages("site.back"))
@@ -78,7 +76,6 @@
     isWelshTranslationAvailable = true,
     templateOverrides = TemplateOverrides(
         additionalHeadBlock = Some(headScripts),
-        beforeContentBlock = Some(beforeContentBlock),
-        additionalScriptsBlock = Some(autocompleteJavascript())
+        beforeContentBlock = Some(beforeContentBlock)
     )
 ))(mainContentWithGetHelp)
