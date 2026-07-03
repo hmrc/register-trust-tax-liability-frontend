@@ -16,6 +16,7 @@
 
 @import controllers.routes._
 @import config.FrontendAppConfig
+@import resources._
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardPage
 
@@ -23,6 +24,7 @@
     appConfig: FrontendAppConfig,
     hmrcTimeoutDialogHelper: HmrcTimeoutDialogHelper,
     hmrcStandardPage: HmrcStandardPage,
+    stylesheets: Stylesheets,
     govukBackLink: GovukBackLink,
     hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper
 )
@@ -51,6 +53,9 @@
             keepAliveButtonText = Some(messages("timeout.keep-alive-button"))
         )
     }
+
+    @stylesheets()
+
 }
 
 @beforeContentBlock = {

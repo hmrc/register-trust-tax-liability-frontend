@@ -1,0 +1,32 @@
+$govuk-include-default-font-face: false;
+
+@import "lib/govuk-frontend/dist/govuk/base";
+@import "lib/govuk-frontend/dist/govuk/core/typography";
+
+$govuk-global-styles: true;
+
+// ----------------
+// Hide the back link when body does not have .js-enabled
+body:not(.js-enabled) {
+    .govuk-back-link {
+        display: none;
+        visibility: hidden;
+        width: 0;
+        height: 0;
+    }
+}
+// ----------------
+
+p {
+  @extend .govuk-body;
+}
+
+h2 {
+ @extend .govuk-heading-m
+}
+
+@media (min-width: 40.0625em) {
+  .govuk-summary-list__value {
+    width: 50%;
+  }
+}
