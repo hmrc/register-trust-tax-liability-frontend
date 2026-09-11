@@ -26,6 +26,8 @@ import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
 class LogoutControllerSpec extends SpecBase {
 
+  val expectedLogoutUrl: String = "http://localhost:9514/feedback/trusts?useServiceNavigation"
+
   "LogoutController.logout" must {
 
     "redirect to logoutUrl and audit when logoutAudit is enabled" in {
@@ -40,7 +42,7 @@ class LogoutControllerSpec extends SpecBase {
       val result  = route(application, request).value
 
       status(result)                 mustBe SEE_OTHER
-      redirectLocation(result).value mustBe frontendAppConfig.logoutUrl
+      redirectLocation(result).value mustBe expectedLogoutUrl
 
       verify(mockAuditConnector, times(1))
         .sendExplicitAudit(eqTo("trusts"), any[Map[String, String]])(any(), any())
@@ -60,8 +62,7 @@ class LogoutControllerSpec extends SpecBase {
       val result  = route(application, request).value
 
       status(result)                 mustBe SEE_OTHER
-      redirectLocation(result).value mustBe
-        application.injector.instanceOf[config.FrontendAppConfig].logoutUrl
+      redirectLocation(result).value mustBe expectedLogoutUrl
 
       verify(mockAuditConnector, never)
         .sendExplicitAudit(eqTo("trusts"), any[Map[String, String]])(any(), any())
