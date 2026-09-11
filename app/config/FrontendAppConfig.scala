@@ -21,14 +21,12 @@ import controllers.routes
 import play.api.Configuration
 import play.api.i18n.{Lang, Messages}
 import play.api.mvc.Call
-import uk.gov.hmrc.hmrcfrontend.config.ContactFrontendConfig
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
 class FrontendAppConfig @Inject() (
   val configuration: Configuration,
-  servicesConfig: ServicesConfig,
-  contactFrontendConfig: ContactFrontendConfig
+  servicesConfig: ServicesConfig
 ) {
 
   val repositoryKey: String = "taxLiability"
@@ -36,10 +34,6 @@ class FrontendAppConfig @Inject() (
   final val ENGLISH = "en"
   final val WELSH   = "cy"
 
-  val betaFeedbackUrl =
-    s"${contactFrontendConfig.baseUrl.get}/contact/beta-feedback?service=${contactFrontendConfig.serviceId.get}"
-
-  lazy val authUrl: String          = servicesConfig.baseUrl("auth")
   lazy val loginUrl: String         = configuration.get[String]("urls.login")
   lazy val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
   lazy val logoutUrl: String        = s"${configuration.get[String]("urls.logout")}?useServiceNavigation"
