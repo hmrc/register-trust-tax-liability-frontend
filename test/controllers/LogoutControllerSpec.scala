@@ -28,8 +28,6 @@ import java.net.URLEncoder
 
 class LogoutControllerSpec extends SpecBase {
 
-  // val expectedLogoutUrl: String = "http://localhost:9514/feedback/trusts?useServiceNavigation"
-
   "LogoutController.logout" must {
 
     val continueUrl = URLEncoder.encode(s"${frontendAppConfig.feedbackFrontendUrl}", "UTF-8")
